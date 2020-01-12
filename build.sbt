@@ -29,9 +29,11 @@ addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck"
 
 val zioVersion = "1.0.0-RC17"
 libraryDependencies ++= Seq(
-  "dev.zio" %% "zio"          % zioVersion,
-  "dev.zio" %% "zio-test"     % zioVersion % "test",
-  "dev.zio" %% "zio-test-sbt" % zioVersion % "test"
+  "dev.zio"                %% "zio"                     % zioVersion,
+  "dev.zio"                %% "zio-streams"             % zioVersion,
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3",
+  "dev.zio"                %% "zio-test"                % zioVersion % "test",
+  "dev.zio"                %% "zio-test-sbt"            % zioVersion % "test"
 )
 
 testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))

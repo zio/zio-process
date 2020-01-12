@@ -3,7 +3,7 @@
 [![Badge-Discord]][Link-Discord] | [![CircleCI](https://circleci.com/gh/zio/zio-process/tree/master.svg?style=svg)](https://circleci.com/gh/zio/zio-process/tree/master)
 
 # Summary
-TODO: Tagline
+Purely functional command and process library based on ZIO.
 
 # Documentation
 [ZIO Process Microsite](https://zio.github.io/zio-process/)

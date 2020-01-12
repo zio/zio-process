@@ -96,7 +96,7 @@ final case class Process(private val process: JProcess) {
           result.write(buffer, 0, length)
         }
 
-        result.toString(charset)
+        new String(result.toByteArray, charset)
       }(UIO(inputStream.close()))
     }
 }

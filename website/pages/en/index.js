@@ -64,7 +64,6 @@ class HomeSplash extends React.Component {
                     <ProjectTitle siteConfig={siteConfig}/>
                     <PromoSection>
                         <Button href={docUrl('overview/overview_index')}>Overview</Button>
-                        <Button href={docUrl('usecases/usecases_index')}>Use Cases</Button>
                         <Button href="https://github.com/zio/zio-process" target="_blank">GitHub</Button>
                     </PromoSection>
                 </div>
@@ -97,11 +96,20 @@ class Index extends React.Component {
                 style={{textAlign: 'center'}}>
                 <h2>Welcome to ZIO Process</h2>
                 <MarkdownBlock>
-                    TODO: Tagline
+                  _Purely functional command and process library based on ZIO._
                 </MarkdownBlock>
 
                 <MarkdownBlock>
-                    TODO: Long description (paragraph)
+                    ZIO Process provides a principled way to call out to external programs from within a ZIO application
+                    while leveraging ZIO's capabilities like interruption and offloading blocking operations to a
+                    separate thread pool. You don't need to worry about avoiding these common pitfalls as you would if
+                    you were to use Java's `ProcessBuilder` or the `scala.sys.process` API since it already taken care
+                    of for you.
+                </MarkdownBlock>
+              
+                <MarkdownBlock>
+                    ZIO Process is backed by ZIO Streams, enabling you to work with processes that output gigabytes of
+                    data without worrying about exceeding memory constraints.
                 </MarkdownBlock>
             </div>
         );
@@ -110,17 +118,23 @@ class Index extends React.Component {
             <Block layout="fourColumn">
                 {[
                     {
-                        content: 'TODO: Content 1',
-                        image: `${baseUrl}img/undraw_tweetstorm.svg`,
+                        content: 'Leverages ZIO to handle interruption and offload blocking operations',
+                        image: `${baseUrl}img/undraw_abstract.svg`,
                         imageAlign: 'top',
-                        title: 'TODO: Title 1',
+                        title: 'Integrated',
                     },
                     {
-                        content: 'TODO: Content 2',
-                        image: `${baseUrl}img/undraw_operating_system.svg`,
+                        content: 'Supports streaming via ZIO Streams',
+                        image: `${baseUrl}img/undraw_to_the_moon.svg`,
                         imageAlign: 'top',
-                        title: 'TODO: Title 2',
+                        title: 'Streaming',
                     },
+                    {
+                      content: 'Built-in support for piping and other common process operations',
+                      image: `${baseUrl}img/undraw_software_engineer.svg`,
+                      imageAlign: 'top',
+                      title: 'Convenient',
+                    }
                 ]}
             </Block>
         );

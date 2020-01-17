@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>About ZIO Process · ZIO Process</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="_Purely functional command and process library based on ZIO._"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="About ZIO Process · ZIO Process"/><meta property="og:type" content="website"/><meta property="og:url" content="https://zio.github.io/zio-process/"/><meta property="og:description" content="_Purely functional command and process library based on ZIO._"/><meta property="og:image" content="https://zio.github.io/zio-process/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://zio.github.io/zio-process/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/zio-process/img/favicon.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="https://unpkg.com/vanilla-back-to-top@7.1.14/dist/vanilla-back-to-top.min.js"></script><script>
+        document.addEventListener('DOMContentLoaded', function() {
+          addBackToTop(
+            {"zIndex":100,"cornerOffset":100}
+          )
+        });
+        </script><script src="/zio-process/js/scrollSpy.js"></script><link rel="stylesheet" href="/zio-process/css/main.css"/><script src="/zio-process/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/zio-process/"><img class="logo" src="/zio-process/img/navbar_brand2x.png" alt="ZIO Process"/><h2 class="headerTitleWithLogo">ZIO Process</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/zio-process/docs/overview/overview_index" target="_self">Overview</a></li><li class=""><a href="api/index.html" target="_self">API</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/zio-process/docs/about/about_index" target="_self">About</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>About</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">About</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/zio-process/docs/about/about_index">About ZIO Process</a></li><li class="navListItem"><a class="navItem" href="/zio-process/docs/about/about_contributing">ZIO Contributor Guidelines</a></li><li class="navListItem"><a class="navItem" href="/zio-process/docs/about/about_coc">ZIO Code of Conduct</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">About ZIO Process</h1></header><article><div><span><p><em>Purely functional command and process library based on ZIO.</em></p>
+<p>ZIO Process provides a principled way to call out to external programs from within a ZIO application
+while leveraging ZIO's capabilities like interruption and offloading blocking operations to a
+separate thread pool. You don't need to worry about avoiding these common pitfalls as you would if
+you were to use Java's <code>ProcessBuilder</code> or the <code>scala.sys.process</code> API since it already taken care
+of for you.</p>
+<p>ZIO Process is backed by ZIO Streams, enabling you to work with processes that output gigabytes of
+data without worrying about exceeding memory constraints.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-next button" href="/zio-process/docs/about/about_contributing"><span>ZIO Contributor Guidelines</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/zio-process/" class="nav-home"><img src="/zio-process/img/sidebar_brand2x.png" alt="ZIO Process"/></a><div><h5>GitHub</h5><a class="github-button" href="https://github.com/zio/zio-process" data-icon="octicon-star" data-count-href="/zio/zio-process/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><h5>Chat with us on Discord</h5><a href="https://discord.gg/2ccFBr4"><img src="/zio-process//img/discord.png" width="120" alt="discord"/></a></div><div><h5>Additional resources</h5><a href="/zio-process/api/index.html">Scaladoc of zio-process</a></div></section><section class="copyright">Copyright © 2020 ZIO Maintainers</section></footer></div></body></html>

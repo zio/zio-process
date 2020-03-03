@@ -140,8 +140,7 @@ sealed trait Command {
                     _ <- input.chunks
                           .run(ZSink.fromOutputStream(outputStream))
                           .ensuring(UIO(outputStream.close()))
-                          .fork
-                          .daemon
+                          .forkDaemon
                   } yield ()
               }
         } yield process

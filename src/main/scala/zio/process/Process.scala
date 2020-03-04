@@ -31,7 +31,7 @@ final case class Process(private val process: JProcess) {
    * Access the underlying Java Process wrapped in a blocking ZIO.
    */
   def execute[T](f: JProcess => T): ZIO[Blocking, IOException, T] =
-    effectBlocking(f(process)).refineToOrDie[IOException]
+    effectBlockingInterrupt(f(process)).refineToOrDie[IOException]
 
   /**
    * Return the exit code of this process.

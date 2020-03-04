@@ -5,7 +5,7 @@ import java.io.File
 import zio.test.Assertion._
 import zio.test._
 
-object PipedCommandSpec extends DefaultRunnableSpec {
+object PipedCommandSpec extends ZIOProcessBaseSpec {
   def spec = suite("PipedCommandSpec")(
     testM("support piping") {
       val zio = (Command("echo", "2\n1\n3") | Command("cat") | Command("sort")).lines

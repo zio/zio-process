@@ -10,7 +10,7 @@ import zio.duration._
 import zio.test.environment.TestClock
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
-object CommandSpec extends DefaultRunnableSpec {
+object CommandSpec extends ZIOProcessBaseSpec {
   def spec = suite("CommandSpec")(
     testM("convert stdout to string") {
       val zio = Command("echo", "-n", "test").string

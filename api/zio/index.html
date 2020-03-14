@@ -133,47 +133,11 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="zio.EitherCompat">EitherCompat</span>, <span class="extype" name="zio.ZEnvDefinition">ZEnvDefinition</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="zio.VersionSpecific">VersionSpecific</span>, <span class="extype" name="zio.PlatformSpecific">PlatformSpecific</span>, <span class="extype" name="zio.EitherCompat">EitherCompat</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
-      <div id="mbrsel">
-        <div class="toggle"></div>
-        <div id="memberfilter">
-          <i class="material-icons arrow"></i>
-          <span class="input">
-            <input id="mbrsel-input" placeholder="Filter all members" type="text" accesskey="/" />
-          </span>
-          <i class="clear material-icons"></i>
-        </div>
-        <div id="filterby">
-          <div id="order">
-            <span class="filtertype">Ordering</span>
-            <ol>
-              
-              <li class="alpha in"><span>Alphabetic</span></li>
-              <li class="inherit out"><span>By Inheritance</span></li>
-            </ol>
-          </div>
-          <div class="ancestors">
-                  <span class="filtertype">Inherited<br />
-                  </span>
-                  <ol id="linearization">
-                    <li class="in" name="zio"><span>zio</span></li><li class="in" name="zio.EitherCompat"><span>EitherCompat</span></li><li class="in" name="zio.ZEnvDefinition"><span>ZEnvDefinition</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
-                  </ol>
-                </div><div class="ancestors">
-              <span class="filtertype"></span>
-              <ol>
-                <li class="hideall out"><span>Hide All</span></li>
-                <li class="showall in"><span>Show All</span></li>
-              </ol>
-            </div>
-          <div id="visbl">
-              <span class="filtertype">Visibility</span>
-              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
-            </div>
-        </div>
-      </div>
+      
 
       <div id="template">
         <div id="allMembers">
@@ -182,9 +146,9 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="zio.Canceler" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Canceler[R]=zio.package.URIO[R,Any]"></a><a id="Canceler[R]:Canceler[R]"></a>
+      <a id="Canceler[-R]=zio.package.URIO[R,Any]"></a><a id="Canceler[-R]:Canceler[R]"></a>
       <span class="permalink">
-      <a href="../zio/index.html#Canceler[R]=zio.package.URIO[R,Any]" title="Permalink">
+      <a href="../zio/index.html#Canceler[-R]=zio.package.URIO[R,Any]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -193,7 +157,23 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">Canceler</span><span class="tparams">[<span name="R">R</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.Canceler.R">R</span>, <span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="scala.Any">Any</span>]</span>
+        <span class="name">Canceler</span><span class="tparams">[<span name="R">-R</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.Canceler.R">R</span>, <span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="scala.Any">Any</span>]</span>
+      </span>
+      
+      
+    </li><li name="zio.ERef" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ERef[+E,A]=zio.ZRef[E,E,A,A]"></a><a id="ERef[+E,A]:ERef[E,A]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#ERef[+E,A]=zio.ZRef[E,E,A,A]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ERef</span><span class="tparams">[<span name="E">+E</span>, <span name="A">A</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZRef">ZRef</span>[<span class="extype" name="zio.ERef.E">E</span>, <span class="extype" name="zio.ERef.E">E</span>, <span class="extype" name="zio.ERef.A">A</span>, <span class="extype" name="zio.ERef.A">A</span>]</span>
       </span>
       
       
@@ -210,6 +190,22 @@
       </span>
       <span class="symbol">
         <span class="name">IO</span><span class="tparams">[<span name="E">+E</span>, <span name="A">+A</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="zio.IO.E">E</span>, <span class="extype" name="zio.IO.A">A</span>]</span>
+      </span>
+      
+      
+    </li><li name="zio.Layer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Layer[+E,+ROut]=zio.ZLayer[Any,E,ROut]"></a><a id="Layer[+E,+ROut]:Layer[E,ROut]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#Layer[+E,+ROut]=zio.ZLayer[Any,E,ROut]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Layer</span><span class="tparams">[<span name="E">+E</span>, <span name="ROut">+ROut</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZLayer">ZLayer</span>[<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="zio.Layer.E">E</span>, <span class="extype" name="zio.Layer.ROut">ROut</span>]</span>
       </span>
       
       
@@ -261,6 +257,22 @@
       </span>
       
       
+    </li><li name="zio.RLayer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RLayer[-RIn,+ROut]=zio.ZLayer[RIn,Throwable,ROut]"></a><a id="RLayer[-RIn,+ROut]:RLayer[RIn,ROut]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#RLayer[-RIn,+ROut]=zio.ZLayer[RIn,Throwable,ROut]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RLayer</span><span class="tparams">[<span name="RIn">-RIn</span>, <span name="ROut">+ROut</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZLayer">ZLayer</span>[<span class="extype" name="zio.RLayer.RIn">RIn</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="zio.RLayer.ROut">ROut</span>]</span>
+      </span>
+      
+      
     </li><li name="zio.RManaged" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RManaged[-R,+A]=zio.ZManaged[R,Throwable,A]"></a><a id="RManaged[-R,+A]:RManaged[R,A]"></a>
       <span class="permalink">
@@ -277,6 +289,406 @@
       </span>
       
       
+    </li><li name="zio.Ref" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Ref[A]=zio.ZRef[Nothing,Nothing,A,A]"></a><a id="Ref[A]:Ref[A]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#Ref[A]=zio.ZRef[Nothing,Nothing,A,A]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Ref</span><span class="tparams">[<span name="A">A</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZRef">ZRef</span>[<span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="zio.Ref.A">A</span>, <span class="extype" name="zio.Ref.A">A</span>]</span>
+      </span>
+      
+      
+    </li><li name="zio.VersionSpecific.TagType" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TagType=izumi.reflect.macrortti.LightTypeTag"></a><a id="TagType:TagType"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TagType=izumi.reflect.macrortti.LightTypeTag" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TagType</span><span class="result alias"> = <span class="extype" name="izumi.reflect.macrortti.LightTypeTag">LightTypeTag</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.Tagged" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Tagged[A]=izumi.reflect.Tags.Tag[A]"></a><a id="Tagged[A]:Tagged[A]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#Tagged[A]=izumi.reflect.Tags.Tag[A]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Tagged</span><span class="tparams">[<span name="A">A</span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.Tag">Tag</span>[<span class="extype" name="zio.VersionSpecific.Tagged.A">A</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF[F[_]]=izumi.reflect.Tags.TagK[F]"></a><a id="TaggedF[F[_]]:TaggedF[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF[F[_]]=izumi.reflect.Tags.TagK[F]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[A] = F[A] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF10" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF10[F[_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[180,181,182,183,184,185,186,187,188,189]=F[180,181,182,183,184,185,186,187,188,189]}]"></a><a id="TaggedF10[F[_,_,_,_,_,_,_,_,_,_]]:TaggedF10[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF10[F[_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[180,181,182,183,184,185,186,187,188,189]=F[180,181,182,183,184,185,186,187,188,189]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF10</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[180, 181, 182, 183, 184, 185, 186, 187, 188, 189] = F[180,181,182,183,184,185,186,187,188,189] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF11" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF11[F[_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[223,224,225,226,227,228,229,230,231,232,233]=F[223,224,225,226,227,228,229,230,231,232,233]}]"></a><a id="TaggedF11[F[_,_,_,_,_,_,_,_,_,_,_]]:TaggedF11[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF11[F[_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[223,224,225,226,227,228,229,230,231,232,233]=F[223,224,225,226,227,228,229,230,231,232,233]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF11</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233] = F[223,224,225,226,227,228,229,230,231,232,233] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF12" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF12[F[_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[270,271,272,273,274,275,276,277,278,279,280,281]=F[270,271,272,273,274,275,276,277,278,279,280,281]}]"></a><a id="TaggedF12[F[_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF12[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF12[F[_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[270,271,272,273,274,275,276,277,278,279,280,281]=F[270,271,272,273,274,275,276,277,278,279,280,281]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF12</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281] = F[270,271,272,273,274,275,276,277,278,279,280,281] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF13" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF13[F[_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[321,322,323,324,325,326,327,328,329,330,331,332,333]=F[321,322,323,324,325,326,327,328,329,330,331,332,333]}]"></a><a id="TaggedF13[F[_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF13[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF13[F[_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[321,322,323,324,325,326,327,328,329,330,331,332,333]=F[321,322,323,324,325,326,327,328,329,330,331,332,333]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF13</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333] = F[321,322,323,324,325,326,327,328,329,330,331,332,333] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF14" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF14[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[376,377,378,379,380,381,382,383,384,385,386,387,388,389]=F[376,377,378,379,380,381,382,383,384,385,386,387,388,389]}]"></a><a id="TaggedF14[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF14[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF14[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[376,377,378,379,380,381,382,383,384,385,386,387,388,389]=F[376,377,378,379,380,381,382,383,384,385,386,387,388,389]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF14</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389] = F[376,377,378,379,380,381,382,383,384,385,386,387,388,389] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF15" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF15[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[435,436,437,438,439,440,441,442,443,444,445,446,447,448,449]=F[435,436,437,438,439,440,441,442,443,444,445,446,447,448,449]}]"></a><a id="TaggedF15[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF15[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF15[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[435,436,437,438,439,440,441,442,443,444,445,446,447,448,449]=F[435,436,437,438,439,440,441,442,443,444,445,446,447,448,449]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF15</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449] = F[435,436,437,438,439,440,441,442,443,444,445,446,447,448,449] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF16" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF16[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513]=F[498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513]}]"></a><a id="TaggedF16[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF16[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF16[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513]=F[498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF16</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513] = F[498,499,500,501,502,503,504,505,506,507,508,509,510,511,512,513] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF17" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF17[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581]=F[565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581]}]"></a><a id="TaggedF17[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF17[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF17[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581]=F[565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF17</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581] = F[565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF18" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF18[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653]=F[636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653]}]"></a><a id="TaggedF18[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF18[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF18[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653]=F[636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF18</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 651, 652, 653] = F[636,637,638,639,640,641,642,643,644,645,646,647,648,649,650,651,652,653] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF19" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF19[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729]=F[711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729]}]"></a><a id="TaggedF19[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF19[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF19[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729]=F[711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF19</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729] = F[711,712,713,714,715,716,717,718,719,720,721,722,723,724,725,726,727,728,729] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF2" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF2[F[_,_]]=izumi.reflect.Tags.TagKK[F]"></a><a id="TaggedF2[F[_,_]]:TaggedF2[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF2[F[_,_]]=izumi.reflect.Tags.TagKK[F]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF2</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[A, B] = F[A,B] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF20" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF20[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[790,791,792,793,794,795,796,797,798,799,800,801,802,803,804,805,806,807,808,809]=F[790,791,792,793,794,795,796,797,798,799,800,801,802,803,804,805,806,807,808,809]}]"></a><a id="TaggedF20[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF20[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF20[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[790,791,792,793,794,795,796,797,798,799,800,801,802,803,804,805,806,807,808,809]=F[790,791,792,793,794,795,796,797,798,799,800,801,802,803,804,805,806,807,808,809]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF20</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809] = F[790,791,792,793,794,795,796,797,798,799,800,801,802,803,804,805,806,807,808,809] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF21" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF21[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893]=F[873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893]}]"></a><a id="TaggedF21[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF21[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF21[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893]=F[873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF21</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890, 891, 892, 893] = F[873,874,875,876,877,878,879,880,881,882,883,884,885,886,887,888,889,890,891,892,893] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF22" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF22[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[960,961,962,963,964,965,966,967,968,969,970,971,972,973,974,975,976,977,978,979,980,981]=F[960,961,962,963,964,965,966,967,968,969,970,971,972,973,974,975,976,977,978,979,980,981]}]"></a><a id="TaggedF22[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]:TaggedF22[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF22[F[_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[960,961,962,963,964,965,966,967,968,969,970,971,972,973,974,975,976,977,978,979,980,981]=F[960,961,962,963,964,965,966,967,968,969,970,971,972,973,974,975,976,977,978,979,980,981]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF22</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981] = F[960,961,962,963,964,965,966,967,968,969,970,971,972,973,974,975,976,977,978,979,980,981] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF3" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF3[F[_,_,_]]=izumi.reflect.Tags.TagK3[F]"></a><a id="TaggedF3[F[_,_,_]]:TaggedF3[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF3[F[_,_,_]]=izumi.reflect.Tags.TagK3[F]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF3</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[A, B, C] = F[A,B,C] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF4" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF4[F[_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[6,7,8,9]=F[6,7,8,9]}]"></a><a id="TaggedF4[F[_,_,_,_]]:TaggedF4[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF4[F[_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[6,7,8,9]=F[6,7,8,9]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF4</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[6, 7, 8, 9] = F[6,7,8,9] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF5" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF5[F[_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[25,26,27,28,29]=F[25,26,27,28,29]}]"></a><a id="TaggedF5[F[_,_,_,_,_]]:TaggedF5[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF5[F[_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[25,26,27,28,29]=F[25,26,27,28,29]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF5</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[25, 26, 27, 28, 29] = F[25,26,27,28,29] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF6" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF6[F[_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[48,49,50,51,52,53]=F[48,49,50,51,52,53]}]"></a><a id="TaggedF6[F[_,_,_,_,_,_]]:TaggedF6[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF6[F[_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[48,49,50,51,52,53]=F[48,49,50,51,52,53]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF6</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[48, 49, 50, 51, 52, 53] = F[48,49,50,51,52,53] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF7" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF7[F[_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[75,76,77,78,79,80,81]=F[75,76,77,78,79,80,81]}]"></a><a id="TaggedF7[F[_,_,_,_,_,_,_]]:TaggedF7[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF7[F[_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[75,76,77,78,79,80,81]=F[75,76,77,78,79,80,81]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF7</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[75, 76, 77, 78, 79, 80, 81] = F[75,76,77,78,79,80,81] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF8" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF8[F[_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[106,107,108,109,110,111,112,113]=F[106,107,108,109,110,111,112,113]}]"></a><a id="TaggedF8[F[_,_,_,_,_,_,_,_]]:TaggedF8[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF8[F[_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[106,107,108,109,110,111,112,113]=F[106,107,108,109,110,111,112,113]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF8</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[106, 107, 108, 109, 110, 111, 112, 113] = F[106,107,108,109,110,111,112,113] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
+    </li><li name="zio.VersionSpecific.TaggedF9" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TaggedF9[F[_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[141,142,143,144,145,146,147,148,149]=F[141,142,143,144,145,146,147,148,149]}]"></a><a id="TaggedF9[F[_,_,_,_,_,_,_,_,_]]:TaggedF9[F]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaggedF9[F[_,_,_,_,_,_,_,_,_]]=izumi.reflect.Tags.HKTag[Object{typeArg[141,142,143,144,145,146,147,148,149]=F[141,142,143,144,145,146,147,148,149]}]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaggedF9</span><span class="tparams">[<span name="F">F<span class="tparams">[<span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>, <span name="_">_</span>]</span></span>]</span><span class="result alias"> = <span class="extype" name="izumi.reflect.Tags.HKTag">HKTag</span>[<span class="extype" name="scala.AnyRef">AnyRef</span> { type Arg[141, 142, 143, 144, 145, 146, 147, 148, 149] = F[141,142,143,144,145,146,147,148,149] }]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>VersionSpecific</dd></dl></div>
     </li><li name="zio.Task" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Task[+A]=zio.ZIO[Any,Throwable,A]"></a><a id="Task[+A]:Task[A]"></a>
       <span class="permalink">
@@ -290,6 +702,22 @@
       </span>
       <span class="symbol">
         <span class="name">Task</span><span class="tparams">[<span name="A">+A</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="zio.Task.A">A</span>]</span>
+      </span>
+      
+      
+    </li><li name="zio.TaskLayer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TaskLayer[+ROut]=zio.ZLayer[Any,Throwable,ROut]"></a><a id="TaskLayer[+ROut]:TaskLayer[ROut]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#TaskLayer[+ROut]=zio.ZLayer[Any,Throwable,ROut]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TaskLayer</span><span class="tparams">[<span name="ROut">+ROut</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZLayer">ZLayer</span>[<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="zio.TaskLayer.ROut">ROut</span>]</span>
       </span>
       
       
@@ -325,6 +753,22 @@
       </span>
       
       
+    </li><li name="zio.ULayer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ULayer[+ROut]=zio.ZLayer[Any,Nothing,ROut]"></a><a id="ULayer[+ROut]:ULayer[ROut]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#ULayer[+ROut]=zio.ZLayer[Any,Nothing,ROut]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ULayer</span><span class="tparams">[<span name="ROut">+ROut</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZLayer">ZLayer</span>[<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="zio.ULayer.ROut">ROut</span>]</span>
+      </span>
+      
+      
     </li><li name="zio.UManaged" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="UManaged[+A]=zio.ZManaged[Any,Nothing,A]"></a><a id="UManaged[+A]:UManaged[A]"></a>
       <span class="permalink">
@@ -357,6 +801,22 @@
       </span>
       
       
+    </li><li name="zio.URLayer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="URLayer[-RIn,+ROut]=zio.ZLayer[RIn,Nothing,ROut]"></a><a id="URLayer[-RIn,+ROut]:URLayer[RIn,ROut]"></a>
+      <span class="permalink">
+      <a href="../zio/index.html#URLayer[-RIn,+ROut]=zio.ZLayer[RIn,Nothing,ROut]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">URLayer</span><span class="tparams">[<span name="RIn">-RIn</span>, <span name="ROut">+ROut</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZLayer">ZLayer</span>[<span class="extype" name="zio.URLayer.RIn">RIn</span>, <span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="zio.URLayer.ROut">ROut</span>]</span>
+      </span>
+      
+      
     </li><li name="zio.URManaged" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="URManaged[-R,+A]=zio.ZManaged[R,Nothing,A]"></a><a id="URManaged[-R,+A]:URManaged[R,A]"></a>
       <span class="permalink">
@@ -373,7 +833,7 @@
       </span>
       
       
-    </li><li name="zio.ZEnvDefinition.ZEnv" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="zio.PlatformSpecific.ZEnv" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ZEnv=zio.clock.Clockwithzio.console.Consolewithzio.system.Systemwithzio.random.Randomwithzio.blocking.Blocking"></a><a id="ZEnv:ZEnv"></a>
       <span class="permalink">
       <a href="../zio/index.html#ZEnv=zio.clock.Clockwithzio.console.Consolewithzio.system.Systemwithzio.random.Randomwithzio.blocking.Blocking" title="Permalink">
@@ -388,64 +848,7 @@
         <span class="name">ZEnv</span><span class="result alias"> = <span class="extype" name="zio.clock.Clock">Clock</span> with <span class="extype" name="zio.console.Console">Console</span> with <span class="extype" name="zio.system.System">System</span> with <span class="extype" name="zio.random.Random">Random</span> with <span class="extype" name="zio.blocking.Blocking">Blocking</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ZEnvDefinition</dd></dl></div>
-    </li><li name="zio.FiberId" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FiberId=zio.Fiber.Id"></a><a id="FiberId:FiberId"></a>
-      <span class="permalink">
-      <a href="../zio/index.html#FiberId=zio.Fiber.Id" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">type</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use Fiber.Id">FiberId</span><span class="result alias"> = <span class="extype" name="zio.Fiber.Id">Id</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use Fiber.Id</p></dd></dl></div>
-    </li><li name="zio.TaskR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="TaskR[-R,+A]=zio.package.RIO[R,A]"></a><a id="TaskR[-R,+A]:TaskR[R,A]"></a>
-      <span class="permalink">
-      <a href="../zio/index.html#TaskR[-R,+A]=zio.package.RIO[R,A]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">type</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use RIO">TaskR</span><span class="tparams">[<span name="R">-R</span>, <span name="A">+A</span>]</span><span class="result alias"> = <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.TaskR.R">R</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="zio.TaskR.A">A</span>]</span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use RIO</p></dd></dl></div>
-    </li><li name="zio.ZSchedule" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ZSchedule[-R,-A,+B]=zio.Schedule[R,A,B]"></a><a id="ZSchedule[-R,-A,+B]:ZSchedule[R,A,B]"></a>
-      <span class="permalink">
-      <a href="../zio/index.html#ZSchedule[-R,-A,+B]=zio.Schedule[R,A,B]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">type</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use Schedule">ZSchedule</span><span class="tparams">[<span name="R">-R</span>, <span name="A">-A</span>, <span name="B">+B</span>]</span><span class="result alias"> = <span class="extype" name="zio.Schedule">Schedule</span>[<span class="extype" name="zio.ZSchedule.R">R</span>, <span class="extype" name="zio.ZSchedule.A">A</span>, <span class="extype" name="zio.ZSchedule.B">B</span>]</span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use Schedule</p></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PlatformSpecific</dd></dl></div>
     </li></ol>
             </div>
 
@@ -455,36 +858,16 @@
 
         
 
-        <div class="values members">
-              <h3>Deprecated Value Members</h3>
-              <ol><li name="zio#TaskR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="TaskR:zio.RIO.type"></a><a id="TaskR:RIO.type"></a>
-      <span class="permalink">
-      <a href="../zio/index.html#TaskR:zio.RIO.type" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name deprecated" title="Deprecated: (Since version 1.0.0) use RIO">TaskR</span><span class="result">: <span class="extype" name="zio.RIO">RIO</span>.type</span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@deprecated</span>
-              
-        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 1.0.0)</i> use RIO</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="zio.EitherCompat">
+        <div class="parent" name="zio.VersionSpecific">
+              <h3>Inherited from <span class="extype" name="zio.VersionSpecific">VersionSpecific</span></h3>
+            </div><div class="parent" name="zio.PlatformSpecific">
+              <h3>Inherited from <span class="extype" name="zio.PlatformSpecific">PlatformSpecific</span></h3>
+            </div><div class="parent" name="zio.EitherCompat">
               <h3>Inherited from <span class="extype" name="zio.EitherCompat">EitherCompat</span></h3>
-            </div><div class="parent" name="zio.ZEnvDefinition">
-              <h3>Inherited from <span class="extype" name="zio.ZEnvDefinition">ZEnvDefinition</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

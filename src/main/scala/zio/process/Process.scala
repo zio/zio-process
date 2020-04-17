@@ -17,15 +17,14 @@ package zio.process
 
 import java.io._
 import java.lang.{ Process => JProcess }
-import java.nio.charset.{ Charset, StandardCharsets }
 
 import zio.blocking._
-import zio.stream.{ Stream, StreamChunk, ZSink, ZStream }
-import zio.{ RIO, UIO, ZIO, ZManaged }
-
-import scala.collection.mutable.ArrayBuffer
+import zio.{ RIO, UIO, ZIO }
 
 final case class Process(private val process: JProcess) {
+
+  val stdout: ProcessStream = ProcessStream(process.getInputStream)
+  val stderr: ProcessStream = ProcessStream(process.getErrorStream)
 
   /**
    * Access the underlying Java Process wrapped in a blocking ZIO.
@@ -38,65 +37,4 @@ final case class Process(private val process: JProcess) {
    */
   def exitCode: RIO[Blocking, Int] =
     effectBlockingCancelable(process.waitFor())(UIO(process.destroy()))
-
-  /**
-   * Return the output of this process as a list of lines (default encoding of UTF-8).
-   */
-  def lines: RIO[Blocking, List[String]] = lines(StandardCharsets.UTF_8)
-
-  /**
-   * Return the output of this process as a list of lines with the specified encoding.
-   */
-  def lines(charset: Charset): RIO[Blocking, List[String]] =
-    ZManaged.fromAutoCloseable(UIO(new BufferedReader(new InputStreamReader(process.getInputStream, charset)))).use {
-      reader =>
-        effectBlockingCancelable {
-          val lines = new ArrayBuffer[String]
-
-          var line: String = null
-          while ({ line = reader.readLine; line != null }) {
-            lines.append(line)
-          }
-
-          lines.toList
-        }(UIO(reader.close()))
-    }
-
-  /**
-   * Return the output of this process as a stream of lines (default encoding of UTF-8).
-   */
-  def linesStream: ZStream[Blocking, Throwable, String] =
-    stream.chunks
-      .aggregate(ZSink.utf8DecodeChunk)
-      .aggregate(ZSink.splitLines)
-      .mapConcatChunk(identity)
-
-  /**
-   * Return the output of this process as a chunked stream of bytes.
-   */
-  def stream: StreamChunk[Throwable, Byte] =
-    Stream.fromInputStream(process.getInputStream)
-
-  /**
-   * Return the entire output of this process as a string (default encoding of UTF-8).
-   */
-  def string: RIO[Blocking, String] = string(StandardCharsets.UTF_8)
-
-  /**
-   * Return the entire output of this process as a string with the specified encoding.
-   */
-  def string(charset: Charset): RIO[Blocking, String] =
-    ZManaged.fromAutoCloseable(UIO(process.getInputStream())).use { inputStream =>
-      effectBlockingCancelable {
-        val buffer = new Array[Byte](4096)
-        val result = new ByteArrayOutputStream
-        var length = 0
-
-        while ({ length = inputStream.read(buffer); length != -1 }) {
-          result.write(buffer, 0, length)
-        }
-
-        new String(result.toByteArray, charset)
-      }(UIO(inputStream.close()))
-    }
 }

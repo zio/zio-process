@@ -68,3 +68,16 @@ command.stream
 ```
 
 The bytes are chunked for performance in the form of `StreamChunk[Throwable, Byte]`
+
+### Access stdout and stderr separately
+
+There are times where you need to process the output of stderr as well.
+
+```scala mdoc:silent
+for {
+  process <- Command("./some-process").run
+  stdout  <- process.stdout.string
+  stderr  <- process.stderr.string
+  // ...
+} yield ()
+```

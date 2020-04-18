@@ -23,7 +23,14 @@ import zio.{ RIO, UIO, ZIO }
 
 final case class Process(private val process: JProcess) {
 
+  /**
+   * Access the standard output stream.
+   */
   val stdout: ProcessStream = ProcessStream(process.getInputStream)
+
+  /**
+   * Access the standard error stream.
+   */
   val stderr: ProcessStream = ProcessStream(process.getErrorStream)
 
   /**

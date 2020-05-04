@@ -40,10 +40,10 @@ object PipedCommandSpec extends ZIOProcessBaseSpec {
       )
     },
     test("stderr delegate to rightmost command") {
-      val command = (Command("cat") | (Command("sort") | Command("head", "-2"))).stderr(ProcessOutput.Pipe)
+      val command = (Command("cat") | (Command("sort") | Command("head", "-2"))).stderr(ProcessOutput.Inherit)
 
       assert(command.flatten.map(_.stderr))(
-        equalTo(Vector(ProcessOutput.Inherit, ProcessOutput.Inherit, ProcessOutput.Pipe))
+        equalTo(Vector(ProcessOutput.Pipe, ProcessOutput.Pipe, ProcessOutput.Inherit))
       )
     },
     test("stdout delegate to rightmost command") {

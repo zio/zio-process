@@ -11,6 +11,7 @@ import zio.test.environment.TestClock
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {
+
   def spec = suite("CommandSpec")(
     testM("convert stdout to string") {
       val zio = Command("echo", "-n", "test").string
@@ -90,6 +91,24 @@ object CommandSpec extends ZIOProcessBaseSpec {
       } yield result
 
       assertM(zio)(isNone)
+    },
+    testM("capture stdout and stderr separately") {
+      val zio = for {
+        process <- Command("src/test/bash/both-streams-test.sh").run
+        stdout  <- process.stdout.string
+        stderr  <- process.stderr.string
+      } yield (stdout, stderr)
+
+      assertM(zio)(equalTo(("stdout1\nstdout2\n", "stderr1\nstderr2\n")))
+    },
+    testM("redirectErrorStream should merge stderr into stdout") {
+      val zio = for {
+        process <- Command("src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
+        stdout  <- process.stdout.string
+        stderr  <- process.stderr.string
+      } yield (stdout, stderr)
+
+      assertM(zio)(equalTo(("stdout1\nstderr1\nstdout2\nstderr2\n", "")))
     }
   )
 }

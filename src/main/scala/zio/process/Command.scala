@@ -61,19 +61,19 @@ sealed trait Command {
    * Runs the command returning the output as a list of lines (default encoding of UTF-8).
    */
   def lines: RIO[Blocking, List[String]] =
-    run.flatMap(_.lines)
+    run.flatMap(_.stdout.lines)
 
   /**
    * Runs the command returning the output as a list of lines with the specified encoding.
    */
   def lines(charset: Charset): RIO[Blocking, List[String]] =
-    run.flatMap(_.lines(charset))
+    run.flatMap(_.stdout.lines(charset))
 
   /**
    * Runs the command returning the output as a stream of lines (default encoding of UTF-8).
    */
   def linesStream: ZStream[Blocking, Throwable, String] =
-    ZStream.fromEffect(run).flatMap(_.linesStream)
+    ZStream.fromEffect(run).flatMap(_.stdout.linesStream)
 
   /**
    * A named alias for `|`
@@ -194,19 +194,19 @@ sealed trait Command {
    * Runs the command returning the entire output as a string (default encoding of UTF-8).
    */
   def string: RIO[Blocking, String] =
-    run.flatMap(_.string)
+    run.flatMap(_.stdout.string)
 
   /**
    * Runs the command returning the entire output as a string with the specified encoding.
    */
   def string(charset: Charset): RIO[Blocking, String] =
-    run.flatMap(_.string(charset))
+    run.flatMap(_.stdout.string(charset))
 
   /**
    * Runs the command returning the output as a chunked stream of bytes.
    */
   def stream: RIO[Blocking, StreamChunk[Throwable, Byte]] =
-    run.map(_.stream)
+    run.map(_.stdout.stream)
 
   /**
    * Set the working directory that will be used when this command will be run.
@@ -262,7 +262,7 @@ object Command {
       Option.empty[File],
       ProcessInput.inherit,
       ProcessOutput.Pipe,
-      ProcessOutput.Inherit,
+      ProcessOutput.Pipe,
       redirectErrorStream = false
     )
 }

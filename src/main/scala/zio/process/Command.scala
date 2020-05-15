@@ -155,9 +155,7 @@ sealed trait Command {
             for {
               stream <- tail.init.foldLeft(head.stream) {
                          case (s, command) =>
-                           s.flatMap { input =>
-                             command.stdin(ProcessInput.fromStreamChunk(input)).stream
-                           }
+                           s.flatMap(input => command.stdin(ProcessInput.fromStreamChunk(input)).stream)
                        }
               result <- tail.last.stdin(ProcessInput.fromStreamChunk(stream)).run
             } yield result

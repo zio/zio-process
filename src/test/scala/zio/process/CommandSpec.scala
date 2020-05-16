@@ -3,10 +3,10 @@ package zio.process
 import java.io.{ File, IOException }
 import java.nio.charset.StandardCharsets
 
-import zio.stream.ZSink
+import zio.duration._
+import zio.stream.ZTransducer
 import zio.test.Assertion._
 import zio.test._
-import zio.duration._
 import zio.test.environment.TestClock
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
@@ -29,10 +29,9 @@ object CommandSpec extends ZIOProcessBaseSpec {
     testM("work with stream directly") {
       val zio = for {
         stream <- Command("echo", "-n", "1\n2\n3").stream
-        lines <- stream.chunks
-                  .aggregate(ZSink.utf8DecodeChunk)
-                  .aggregate(ZSink.splitLines)
-                  .mapConcatChunk(identity)
+        lines <- stream
+                  .aggregate(ZTransducer.utf8Decode)
+                  .aggregate(ZTransducer.splitLines)
                   .runCollect
       } yield lines
 
@@ -51,7 +50,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
     testM("accept streaming stdin") {
       val zio = for {
         stream <- Command("echo", "-n", "a", "b", "c").stream
-        result <- Command("cat").stdin(ProcessInput.fromStreamChunk(stream)).string
+        result <- Command("cat").stdin(ProcessInput.fromStream(stream)).string
       } yield result
 
       assertM(zio)(equalTo("a b c"))

@@ -19,9 +19,10 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.{ Charset, StandardCharsets }
 
 import zio.Chunk
-import zio.stream.{ Stream, StreamChunk }
+import zio.blocking.Blocking
+import zio.stream.{ Stream, ZStream }
 
-final case class ProcessInput(source: Option[StreamChunk[Throwable, Byte]])
+final case class ProcessInput(source: Option[ZStream[Blocking, Throwable, Byte]])
 
 object ProcessInput {
   val inherit: ProcessInput = ProcessInput(None)
@@ -33,20 +34,20 @@ object ProcessInput {
     ProcessInput(Some(Stream.fromInputStream(new ByteArrayInputStream(bytes))))
 
   /**
-   * Returns a ProcessInput from a stream of chunked bytes.
+   * Returns a ProcessInput from a stream of bytes.
    */
-  def fromStreamChunk(stream: StreamChunk[Throwable, Byte]): ProcessInput =
+  def fromStream(stream: ZStream[Blocking, Throwable, Byte]): ProcessInput =
     ProcessInput(Some(stream))
 
   /**
    * Returns a ProcessInput from a String with the given charset.
    */
   def fromString(text: String, charset: Charset): ProcessInput =
-    ProcessInput(Some(StreamChunk.fromChunks(Chunk.fromArray(text.getBytes(charset)))))
+    ProcessInput(Some(ZStream.fromChunks(Chunk.fromArray(text.getBytes(charset)))))
 
   /**
    * Returns a ProcessInput from a UTF-8 String.
    */
   def fromUTF8String(text: String): ProcessInput =
-    ProcessInput(Some(StreamChunk.fromChunks(Chunk.fromArray(text.getBytes(StandardCharsets.UTF_8)))))
+    ProcessInput(Some(ZStream.fromChunks(Chunk.fromArray(text.getBytes(StandardCharsets.UTF_8)))))
 }

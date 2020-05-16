@@ -3,6 +3,7 @@ package zio.process
 import java.io.{ File, IOException }
 import java.nio.charset.StandardCharsets
 
+import zio.ZIO
 import zio.duration._
 import zio.stream.ZTransducer
 import zio.test.Assertion._
@@ -84,9 +85,11 @@ object CommandSpec extends ZIOProcessBaseSpec {
     },
     testM("interrupt a process due to timeout") {
       val zio = for {
-        fiber  <- Command("sleep", "20").exitCode.timeout(5.seconds).fork
-        _      <- TestClock.adjust(5.seconds)
-        result <- fiber.join
+        fiber       <- Command("sleep", "20").exitCode.timeout(5.seconds).fork
+        adjustFiber <- TestClock.adjust(5.seconds).fork
+        _           <- ZIO.sleep(5.seconds)
+        _           <- adjustFiber.join
+        result      <- fiber.join
       } yield result
 
       assertM(zio)(isNone)

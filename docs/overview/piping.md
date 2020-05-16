@@ -15,8 +15,8 @@ import zio.process._
 ```scala mdoc:silent
 for {
   processes     <- Command("ps", "-ef").stream
-  javaProcesses <- Command("grep", "java").stdin(ProcessInput.fromStreamChunk(processes)).stream
-  processIds    <- Command("awk", "{print $2}").stdin(ProcessInput.fromStreamChunk(javaProcesses)).lines
+  javaProcesses <- Command("grep", "java").stdin(ProcessInput.fromStream(processes)).stream
+  processIds    <- Command("awk", "{print $2}").stdin(ProcessInput.fromStream(javaProcesses)).lines
 } yield processIds
 ```
 

@@ -59,15 +59,13 @@ When you don't care about the output (or there is no output), you can return jus
 command.exitCode
 ```
 
-### Stream of bytes (chunked)
+### Stream of bytes
 
 If you need lower-level access to the output's stream of bytes, you can access them directly like so:
 
 ```scala mdoc:silent
 command.stream
 ```
-
-The bytes are chunked for performance in the form of `StreamChunk[Throwable, Byte]`
 
 ### Access stdout and stderr separately
 

@@ -20,7 +20,7 @@ import java.lang.ProcessBuilder.Redirect
 import java.nio.charset.Charset
 
 import zio.blocking.Blocking
-import zio.stream.{ StreamChunk, ZSink, ZStream }
+import zio.stream.{ ZSink, ZStream }
 import zio.{ IO, RIO, Task, UIO, ZIO }
 
 import scala.jdk.CollectionConverters._
@@ -137,7 +137,7 @@ sealed trait Command {
                 case ProcessInput(Some(input)) =>
                   for {
                     outputStream <- process.execute(_.getOutputStream)
-                    _ <- input.chunks
+                    _ <- input
                           .run(ZSink.fromOutputStream(outputStream))
                           .ensuring(UIO(outputStream.close()))
                           .forkDaemon
@@ -155,9 +155,9 @@ sealed trait Command {
             for {
               stream <- tail.init.foldLeft(head.stream) {
                          case (s, command) =>
-                           s.flatMap(input => command.stdin(ProcessInput.fromStreamChunk(input)).stream)
+                           s.flatMap(input => command.stdin(ProcessInput.fromStream(input)).stream)
                        }
-              result <- tail.last.stdin(ProcessInput.fromStreamChunk(stream)).run
+              result <- tail.last.stdin(ProcessInput.fromStream(stream)).run
             } yield result
         }
     }
@@ -203,7 +203,7 @@ sealed trait Command {
   /**
    * Runs the command returning the output as a chunked stream of bytes.
    */
-  def stream: RIO[Blocking, StreamChunk[Throwable, Byte]] =
+  def stream: RIO[Blocking, ZStream[Blocking, Throwable, Byte]] =
     run.map(_.stdout.stream)
 
   /**

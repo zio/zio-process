@@ -18,9 +18,9 @@ package zio.process
 import java.io.{ BufferedReader, ByteArrayOutputStream, InputStream, InputStreamReader }
 import java.nio.charset.{ Charset, StandardCharsets }
 
-import zio.{ RIO, UIO, ZManaged }
 import zio.blocking.{ effectBlockingCancelable, Blocking }
-import zio.stream.{ Stream, StreamChunk, ZSink, ZStream }
+import zio.stream.{ ZStream, ZTransducer }
+import zio.{ RIO, UIO, ZManaged }
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -52,16 +52,15 @@ final case class ProcessStream(private val inputStream: InputStream) {
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
    */
   def linesStream: ZStream[Blocking, Throwable, String] =
-    stream.chunks
-      .aggregate(ZSink.utf8DecodeChunk)
-      .aggregate(ZSink.splitLines)
-      .mapConcatChunk(identity)
+    stream
+      .aggregate(ZTransducer.utf8Decode)
+      .aggregate(ZTransducer.splitLines)
 
   /**
    * Return the output of this process as a chunked stream of bytes.
    */
-  def stream: StreamChunk[Throwable, Byte] =
-    Stream.fromInputStream(inputStream)
+  def stream: ZStream[Blocking, Throwable, Byte] =
+    ZStream.fromInputStream(inputStream)
 
   /**
    * Return the entire output of this process as a string (default encoding of UTF-8).

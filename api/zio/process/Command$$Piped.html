@@ -752,9 +752,9 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
       <p class="shortcomment cmt">Specify what to do with the standard output of this command.</p><div class="fullcomment"><div class="comment cmt"><p>Specify what to do with the standard output of this command.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="zio.process.Command#stream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="stream:zio.RIO[zio.blocking.Blocking,zio.stream.StreamChunk[Throwable,Byte]]"></a><a id="stream:RIO[Blocking,StreamChunk[Throwable,Byte]]"></a>
+      <a id="stream:zio.RIO[zio.blocking.Blocking,zio.stream.ZStream[zio.blocking.Blocking,Throwable,Byte]]"></a><a id="stream:RIO[Blocking,ZStream[Blocking,Throwable,Byte]]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Piped.html#stream:zio.RIO[zio.blocking.Blocking,zio.stream.StreamChunk[Throwable,Byte]]" title="Permalink">
+      <a href="../../zio/process/Command$$Piped.html#stream:zio.RIO[zio.blocking.Blocking,zio.stream.ZStream[zio.blocking.Blocking,Throwable,Byte]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -763,7 +763,7 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">stream</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="zio.stream.StreamChunk">StreamChunk</span>[<span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Byte">Byte</span>]]</span>
+        <span class="name">stream</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Byte">Byte</span>]]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the output as a chunked stream of bytes.</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the output as a chunked stream of bytes.

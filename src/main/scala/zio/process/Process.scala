@@ -26,12 +26,12 @@ final case class Process(private val process: JProcess) {
   /**
    * Access the standard output stream.
    */
-  val stdout: ProcessStream = ProcessStream(process.getInputStream)
+  val stdout: ProcessStream = ProcessStream(process.getInputStream())
 
   /**
    * Access the standard error stream.
    */
-  val stderr: ProcessStream = ProcessStream(process.getErrorStream)
+  val stderr: ProcessStream = ProcessStream(process.getErrorStream())
 
   /**
    * Access the underlying Java Process wrapped in a blocking ZIO.

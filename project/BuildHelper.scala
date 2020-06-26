@@ -5,7 +5,7 @@ import BuildInfoKeys._
 
 object BuildHelper {
   private val Scala211        = "2.11.12"
-  private val Scala212        = "2.12.10"
+  private val Scala212        = "2.12.11"
   private val Scala213        = "2.13.2"
   private val SilencerVersion = "1.7.0"
 

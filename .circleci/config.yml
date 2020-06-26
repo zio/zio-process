@@ -1,10 +1,13 @@
 version: 2.1
 
+scala_211: &scala_211
+  SCALA_VERSION: 2.11.12
+
 scala_212: &scala_212
   SCALA_VERSION: 2.12.10
 
 scala_213: &scala_213
-  SCALA_VERSION: 2.13.1
+  SCALA_VERSION: 2.13.2
 
 scala_dotty: &scala_dotty
   SCALA_VERSION: 0.20.0-RC1
@@ -198,6 +201,13 @@ jobs:
       - <<: *scala_212
       - <<: *jdk_8
 
+  test_211_jdk8_jvm:
+    <<: *test
+    <<: *machine_ubuntu
+    environment:
+      - <<: *scala_211
+      - <<: *jdk_8
+
   test_212_jdk8_jvm:
     <<: *test
     <<: *machine_ubuntu
@@ -218,6 +228,13 @@ jobs:
     environment:
       - <<: *scala_dotty
       - <<: *jdk_8
+
+  test_211_jdk11_jvm:
+    <<: *test
+    <<: *machine_ubuntu
+    environment:
+      - <<: *scala_211
+      - <<: *jdk_11
 
   test_212_jdk11_jvm:
     <<: *test
@@ -268,6 +285,12 @@ workflows:
           filters:
             tags:
               only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      - test_211_jdk8_jvm:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       - test_212_jdk8_jvm:
           requires:
             - lint
@@ -275,6 +298,12 @@ workflows:
             tags:
               only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       - test_213_jdk8_jvm:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      - test_211_jdk11_jvm:
           requires:
             - lint
           filters:
@@ -304,6 +333,8 @@ workflows:
       - microsite:
           context: Website
           requires:
+            - test_211_jdk8_jvm
+            - test_211_jdk11_jvm
             - test_212_jdk8_jvm
             - test_212_jdk11_jvm
             - test_213_jdk8_jvm

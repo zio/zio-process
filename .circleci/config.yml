@@ -308,7 +308,11 @@ workflows:
       - release:
           context: Sonatype2
           requires:
-            - microsite
+            - test_212_jdk8_jvm
+            - test_212_jdk11_jvm
+            - test_213_jdk8_jvm
+            - test_213_jdk11_jvm
+            - mdoc
           filters:
             branches:
               ignore: /.*/
@@ -317,11 +321,7 @@ workflows:
       - microsite:
           context: Website
           requires:
-            - test_212_jdk8_jvm
-            - test_212_jdk11_jvm
-            - test_213_jdk8_jvm
-            - test_213_jdk11_jvm
-            - mdoc
+            - release
           filters:
             branches:
               ignore: /.*/

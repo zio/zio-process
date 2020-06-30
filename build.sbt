@@ -27,7 +27,7 @@ ThisBuild / publishTo := sonatypePublishToBundle.value
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
 
-val zioVersion = "1.0.0-RC21-1"
+val zioVersion = "1.0.0-RC21-2"
 libraryDependencies ++= Seq(
   "dev.zio"                %% "zio"                     % zioVersion,
   "dev.zio"                %% "zio-streams"             % zioVersion,

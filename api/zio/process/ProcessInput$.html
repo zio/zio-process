@@ -110,6 +110,10 @@
                         <a class="trait" href="Command.html" title=""></a>
                         <a href="Command.html" title="">Command</a>
                       </li><li class="current-entities indented2">
+                        <a class="object" href="CommandError$.html" title=""></a>
+                        <a class="class" href="CommandError.html" title=""></a>
+                        <a href="CommandError.html" title="">CommandError</a>
+                      </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="Process.html" title=""></a>
                         <a href="Process.html" title="">Process</a>
@@ -371,9 +375,9 @@
       
       <p class="shortcomment cmt">Returns a ProcessInput from an array of bytes.</p>
     </li><li name="zio.process.ProcessInput#fromStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="fromStream(stream:zio.stream.ZStream[zio.blocking.Blocking,Throwable,Byte]):zio.process.ProcessInput"></a><a id="fromStream(ZStream[Blocking,Throwable,Byte]):ProcessInput"></a>
+      <a id="fromStream(stream:zio.stream.ZStream[zio.blocking.Blocking,zio.process.CommandError,Byte]):zio.process.ProcessInput"></a><a id="fromStream(ZStream[Blocking,CommandError,Byte]):ProcessInput"></a>
       <span class="permalink">
-      <a href="../../zio/process/ProcessInput$.html#fromStream(stream:zio.stream.ZStream[zio.blocking.Blocking,Throwable,Byte]):zio.process.ProcessInput" title="Permalink">
+      <a href="../../zio/process/ProcessInput$.html#fromStream(stream:zio.stream.ZStream[zio.blocking.Blocking,zio.process.CommandError,Byte]):zio.process.ProcessInput" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -382,7 +386,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fromStream</span><span class="params">(<span name="stream">stream: <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result">: <a href="ProcessInput.html" class="extype" name="zio.process.ProcessInput">ProcessInput</a></span>
+        <span class="name">fromStream</span><span class="params">(<span name="stream">stream: <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result">: <a href="ProcessInput.html" class="extype" name="zio.process.ProcessInput">ProcessInput</a></span>
       </span>
       
       <p class="shortcomment cmt">Returns a ProcessInput from a stream of bytes.</p>

@@ -110,6 +110,10 @@
                         <a class="trait" href="Command.html" title=""></a>
                         <a href="Command.html" title="">Command</a>
                       </li><li class="current-entities indented2">
+                        <a class="object" href="CommandError$.html" title=""></a>
+                        <a class="class" href="CommandError.html" title=""></a>
+                        <a href="CommandError.html" title="">CommandError</a>
+                      </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="" title=""></a>
                         <a href="" title="">Process</a>
@@ -334,9 +338,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="zio.process.Process#execute" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="execute[T](f:Process=&gt;T):zio.ZIO[zio.blocking.Blocking,java.io.IOException,T]"></a><a id="execute[T]((java.lang.Process)⇒T):ZIO[Blocking,IOException,T]"></a>
+      <a id="execute[T](f:Process=&gt;T):zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,T]"></a><a id="execute[T]((java.lang.Process)⇒T):ZIO[Blocking,CommandError,T]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Process.html#execute[T](f:Process=&gt;T):zio.ZIO[zio.blocking.Blocking,java.io.IOException,T]" title="Permalink">
+      <a href="../../zio/process/Process.html#execute[T](f:Process=&gt;T):zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,T]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -345,14 +349,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">execute</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="java.lang.Process">java.lang.Process</span>) ⇒ <span class="extype" name="zio.process.Process.execute.T">T</span></span>)</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="java.io.IOException">IOException</span>, <span class="extype" name="zio.process.Process.execute.T">T</span>]</span>
+        <span class="name">execute</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="java.lang.Process">java.lang.Process</span>) ⇒ <span class="extype" name="zio.process.Process.execute.T">T</span></span>)</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.process.Process.execute.T">T</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Access the underlying Java Process wrapped in a blocking ZIO.</p>
     </li><li name="zio.process.Process#exitCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="exitCode:zio.RIO[zio.blocking.Blocking,Int]"></a><a id="exitCode:RIO[Blocking,Int]"></a>
+      <a id="exitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]"></a><a id="exitCode:ZIO[Blocking,CommandError,ExitCode]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Process.html#exitCode:zio.RIO[zio.blocking.Blocking,Int]" title="Permalink">
+      <a href="../../zio/process/Process.html#exitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -361,7 +365,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">exitCode</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Int">Int</span>]</span>
+        <span class="name">exitCode</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.ExitCode">ExitCode</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Return the exit code of this process.</p>
@@ -508,6 +512,23 @@
       </span>
       
       <p class="shortcomment cmt">Access the standard output stream.</p>
+    </li><li name="zio.process.Process#successfulExitCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="successfulExitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]"></a><a id="successfulExitCode:ZIO[Blocking,CommandError,ExitCode]"></a>
+      <span class="permalink">
+      <a href="../../zio/process/Process.html#successfulExitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">successfulExitCode</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.ExitCode">ExitCode</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Return the exit code of this process if it is zero.</p><div class="fullcomment"><div class="comment cmt"><p>Return the exit code of this process if it is zero. If non-zero, it will fail with <code>CommandError.NonZeroErrorCode</code>.
+</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

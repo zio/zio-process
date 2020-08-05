@@ -434,9 +434,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="zio.process.Command#exitCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="exitCode:zio.RIO[zio.blocking.Blocking,Int]"></a><a id="exitCode:RIO[Blocking,Int]"></a>
+      <a id="exitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]"></a><a id="exitCode:ZIO[Blocking,CommandError,ExitCode]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#exitCode:zio.RIO[zio.blocking.Blocking,Int]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#exitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -445,7 +445,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">exitCode</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Int">Int</span>]</span>
+        <span class="name">exitCode</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.ExitCode">ExitCode</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning only the exit code.</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning only the exit code.
@@ -544,9 +544,9 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="zio.process.Command#lines" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="lines(charset:java.nio.charset.Charset):zio.RIO[zio.blocking.Blocking,List[String]]"></a><a id="lines(Charset):RIO[Blocking,List[String]]"></a>
+      <a id="lines(charset:java.nio.charset.Charset):zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.Chunk[String]]"></a><a id="lines(Charset):ZIO[Blocking,CommandError,Chunk[String]]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#lines(charset:java.nio.charset.Charset):zio.RIO[zio.blocking.Blocking,List[String]]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#lines(charset:java.nio.charset.Charset):zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.Chunk[String]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -555,15 +555,15 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">lines</span><span class="params">(<span name="charset">charset: <span class="extype" name="java.nio.charset.Charset">Charset</span></span>)</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+        <span class="name">lines</span><span class="params">(<span name="charset">charset: <span class="extype" name="java.nio.charset.Charset">Charset</span></span>)</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.Chunk">Chunk</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the output as a list of lines with the specified encoding.</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the output as a list of lines with the specified encoding.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="zio.process.Command#lines" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="lines:zio.RIO[zio.blocking.Blocking,List[String]]"></a><a id="lines:RIO[Blocking,List[String]]"></a>
+      <a id="lines:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.Chunk[String]]"></a><a id="lines:ZIO[Blocking,CommandError,Chunk[String]]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#lines:zio.RIO[zio.blocking.Blocking,List[String]]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#lines:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.Chunk[String]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -572,15 +572,15 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">lines</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+        <span class="name">lines</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.Chunk">Chunk</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the output as a list of lines (default encoding of UTF-8).</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the output as a list of lines (default encoding of UTF-8).
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="zio.process.Command#linesStream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="linesStream:zio.stream.ZStream[zio.blocking.Blocking,Throwable,String]"></a><a id="linesStream:ZStream[Blocking,Throwable,String]"></a>
+      <a id="linesStream:zio.stream.ZStream[zio.blocking.Blocking,zio.process.CommandError,String]"></a><a id="linesStream:ZStream[Blocking,CommandError,String]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#linesStream:zio.stream.ZStream[zio.blocking.Blocking,Throwable,String]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#linesStream:zio.stream.ZStream[zio.blocking.Blocking,zio.process.CommandError,String]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -589,7 +589,7 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">linesStream</span><span class="result">: <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">linesStream</span><span class="result">: <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the output as a stream of lines (default encoding of UTF-8).</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the output as a stream of lines (default encoding of UTF-8).
@@ -700,9 +700,9 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
       
       
     </li><li name="zio.process.Command#run" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="run:zio.RIO[zio.blocking.Blocking,zio.process.Process]"></a><a id="run:RIO[Blocking,Process]"></a>
+      <a id="run:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.process.Process]"></a><a id="run:ZIO[Blocking,CommandError,Process]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#run:zio.RIO[zio.blocking.Blocking,zio.process.Process]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#run:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.process.Process]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -711,7 +711,7 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">run</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="Process.html" class="extype" name="zio.process.Process">Process</a>]</span>
+        <span class="name">run</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <a href="Process.html" class="extype" name="zio.process.Process">Process</a>]</span>
       </span>
       
       <p class="shortcomment cmt">Start running the command returning a handle to the running process.</p><div class="fullcomment"><div class="comment cmt"><p>Start running the command returning a handle to the running process.
@@ -816,9 +816,9 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
       
       
     </li><li name="zio.process.Command#stream" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="stream:zio.RIO[zio.blocking.Blocking,zio.stream.ZStream[zio.blocking.Blocking,Throwable,Byte]]"></a><a id="stream:RIO[Blocking,ZStream[Blocking,Throwable,Byte]]"></a>
+      <a id="stream:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.stream.ZStream[zio.blocking.Blocking,zio.process.CommandError,Byte]]"></a><a id="stream:ZIO[Blocking,CommandError,ZStream[Blocking,CommandError,Byte]]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#stream:zio.RIO[zio.blocking.Blocking,zio.stream.ZStream[zio.blocking.Blocking,Throwable,Byte]]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#stream:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.stream.ZStream[zio.blocking.Blocking,zio.process.CommandError,Byte]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -827,15 +827,15 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">stream</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Byte">Byte</span>]]</span>
+        <span class="name">stream</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="scala.Byte">Byte</span>]]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the output as a chunked stream of bytes.</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the output as a chunked stream of bytes.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="zio.process.Command#string" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="string(charset:java.nio.charset.Charset):zio.RIO[zio.blocking.Blocking,String]"></a><a id="string(Charset):RIO[Blocking,String]"></a>
+      <a id="string(charset:java.nio.charset.Charset):zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,String]"></a><a id="string(Charset):ZIO[Blocking,CommandError,String]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#string(charset:java.nio.charset.Charset):zio.RIO[zio.blocking.Blocking,String]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#string(charset:java.nio.charset.Charset):zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,String]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -844,15 +844,15 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">string</span><span class="params">(<span name="charset">charset: <span class="extype" name="java.nio.charset.Charset">Charset</span></span>)</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">string</span><span class="params">(<span name="charset">charset: <span class="extype" name="java.nio.charset.Charset">Charset</span></span>)</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the entire output as a string with the specified encoding.</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the entire output as a string with the specified encoding.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="zio.process.Command#string" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="string:zio.RIO[zio.blocking.Blocking,String]"></a><a id="string:RIO[Blocking,String]"></a>
+      <a id="string:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,String]"></a><a id="string:ZIO[Blocking,CommandError,String]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Standard.html#string:zio.RIO[zio.blocking.Blocking,String]" title="Permalink">
+      <a href="../../zio/process/Command$$Standard.html#string:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,String]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -861,10 +861,27 @@ For the piped case, all the commands in the pipe will be extracted out into a Ve
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">string</span><span class="result">: <a href="../index.html#RIO[-R,+A]=zio.ZIO[R,Throwable,A]" class="extmbr" name="zio.RIO">RIO</a>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">string</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Runs the command returning the entire output as a string (default encoding of UTF-8).</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning the entire output as a string (default encoding of UTF-8).
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
+    </li><li name="zio.process.Command#successfulExitCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="successfulExitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]"></a><a id="successfulExitCode:ZIO[Blocking,CommandError,ExitCode]"></a>
+      <span class="permalink">
+      <a href="../../zio/process/Command$$Standard.html#successfulExitCode:zio.ZIO[zio.blocking.Blocking,zio.process.CommandError,zio.ExitCode]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">successfulExitCode</span><span class="result">: <span class="extype" name="zio.ZIO">ZIO</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="zio.ExitCode">ExitCode</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Runs the command returning only the exit code if zero.</p><div class="fullcomment"><div class="comment cmt"><p>Runs the command returning only the exit code if zero.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>

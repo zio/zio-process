@@ -110,6 +110,10 @@
                         <a class="trait" href="Command.html" title=""></a>
                         <a href="Command.html" title="">Command</a>
                       </li><li class="current-entities indented2">
+                        <a class="object" href="CommandError$.html" title=""></a>
+                        <a class="class" href="CommandError.html" title=""></a>
+                        <a href="CommandError.html" title="">CommandError</a>
+                      </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="Process.html" title=""></a>
                         <a href="Process.html" title="">Process</a>
@@ -204,6 +208,22 @@
       </span>
       
       
+    </li><li name="zio.process.CommandError" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CommandErrorextendsExceptionwithProductwithSerializable"></a><a id="CommandError:CommandError"></a>
+      <span class="permalink">
+      <a href="../../zio/process/CommandError.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandError.html"><span class="name">CommandError</span></a><span class="result"> extends <span class="extype" name="scala.Exception">Exception</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="zio.process.Process" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ProcessextendsProductwithSerializable"></a><a id="Process:Process"></a>
       <span class="permalink">
@@ -232,7 +252,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="ProcessInput.html"><span class="name">ProcessInput</span></a><span class="params">(<span name="source">source: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <span class="extype" name="scala.Throwable">Throwable</span>, <span class="extype" name="scala.Byte">Byte</span>]]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="ProcessInput.html"><span class="name">ProcessInput</span></a><span class="params">(<span name="source">source: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="zio.stream.ZStream">ZStream</span>[<span class="extype" name="zio.blocking.Blocking">Blocking</span>, <a href="CommandError.html" class="extype" name="zio.process.CommandError">CommandError</a>, <span class="extype" name="scala.Byte">Byte</span>]]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -305,6 +325,22 @@
       </span>
       <span class="symbol">
         <a title="" href="Command$.html"><span class="name">Command</span></a>
+      </span>
+      
+      
+    </li><li name="zio.process.CommandError" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CommandError"></a><a id="CommandError:CommandError"></a>
+      <span class="permalink">
+      <a href="../../zio/process/CommandError$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CommandError$.html"><span class="name">CommandError</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

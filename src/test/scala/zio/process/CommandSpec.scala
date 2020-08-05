@@ -1,14 +1,14 @@
 package zio.process
 
-import java.io.{ File, IOException }
+import java.io.File
 import java.nio.charset.StandardCharsets
 
-import zio.{ Chunk, ZIO }
 import zio.duration._
 import zio.stream.ZTransducer
 import zio.test.Assertion._
 import zio.test._
 import zio.test.environment.TestClock
+import zio.{ Chunk, ExitCode, ZIO }
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {
@@ -38,10 +38,10 @@ object CommandSpec extends ZIOProcessBaseSpec {
 
       assertM(zio)(equalTo(Chunk("1", "2", "3")))
     },
-    testM("fail trying to run a command that doesn't exit") {
+    testM("fail trying to run a command that doesn't exist") {
       val zio = Command("some-invalid-command", "test").string
 
-      assertM(zio.run)(fails(isSubtype[IOException](anything)))
+      assertM(zio.run)(fails(isSubtype[CommandError.ProgramNotFound](anything)))
     },
     testM("pass environment variables") {
       val zio = Command("bash", "-c", "echo -n \"var = $VAR\"").env(Map("VAR" -> "value")).string
@@ -74,6 +74,13 @@ object CommandSpec extends ZIOProcessBaseSpec {
 
       assertM(zio)(contains("Command.scala"))
     },
+    testM("be able to fallback to a different program using typed error channel") {
+      val zio = Command("custom-echo", "-n", "test").string.catchSome {
+        case CommandError.ProgramNotFound(_) => Command("echo", "-n", "test").string
+      }
+
+      assertM(zio)(equalTo("test"))
+    },
     testM("interrupt a process manually") {
       val zio = for {
         fiber  <- Command("sleep", "20").exitCode.fork
@@ -102,6 +109,21 @@ object CommandSpec extends ZIOProcessBaseSpec {
       } yield (stdout, stderr)
 
       assertM(zio)(equalTo(("stdout1\nstdout2\n", "stderr1\nstderr2\n")))
+    },
+    testM("return non-zero exit code in success channel") {
+      val zio = Command("ls", "--non-existant-flag").exitCode
+
+      assertM(zio)(not(equalTo(ExitCode.success)))
+    },
+    testM("absolve non-zero exit code") {
+      val zio = Command("ls", "--non-existant-flag").successfulExitCode
+
+      assertM(zio.run)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
+    },
+    testM("permission denied is a typed error") {
+      val zio = Command("src/test/bash/no-permissions.sh").string
+
+      assertM(zio.run)(fails(isSubtype[CommandError.PermissionDenied](anything)))
     },
     testM("redirectErrorStream should merge stderr into stdout") {
       val zio = for {

@@ -19,9 +19,9 @@ import java.io.File
 import java.lang.ProcessBuilder.Redirect
 import java.nio.charset.Charset
 
+import zio._
 import zio.blocking.Blocking
 import zio.stream.{ ZSink, ZStream }
-import zio.{ IO, RIO, Task, UIO, ZIO }
 
 import scala.jdk.CollectionConverters._
 
@@ -38,7 +38,7 @@ sealed trait Command {
   /**
    * Runs the command returning only the exit code.
    */
-  def exitCode: RIO[Blocking, Int] =
+  def exitCode: ZIO[Blocking, CommandError, ExitCode] =
     run.flatMap(_.exitCode)
 
   /**
@@ -60,19 +60,19 @@ sealed trait Command {
   /**
    * Runs the command returning the output as a list of lines (default encoding of UTF-8).
    */
-  def lines: RIO[Blocking, List[String]] =
+  def lines: ZIO[Blocking, CommandError, List[String]] =
     run.flatMap(_.stdout.lines)
 
   /**
    * Runs the command returning the output as a list of lines with the specified encoding.
    */
-  def lines(charset: Charset): RIO[Blocking, List[String]] =
+  def lines(charset: Charset): ZIO[Blocking, CommandError, List[String]] =
     run.flatMap(_.stdout.lines(charset))
 
   /**
    * Runs the command returning the output as a stream of lines (default encoding of UTF-8).
    */
-  def linesStream: ZStream[Blocking, Throwable, String] =
+  def linesStream: ZStream[Blocking, CommandError, String] =
     ZStream.fromEffect(run).flatMap(_.stdout.linesStream)
 
   /**
@@ -98,7 +98,7 @@ sealed trait Command {
   /**
    * Start running the command returning a handle to the running process.
    */
-  def run: RIO[Blocking, Process] =
+  def run: ZIO[Blocking, CommandError, Process] =
     this match {
       case c: Command.Standard =>
         for {
@@ -131,6 +131,10 @@ sealed trait Command {
                       }
 
                       Process(builder.start())
+                    }.refineOrDie {
+                      case CommandThrowable.ProgramNotFound(e)  => e
+                      case CommandThrowable.PermissionDenied(e) => e
+                      case CommandThrowable.IOError(e)          => e
                     }
           _ <- c.stdin match {
                 case ProcessInput(None) => ZIO.unit
@@ -149,7 +153,7 @@ sealed trait Command {
         c.flatten match {
           // Technically we're guaranteed to always have 2 elements in the piped case, but `Vector` can't represent this.
           // Let's just handle the impossible cases anyway for completeness.
-          case v if v.isEmpty => IO.fail(new NoSuchElementException("No commands in pipe."))
+          case v if v.isEmpty => ZIO.die(new NoSuchElementException("No commands in pipe."))
           case Vector(head)   => head.run
           case Vector(head, tail @ _*) =>
             for {
@@ -191,20 +195,26 @@ sealed trait Command {
   /**
    * Runs the command returning the entire output as a string (default encoding of UTF-8).
    */
-  def string: RIO[Blocking, String] =
+  def string: ZIO[Blocking, CommandError, String] =
     run.flatMap(_.stdout.string)
 
   /**
    * Runs the command returning the entire output as a string with the specified encoding.
    */
-  def string(charset: Charset): RIO[Blocking, String] =
+  def string(charset: Charset): ZIO[Blocking, CommandError, String] =
     run.flatMap(_.stdout.string(charset))
 
   /**
    * Runs the command returning the output as a chunked stream of bytes.
    */
-  def stream: RIO[Blocking, ZStream[Blocking, Throwable, Byte]] =
+  def stream: ZIO[Blocking, CommandError, ZStream[Blocking, CommandError, Byte]] =
     run.map(_.stdout.stream)
+
+  /**
+   * Runs the command returning only the exit code if zero.
+   */
+  def successfulExitCode: ZIO[Blocking, CommandError, ExitCode] =
+    run.flatMap(_.successfulExitCode)
 
   /**
    * Set the working directory that will be used when this command will be run.

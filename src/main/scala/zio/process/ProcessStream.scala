@@ -15,12 +15,12 @@
  */
 package zio.process
 
-import java.io.{ BufferedReader, ByteArrayOutputStream, InputStream, InputStreamReader }
+import java.io._
 import java.nio.charset.{ Charset, StandardCharsets }
 
 import zio.blocking.{ effectBlockingCancelable, Blocking }
 import zio.stream.{ ZStream, ZTransducer }
-import zio.{ RIO, UIO, ZManaged }
+import zio.{ UIO, ZIO, ZManaged }
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -29,29 +29,34 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a list of lines (default encoding of UTF-8).
    */
-  def lines: RIO[Blocking, List[String]] = lines(StandardCharsets.UTF_8)
+  def lines: ZIO[Blocking, CommandError, List[String]] = lines(StandardCharsets.UTF_8)
 
   /**
    * Return the output of this process as a list of lines with the specified encoding.
    */
-  def lines(charset: Charset): RIO[Blocking, List[String]] =
-    ZManaged.fromAutoCloseable(UIO(new BufferedReader(new InputStreamReader(inputStream, charset)))).use { reader =>
-      effectBlockingCancelable {
-        val lines = new ArrayBuffer[String]
+  def lines(charset: Charset): ZIO[Blocking, CommandError, List[String]] =
+    ZManaged
+      .fromAutoCloseable(UIO(new BufferedReader(new InputStreamReader(inputStream, charset))))
+      .use { reader =>
+        effectBlockingCancelable {
+          val lines = new ArrayBuffer[String]
 
-        var line: String = null
-        while ({ line = reader.readLine; line != null }) {
-          lines.append(line)
-        }
+          var line: String = null
+          while ({ line = reader.readLine; line != null }) {
+            lines.append(line)
+          }
 
-        lines.toList
-      }(UIO(reader.close()))
-    }
+          lines.toList
+        }(UIO(reader.close()))
+      }
+      .refineOrDie {
+        case CommandThrowable.IOError(e) => e
+      }
 
   /**
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
    */
-  def linesStream: ZStream[Blocking, Throwable, String] =
+  def linesStream: ZStream[Blocking, CommandError, String] =
     stream
       .aggregate(ZTransducer.utf8Decode)
       .aggregate(ZTransducer.splitLines)
@@ -59,29 +64,34 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a chunked stream of bytes.
    */
-  def stream: ZStream[Blocking, Throwable, Byte] =
-    ZStream.fromInputStream(inputStream)
+  def stream: ZStream[Blocking, CommandError, Byte] =
+    ZStream.fromInputStream(inputStream).mapError(CommandError.IOError)
 
   /**
    * Return the entire output of this process as a string (default encoding of UTF-8).
    */
-  def string: RIO[Blocking, String] = string(StandardCharsets.UTF_8)
+  def string: ZIO[Blocking, CommandError, String] = string(StandardCharsets.UTF_8)
 
   /**
    * Return the entire output of this process as a string with the specified encoding.
    */
-  def string(charset: Charset): RIO[Blocking, String] =
-    ZManaged.fromAutoCloseable(UIO(inputStream)).use_ {
-      effectBlockingCancelable {
-        val buffer = new Array[Byte](4096)
-        val result = new ByteArrayOutputStream
-        var length = 0
+  def string(charset: Charset): ZIO[Blocking, CommandError, String] =
+    ZManaged
+      .fromAutoCloseable(UIO(inputStream))
+      .use_ {
+        effectBlockingCancelable {
+          val buffer = new Array[Byte](4096)
+          val result = new ByteArrayOutputStream
+          var length = 0
 
-        while ({ length = inputStream.read(buffer); length != -1 }) {
-          result.write(buffer, 0, length)
-        }
+          while ({ length = inputStream.read(buffer); length != -1 }) {
+            result.write(buffer, 0, length)
+          }
 
-        new String(result.toByteArray, charset)
-      }(UIO(inputStream.close()))
-    }
+          new String(result.toByteArray, charset)
+        }(UIO(inputStream.close()))
+      }
+      .refineOrDie {
+        case CommandThrowable.IOError(e) => e
+      }
 }

@@ -20,7 +20,7 @@ import java.nio.charset.{ Charset, StandardCharsets }
 
 import zio.blocking.{ effectBlockingCancelable, Blocking }
 import zio.stream.{ ZStream, ZTransducer }
-import zio.{ UIO, ZIO, ZManaged }
+import zio.{ Chunk, UIO, ZIO, ZManaged }
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -29,12 +29,12 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a list of lines (default encoding of UTF-8).
    */
-  def lines: ZIO[Blocking, CommandError, List[String]] = lines(StandardCharsets.UTF_8)
+  def lines: ZIO[Blocking, CommandError, Chunk[String]] = lines(StandardCharsets.UTF_8)
 
   /**
    * Return the output of this process as a list of lines with the specified encoding.
    */
-  def lines(charset: Charset): ZIO[Blocking, CommandError, List[String]] =
+  def lines(charset: Charset): ZIO[Blocking, CommandError, Chunk[String]] =
     ZManaged
       .fromAutoCloseable(UIO(new BufferedReader(new InputStreamReader(inputStream, charset))))
       .use { reader =>
@@ -46,7 +46,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
             lines.append(line)
           }
 
-          lines.toList
+          Chunk.fromArray(lines.toArray)
         }(UIO(reader.close()))
       }
       .refineOrDie {

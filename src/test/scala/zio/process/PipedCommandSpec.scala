@@ -2,6 +2,7 @@ package zio.process
 
 import java.io.File
 
+import zio.Chunk
 import zio.test.Assertion._
 import zio.test._
 
@@ -10,7 +11,7 @@ object PipedCommandSpec extends ZIOProcessBaseSpec {
     testM("support piping") {
       val zio = (Command("echo", "2\n1\n3") | Command("cat") | Command("sort")).lines
 
-      assertM(zio)(equalTo(List("1", "2", "3")))
+      assertM(zio)(equalTo(Chunk("1", "2", "3")))
     },
     testM("piping is associative") {
       for {
@@ -23,7 +24,7 @@ object PipedCommandSpec extends ZIOProcessBaseSpec {
         .stdin(ProcessInput.fromUTF8String("2\n1\n3"))
         .lines
 
-      assertM(zio)(equalTo(List("1", "2")))
+      assertM(zio)(equalTo(Chunk("1", "2")))
     },
     test("env delegate to all commands") {
       val env     = Map("key" -> "value")

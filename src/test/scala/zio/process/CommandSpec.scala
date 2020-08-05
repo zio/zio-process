@@ -113,12 +113,12 @@ object CommandSpec extends ZIOProcessBaseSpec {
     testM("return non-zero exit code in success channel") {
       val zio = Command("ls", "--non-existant-flag").exitCode
 
-      assertM(zio)(equalTo(ExitCode(1)))
+      assertM(zio)(not(equalTo(ExitCode.success)))
     },
     testM("absolve non-zero exit code") {
       val zio = Command("ls", "--non-existant-flag").successfulExitCode
 
-      assertM(zio.run)(fails(equalTo(CommandError.NonZeroErrorCode(ExitCode(1)))))
+      assertM(zio.run)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
     },
     testM("permission denied is a typed error") {
       val zio = Command("src/test/bash/no-permissions.sh").string

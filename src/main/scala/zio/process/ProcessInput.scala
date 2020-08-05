@@ -22,7 +22,7 @@ import zio.Chunk
 import zio.blocking.Blocking
 import zio.stream.{ Stream, ZStream }
 
-final case class ProcessInput(source: Option[ZStream[Blocking, Throwable, Byte]])
+final case class ProcessInput(source: Option[ZStream[Blocking, CommandError, Byte]])
 
 object ProcessInput {
   val inherit: ProcessInput = ProcessInput(None)
@@ -31,12 +31,12 @@ object ProcessInput {
    * Returns a ProcessInput from an array of bytes.
    */
   def fromByteArray(bytes: Array[Byte]): ProcessInput =
-    ProcessInput(Some(Stream.fromInputStream(new ByteArrayInputStream(bytes))))
+    ProcessInput(Some(Stream.fromInputStream(new ByteArrayInputStream(bytes)).mapError(CommandError.IOError)))
 
   /**
    * Returns a ProcessInput from a stream of bytes.
    */
-  def fromStream(stream: ZStream[Blocking, Throwable, Byte]): ProcessInput =
+  def fromStream(stream: ZStream[Blocking, CommandError, Byte]): ProcessInput =
     ProcessInput(Some(stream))
 
   /**

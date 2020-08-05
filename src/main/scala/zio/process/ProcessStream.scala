@@ -56,7 +56,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
    */
-  def linesStream: ZStream[Blocking, Throwable, String] =
+  def linesStream: ZStream[Blocking, CommandError, String] =
     stream
       .aggregate(ZTransducer.utf8Decode)
       .aggregate(ZTransducer.splitLines)

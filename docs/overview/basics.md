@@ -14,14 +14,14 @@ import java.nio.charset.StandardCharsets
 val command = Command("cat", "file.txt")
 ```
 
-`command.run` will return a handle to the process as `RIO[Blocking, Process]`. Alternatively, instead of flat-mapping
-and calling methods on `Process`, there are convenience methods on `Command` itself for some common operations:
+`command.run` will return a handle to the process as `ZIO[Blocking, CommandError, Process]`. Alternatively, instead of
+flat-mapping and calling methods on `Process`, there are convenience methods on `Command` itself for some common operations:
 
 ## Transforming output
 
 ### List of lines
 
-To obtain the output as a list of lines with the type `RIO[Blocking, List[String]]`
+To obtain the output as a list of lines with the type `ZIO[Blocking, CommandError, List[String]]`
 
 ```scala mdoc:silent
 command.lines
@@ -29,7 +29,7 @@ command.lines
 
 ### Stream of lines
 
-To obtain the output as a stream of lines with the type `ZStream[Blocking, Throwable, String]`
+To obtain the output as a stream of lines with the type `ZStream[Blocking, CommandError, String]`
 
 ```scala mdoc:silent
 command.linesStream
@@ -69,7 +69,7 @@ command.stream
 
 ### Access stdout and stderr separately
 
-There are times where you need to process the output of stderr as well.
+There are times when you need to process the output of stderr as well.
 
 ```scala mdoc:silent
 for {
@@ -78,4 +78,19 @@ for {
   stderr  <- process.stderr.string
   // ...
 } yield ()
+```
+
+## Error handling
+
+Errors are represented as `CommandError` in the error channel instead of `IOException`. Since `CommandError` is an ADT,
+you can pattern match on it and handle specific cases rather than trying to parse the guts of `IOException.getMessage`
+yourself.
+
+For example, if you want to fallback to running a different program if it doesn't exist on the host machine, you can
+match on `CommandError.ProgramNotFound`:
+
+```scala mdoc:silent
+Command("some-program-that-may-not-exit").string.catchSome {
+  case CommandError.ProgramNotFound(_) => Command("fallback-program").string
+}
 ```

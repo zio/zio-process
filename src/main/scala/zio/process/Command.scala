@@ -72,7 +72,7 @@ sealed trait Command {
   /**
    * Runs the command returning the output as a stream of lines (default encoding of UTF-8).
    */
-  def linesStream: ZStream[Blocking, Throwable, String] =
+  def linesStream: ZStream[Blocking, CommandError, String] =
     ZStream.fromEffect(run).flatMap(_.stdout.linesStream)
 
   /**

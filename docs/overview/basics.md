@@ -21,7 +21,7 @@ flat-mapping and calling methods on `Process`, there are convenience methods on 
 
 ### List of lines
 
-To obtain the output as a list of lines with the type `ZIO[Blocking, CommandError, List[String]]`
+To obtain the output as a list of lines with the type `ZIO[Blocking, CommandError, Chunk[String]]`
 
 ```scala mdoc:silent
 command.lines

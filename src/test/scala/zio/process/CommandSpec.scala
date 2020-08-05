@@ -22,7 +22,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
     testM("convert stdout to list of lines") {
       val zio = Command("echo", "-n", "1\n2\n3").lines
 
-      assertM(zio)(equalTo(List("1", "2", "3")))
+      assertM(zio)(equalTo(Chunk("1", "2", "3")))
     },
     testM("stream lines of output") {
       assertM(Command("echo", "-n", "1\n2\n3").linesStream.runCollect)(equalTo(Chunk("1", "2", "3")))

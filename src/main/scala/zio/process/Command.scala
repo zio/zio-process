@@ -60,13 +60,13 @@ sealed trait Command {
   /**
    * Runs the command returning the output as a list of lines (default encoding of UTF-8).
    */
-  def lines: ZIO[Blocking, CommandError, List[String]] =
+  def lines: ZIO[Blocking, CommandError, Chunk[String]] =
     run.flatMap(_.stdout.lines)
 
   /**
    * Runs the command returning the output as a list of lines with the specified encoding.
    */
-  def lines(charset: Charset): ZIO[Blocking, CommandError, List[String]] =
+  def lines(charset: Charset): ZIO[Blocking, CommandError, Chunk[String]] =
     run.flatMap(_.stdout.lines(charset))
 
   /**

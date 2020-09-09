@@ -36,8 +36,8 @@ final case class Process(private val process: JProcess) {
    * Access the underlying Java Process wrapped in a blocking ZIO.
    */
   def execute[T](f: JProcess => T): ZIO[Blocking, CommandError, T] =
-    effectBlockingInterrupt(f(process)).refineOrDie {
-      case CommandThrowable.IOError(e) => e
+    effectBlockingInterrupt(f(process)).refineOrDie { case CommandThrowable.IOError(e) =>
+      e
     }
 
   /**

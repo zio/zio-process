@@ -42,15 +42,14 @@ final case class ProcessStream(private val inputStream: InputStream) {
           val lines = new ArrayBuffer[String]
 
           var line: String = null
-          while ({ line = reader.readLine; line != null }) {
+          while ({ line = reader.readLine; line != null })
             lines.append(line)
-          }
 
           Chunk.fromArray(lines.toArray)
         }(UIO(reader.close()))
       }
-      .refineOrDie {
-        case CommandThrowable.IOError(e) => e
+      .refineOrDie { case CommandThrowable.IOError(e) =>
+        e
       }
 
   /**
@@ -84,14 +83,13 @@ final case class ProcessStream(private val inputStream: InputStream) {
           val result = new ByteArrayOutputStream
           var length = 0
 
-          while ({ length = inputStream.read(buffer); length != -1 }) {
+          while ({ length = inputStream.read(buffer); length != -1 })
             result.write(buffer, 0, length)
-          }
 
           new String(result.toByteArray, charset)
         }(UIO(inputStream.close()))
       }
-      .refineOrDie {
-        case CommandThrowable.IOError(e) => e
+      .refineOrDie { case CommandThrowable.IOError(e) =>
+        e
       }
 }

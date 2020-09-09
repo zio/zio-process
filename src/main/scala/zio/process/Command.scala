@@ -103,64 +103,63 @@ sealed trait Command {
       case c: Command.Standard =>
         for {
           process <- Task {
-                      val builder = new ProcessBuilder(c.command: _*)
-                      builder.redirectErrorStream(c.redirectErrorStream)
-                      c.workingDirectory.foreach(builder.directory)
+                       val builder = new ProcessBuilder(c.command: _*)
+                       builder.redirectErrorStream(c.redirectErrorStream)
+                       c.workingDirectory.foreach(builder.directory)
 
-                      if (c.env.nonEmpty) {
-                        builder.environment().putAll(c.env.asJava)
-                      }
+                       if (c.env.nonEmpty) {
+                         builder.environment().putAll(c.env.asJava)
+                       }
 
-                      c.stdin match {
-                        case ProcessInput(None)    => builder.redirectInput(Redirect.INHERIT)
-                        case ProcessInput(Some(_)) => ()
-                      }
+                       c.stdin match {
+                         case ProcessInput(None)    => builder.redirectInput(Redirect.INHERIT)
+                         case ProcessInput(Some(_)) => ()
+                       }
 
-                      c.stdout match {
-                        case ProcessOutput.FileRedirect(file)       => builder.redirectOutput(Redirect.to(file))
-                        case ProcessOutput.FileAppendRedirect(file) => builder.redirectOutput(Redirect.appendTo(file))
-                        case ProcessOutput.Inherit                  => builder.redirectOutput(Redirect.INHERIT)
-                        case ProcessOutput.Pipe                     => builder.redirectOutput(Redirect.PIPE)
-                      }
+                       c.stdout match {
+                         case ProcessOutput.FileRedirect(file)       => builder.redirectOutput(Redirect.to(file))
+                         case ProcessOutput.FileAppendRedirect(file) => builder.redirectOutput(Redirect.appendTo(file))
+                         case ProcessOutput.Inherit                  => builder.redirectOutput(Redirect.INHERIT)
+                         case ProcessOutput.Pipe                     => builder.redirectOutput(Redirect.PIPE)
+                       }
 
-                      c.stderr match {
-                        case ProcessOutput.FileRedirect(file)       => builder.redirectError(Redirect.to(file))
-                        case ProcessOutput.FileAppendRedirect(file) => builder.redirectError(Redirect.appendTo(file))
-                        case ProcessOutput.Inherit                  => builder.redirectError(Redirect.INHERIT)
-                        case ProcessOutput.Pipe                     => builder.redirectError(Redirect.PIPE)
-                      }
+                       c.stderr match {
+                         case ProcessOutput.FileRedirect(file)       => builder.redirectError(Redirect.to(file))
+                         case ProcessOutput.FileAppendRedirect(file) => builder.redirectError(Redirect.appendTo(file))
+                         case ProcessOutput.Inherit                  => builder.redirectError(Redirect.INHERIT)
+                         case ProcessOutput.Pipe                     => builder.redirectError(Redirect.PIPE)
+                       }
 
-                      Process(builder.start())
-                    }.refineOrDie {
-                      case CommandThrowable.ProgramNotFound(e)  => e
-                      case CommandThrowable.PermissionDenied(e) => e
-                      case CommandThrowable.IOError(e)          => e
-                    }
-          _ <- c.stdin match {
-                case ProcessInput(None) => ZIO.unit
-                case ProcessInput(Some(input)) =>
-                  for {
-                    outputStream <- process.execute(_.getOutputStream)
-                    _ <- input
-                          .run(ZSink.fromOutputStream(outputStream))
-                          .ensuring(UIO(outputStream.close()))
-                          .forkDaemon
-                  } yield ()
-              }
+                       Process(builder.start())
+                     }.refineOrDie {
+                       case CommandThrowable.ProgramNotFound(e)  => e
+                       case CommandThrowable.PermissionDenied(e) => e
+                       case CommandThrowable.IOError(e)          => e
+                     }
+          _       <- c.stdin match {
+                       case ProcessInput(None)        => ZIO.unit
+                       case ProcessInput(Some(input)) =>
+                         for {
+                           outputStream <- process.execute(_.getOutputStream)
+                           _            <- input
+                                             .run(ZSink.fromOutputStream(outputStream))
+                                             .ensuring(UIO(outputStream.close()))
+                                             .forkDaemon
+                         } yield ()
+                     }
         } yield process
 
       case c: Command.Piped =>
         c.flatten match {
           // Technically we're guaranteed to always have 2 elements in the piped case, but `Vector` can't represent this.
           // Let's just handle the impossible cases anyway for completeness.
-          case v if v.isEmpty => ZIO.die(new NoSuchElementException("No commands in pipe."))
-          case Vector(head)   => head.run
+          case v if v.isEmpty          => ZIO.die(new NoSuchElementException("No commands in pipe."))
+          case Vector(head)            => head.run
           case Vector(head, tail @ _*) =>
             for {
-              stream <- tail.init.foldLeft(head.stream) {
-                         case (s, command) =>
-                           s.flatMap(input => command.stdin(ProcessInput.fromStream(input)).stream)
-                       }
+              stream <- tail.init.foldLeft(head.stream) { case (s, command) =>
+                          s.flatMap(input => command.stdin(ProcessInput.fromStream(input)).stream)
+                        }
               result <- tail.last.stdin(ProcessInput.fromStream(stream)).run
             } yield result
         }

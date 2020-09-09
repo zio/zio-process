@@ -30,10 +30,10 @@ object CommandSpec extends ZIOProcessBaseSpec {
     testM("work with stream directly") {
       val zio = for {
         stream <- Command("echo", "-n", "1\n2\n3").stream
-        lines <- stream
-                  .aggregate(ZTransducer.utf8Decode)
-                  .aggregate(ZTransducer.splitLines)
-                  .runCollect
+        lines  <- stream
+                    .aggregate(ZTransducer.utf8Decode)
+                    .aggregate(ZTransducer.splitLines)
+                    .runCollect
       } yield lines
 
       assertM(zio)(equalTo(Chunk("1", "2", "3")))
@@ -75,8 +75,8 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(zio)(contains("Command.scala"))
     },
     testM("be able to fallback to a different program using typed error channel") {
-      val zio = Command("custom-echo", "-n", "test").string.catchSome {
-        case CommandError.ProgramNotFound(_) => Command("echo", "-n", "test").string
+      val zio = Command("custom-echo", "-n", "test").string.catchSome { case CommandError.ProgramNotFound(_) =>
+        Command("echo", "-n", "test").string
       }
 
       assertM(zio)(equalTo("test"))

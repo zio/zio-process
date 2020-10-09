@@ -15,17 +15,18 @@
  */
 package zio.process
 
-import java.io.IOException
+import java.io.{ File, IOException }
 
 import zio.ExitCode
 
 sealed abstract class CommandError(cause: Throwable) extends Exception(cause) with Product with Serializable
 
 object CommandError {
-  final case class ProgramNotFound(cause: IOException)  extends CommandError(cause)
-  final case class PermissionDenied(cause: IOException) extends CommandError(cause)
-  final case class NonZeroErrorCode(exitCode: ExitCode) extends CommandError(null)
-  final case class IOError(cause: IOException)          extends CommandError(cause)
+  final case class ProgramNotFound(cause: IOException)             extends CommandError(cause)
+  final case class PermissionDenied(cause: IOException)            extends CommandError(cause)
+  final case class WorkingDirectoryMissing(workingDirectory: File) extends CommandError(null)
+  final case class NonZeroErrorCode(exitCode: ExitCode)            extends CommandError(null)
+  final case class IOError(cause: IOException)                     extends CommandError(cause)
 }
 
 private[process] object CommandThrowable {

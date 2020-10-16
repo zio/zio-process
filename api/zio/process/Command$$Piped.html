@@ -441,9 +441,9 @@
               
         </dd></dl></div>
     </li><li name="zio.process.Command#flatten" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="flatten:Vector[zio.process.Command.Standard]"></a><a id="flatten:Vector[Standard]"></a>
+      <a id="flatten:zio.NonEmptyChunk[zio.process.Command.Standard]"></a><a id="flatten:NonEmptyChunk[Standard]"></a>
       <span class="permalink">
-      <a href="../../zio/process/Command$$Piped.html#flatten:Vector[zio.process.Command.Standard]" title="Permalink">
+      <a href="../../zio/process/Command$$Piped.html#flatten:zio.NonEmptyChunk[zio.process.Command.Standard]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -452,12 +452,12 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">flatten</span><span class="result">: <span class="extype" name="scala.Vector">Vector</span>[<a href="Command$$Standard.html" class="extype" name="zio.process.Command.Standard">Standard</a>]</span>
+        <span class="name">flatten</span><span class="result">: <span class="extype" name="zio.NonEmptyChunk">NonEmptyChunk</span>[<a href="Command$$Standard.html" class="extype" name="zio.process.Command.Standard">Standard</a>]</span>
       </span>
       
-      <p class="shortcomment cmt">Flatten this command to a vector of standard commands.</p><div class="fullcomment"><div class="comment cmt"><p>Flatten this command to a vector of standard commands.
-For the standard case, this simply returns a 1 element vector.
-For the piped case, all the commands in the pipe will be extracted out into a Vector from left to right.
+      <p class="shortcomment cmt">Flatten this command to a non-empty chunk of standard commands.</p><div class="fullcomment"><div class="comment cmt"><p>Flatten this command to a non-empty chunk of standard commands.
+For the standard case, this simply returns a 1 element chunk.
+For the piped case, all the commands in the pipe will be extracted out into a chunk from left to right.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Command.html" class="extype" name="zio.process.Command">Command</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>

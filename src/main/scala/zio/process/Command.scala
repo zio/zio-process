@@ -42,12 +42,12 @@ sealed trait Command {
     run.flatMap(_.exitCode)
 
   /**
-   * Flatten this command to a vector of standard commands.
-   * For the standard case, this simply returns a 1 element vector.
-   * For the piped case, all the commands in the pipe will be extracted out into a Vector from left to right.
+   * Flatten this command to a non-empty chunk of standard commands.
+   * For the standard case, this simply returns a 1 element chunk.
+   * For the piped case, all the commands in the pipe will be extracted out into a chunk from left to right.
    */
-  def flatten: Vector[Command.Standard] = this match {
-    case c: Command.Standard => Vector(c)
+  def flatten: NonEmptyChunk[Command.Standard] = this match {
+    case c: Command.Standard => NonEmptyChunk.single(c)
     case Command.Piped(l, r) => l.flatten ++ r.flatten
   }
 
@@ -156,16 +156,13 @@ sealed trait Command {
 
       case c: Command.Piped =>
         c.flatten match {
-          // Technically we're guaranteed to always have 2 elements in the piped case, but `Vector` can't represent this.
-          // Let's just handle the impossible cases anyway for completeness.
-          case v if v.isEmpty          => ZIO.die(new NoSuchElementException("No commands in pipe."))
-          case Vector(head)            => head.run
-          case Vector(head, tail @ _*) =>
+          case chunk if chunk.length == 1 => chunk.head.run
+          case chunk                      =>
             for {
-              stream <- tail.init.foldLeft(head.stream) { case (s, command) =>
+              stream <- chunk.tail.init.foldLeft(chunk.head.stream) { case (s, command) =>
                           s.flatMap(input => command.stdin(ProcessInput.fromStream(input)).stream)
                         }
-              result <- tail.last.stdin(ProcessInput.fromStream(stream)).run
+              result <- chunk.last.stdin(ProcessInput.fromStream(stream)).run
             } yield result
         }
     }

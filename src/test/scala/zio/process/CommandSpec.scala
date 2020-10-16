@@ -111,12 +111,12 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(zio)(equalTo(("stdout1\nstdout2\n", "stderr1\nstderr2\n")))
     },
     testM("return non-zero exit code in success channel") {
-      val zio = Command("ls", "--non-existant-flag").exitCode
+      val zio = Command("ls", "--non-existent-flag").exitCode
 
       assertM(zio)(not(equalTo(ExitCode.success)))
     },
     testM("absolve non-zero exit code") {
-      val zio = Command("ls", "--non-existant-flag").successfulExitCode
+      val zio = Command("ls", "--non-existent-flag").successfulExitCode
 
       assertM(zio.run)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
     },
@@ -133,6 +133,11 @@ object CommandSpec extends ZIOProcessBaseSpec {
       } yield (stdout, stderr)
 
       assertM(zio)(equalTo(("stdout1\nstderr1\nstdout2\nstderr2\n", "")))
+    },
+    testM("typed error for non-existent working directory") {
+      val zio = Command("ls").workingDirectory(new File("/some/bad/path")).lines
+
+      assertM(zio.run)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
     }
   )
 }

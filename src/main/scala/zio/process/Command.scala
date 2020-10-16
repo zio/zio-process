@@ -102,6 +102,11 @@ sealed trait Command {
     this match {
       case c: Command.Standard =>
         for {
+          _       <- ZIO.foreach_(c.workingDirectory) { workingDirectory =>
+                       ZIO
+                         .fail(CommandError.WorkingDirectoryMissing(workingDirectory))
+                         .unless(workingDirectory.exists())
+                     }
           process <- Task {
                        val builder = new ProcessBuilder(c.command: _*)
                        builder.redirectErrorStream(c.redirectErrorStream)

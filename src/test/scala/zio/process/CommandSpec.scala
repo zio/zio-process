@@ -28,13 +28,10 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(Command("echo", "-n", "1\n2\n3").linesStream.runCollect)(equalTo(Chunk("1", "2", "3")))
     },
     testM("work with stream directly") {
-      val zio = for {
-        stream <- Command("echo", "-n", "1\n2\n3").stream
-        lines  <- stream
-                    .aggregate(ZTransducer.utf8Decode)
-                    .aggregate(ZTransducer.splitLines)
-                    .runCollect
-      } yield lines
+      val zio = Command("echo", "-n", "1\n2\n3").stream
+        .aggregate(ZTransducer.utf8Decode)
+        .aggregate(ZTransducer.splitLines)
+        .runCollect
 
       assertM(zio)(equalTo(Chunk("1", "2", "3")))
     },
@@ -49,10 +46,8 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(zio)(equalTo("var = value"))
     },
     testM("accept streaming stdin") {
-      val zio = for {
-        stream <- Command("echo", "-n", "a", "b", "c").stream
-        result <- Command("cat").stdin(ProcessInput.fromStream(stream)).string
-      } yield result
+      val stream = Command("echo", "-n", "a", "b", "c").stream
+      val zio    = Command("cat").stdin(ProcessInput.fromStream(stream)).string
 
       assertM(zio)(equalTo("a b c"))
     },

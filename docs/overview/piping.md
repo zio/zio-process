@@ -13,11 +13,9 @@ import zio.process._
 ### Manually
 
 ```scala mdoc:silent
-for {
-  processes     <- Command("ps", "-ef").stream
-  javaProcesses <- Command("grep", "java").stdin(ProcessInput.fromStream(processes)).stream
-  processIds    <- Command("awk", "{print $2}").stdin(ProcessInput.fromStream(javaProcesses)).lines
-} yield processIds
+val processes = Command("ps", "-ef").stream
+val javaProcesses = Command("grep", "java").stdin(ProcessInput.fromStream(processes)).stream
+val processIds = Command("awk", "{print $2}").stdin(ProcessInput.fromStream(javaProcesses)).lines
 ```
 
 ### Using the pipe operator

@@ -158,12 +158,11 @@ sealed trait Command {
         c.flatten match {
           case chunk if chunk.length == 1 => chunk.head.run
           case chunk                      =>
-            for {
-              stream <- chunk.tail.init.foldLeft(chunk.head.stream) { case (s, command) =>
-                          s.flatMap(input => command.stdin(ProcessInput.fromStream(input)).stream)
-                        }
-              result <- chunk.last.stdin(ProcessInput.fromStream(stream)).run
-            } yield result
+            val stream = chunk.tail.init.foldLeft(chunk.head.stream) { case (s, command) =>
+              command.stdin(ProcessInput.fromStream(s)).stream
+            }
+
+            chunk.last.stdin(ProcessInput.fromStream(stream)).run
         }
     }
 
@@ -208,8 +207,8 @@ sealed trait Command {
   /**
    * Runs the command returning the output as a chunked stream of bytes.
    */
-  def stream: ZIO[Blocking, CommandError, ZStream[Blocking, CommandError, Byte]] =
-    run.map(_.stdout.stream)
+  def stream: ZStream[Blocking, CommandError, Byte] =
+    ZStream.fromEffect(run).flatMap(_.stdout.stream)
 
   /**
    * Runs the command returning only the exit code if zero.

@@ -31,7 +31,7 @@ val zioVersion = "1.0.3"
 libraryDependencies ++= Seq(
   "dev.zio"                %% "zio"                     % zioVersion,
   "dev.zio"                %% "zio-streams"             % zioVersion,
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.0",
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.1",
   "dev.zio"                %% "zio-test"                % zioVersion % "test",
   "dev.zio"                %% "zio-test-sbt"            % zioVersion % "test"
 )

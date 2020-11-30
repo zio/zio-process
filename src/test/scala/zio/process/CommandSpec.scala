@@ -110,6 +110,11 @@ object CommandSpec extends ZIOProcessBaseSpec {
 
       assertM(zio)(not(equalTo(ExitCode.success)))
     },
+    testM("return non-zero exit code of type Int in success channel") {
+      val zio = Command("ls", "--non-existent-flag").exitCodeInt
+
+      assertM(zio)(not(equalTo(0)))
+    },
     testM("absolve non-zero exit code") {
       val zio = Command("ls", "--non-existent-flag").successfulExitCode
 

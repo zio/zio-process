@@ -41,6 +41,9 @@ sealed trait Command {
   def exitCode: ZIO[Blocking, CommandError, ExitCode] =
     run.flatMap(_.exitCode)
 
+  def exitCodeInt: ZIO[Blocking, CommandError, Int] =
+    run.flatMap(_.exitCodeInt)
+
   /**
    * Flatten this command to a non-empty chunk of standard commands.
    * For the standard case, this simply returns a 1 element chunk.

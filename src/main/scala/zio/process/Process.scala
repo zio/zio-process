@@ -49,6 +49,14 @@ final case class Process(private val process: JProcess) {
     }
 
   /**
+   * Return the int exit code of this process.
+   */
+  def exitCodeInt: ZIO[Blocking, CommandError, Int] =
+    effectBlockingCancelable(process.waitFor())(UIO(process.destroy())).refineOrDie {
+      case CommandThrowable.IOError(e) => e
+    }
+
+  /**
    * Return the exit code of this process if it is zero. If non-zero, it will fail with `CommandError.NonZeroErrorCode`.
    */
   def successfulExitCode: ZIO[Blocking, CommandError, ExitCode] =

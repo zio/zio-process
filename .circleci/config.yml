@@ -1,7 +1,7 @@
 version: 2.1
 
 scala_211: &scala_211
-  SCALA_VERSION: 2.11.12
+  SCALA_VERSION: 2.13.5
 
 scala_212: &scala_212
   SCALA_VERSION: 2.12.11

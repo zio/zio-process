@@ -1,6 +1,8 @@
 # zio-process
 
-[![Badge-Discord]][Link-Discord] | [![CircleCI](https://circleci.com/gh/zio/zio-process/tree/master.svg?style=svg)](https://circleci.com/gh/zio/zio-process/tree/master)
+[![Project stage][Stage]][Stage-Page]
+[![CircleCI](https://circleci.com/gh/zio/zio-process/tree/master.svg?style=svg)](https://circleci.com/gh/zio/zio-process/tree/master)
+[![Badge-Discord]][Link-Discord]
 
 # Summary
 Purely functional command and process library based on ZIO.
@@ -25,3 +27,5 @@ Come chat with us on [![Badge-Discord]][Link-Discord].
 
 [Link-Discord]: https://discord.gg/2ccFBr4 "Discord"
 [Badge-Discord]: https://img.shields.io/discord/629491597070827530?logo=discord "chat on discord"
+[Stage]: https://img.shields.io/badge/Project%20Stage-Production%20Ready-brightgreen.svg
+[Stage-Page]: https://github.com/zio/zio/wiki/Project-Stages

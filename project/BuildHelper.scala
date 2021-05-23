@@ -4,10 +4,9 @@ import sbtbuildinfo._
 import BuildInfoKeys._
 
 object BuildHelper {
-  private val Scala211        = "2.11.12"
-  private val Scala212        = "2.12.11"
-  private val Scala213        = "2.13.3"
-  private val SilencerVersion = "1.7.1"
+  private val Scala211 = "2.11.12"
+  private val Scala212 = "2.12.13"
+  private val Scala213 = "2.13.6"
 
   private val stdOptions = Seq(
     "-encoding",
@@ -73,15 +72,8 @@ object BuildHelper {
   def stdSettings(prjName: String) = Seq(
     name := s"$prjName",
     crossScalaVersions := Seq(Scala211, Scala212, Scala213),
-    scalaVersion in ThisBuild := Scala213,
+    ThisBuild / scalaVersion := Scala213,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
-    libraryDependencies ++=
-      Seq(
-        ("com.github.ghik"                % "silencer-lib"    % SilencerVersion % Provided)
-          .cross(CrossVersion.full),
-        compilerPlugin(("com.github.ghik" % "silencer-plugin" % SilencerVersion).cross(CrossVersion.full)),
-        compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
-      ),
     incOptions ~= (_.withLogRecompileOnMacro(false))
   )
 }

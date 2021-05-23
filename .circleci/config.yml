@@ -9,8 +9,8 @@ scala_212: &scala_212
 scala_213: &scala_213
   SCALA_VERSION: 2.13.3
 
-scala_dotty: &scala_dotty
-  SCALA_VERSION: 0.20.0-RC1
+scala_3: &scala_3
+  SCALA_VERSION: 3.0.0
 
 jdk_8: &jdk_8
   JDK_VERSION: 8
@@ -200,11 +200,11 @@ jobs:
       - <<: *scala_212
       - <<: *jdk_8
 
-  compile_dotty:
+  compile_3:
     <<: *compile
     <<: *machine_ubuntu
     environment:
-      - <<: *scala_dotty
+      - <<: *scala_3
       - <<: *jdk_8
 
   mdoc:
@@ -235,11 +235,11 @@ jobs:
       - <<: *scala_213
       - <<: *jdk_8
 
-  test_dotty_jdk8_jvm:
+  test_3_jdk8_jvm:
     <<: *test
     <<: *machine_ubuntu
     environment:
-      - <<: *scala_dotty
+      - <<: *scala_3
       - <<: *jdk_8
 
   test_211_jdk11_jvm:
@@ -263,11 +263,11 @@ jobs:
       - <<: *scala_213
       - <<: *jdk_11
 
-  test_dotty_jdk11_jvm:
+  test_3_jdk11_jvm:
     <<: *test
     <<: *machine_ubuntu
     environment:
-      - <<: *scala_dotty
+      - <<: *scala_3
       - <<: *jdk_11
 
   release:
@@ -316,6 +316,12 @@ workflows:
           filters:
             tags:
               only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      - test_3_jdk8_jvm:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       - test_211_jdk11_jvm:
           requires:
             - lint
@@ -334,6 +340,12 @@ workflows:
           filters:
             tags:
               only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      - test_3_jdk11_jvm:
+          requires:
+            - lint
+          filters:
+            tags:
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
       - release:
           context: Sonatype2
           requires:
@@ -343,6 +355,8 @@ workflows:
             - test_212_jdk11_jvm
             - test_213_jdk8_jvm
             - test_213_jdk11_jvm
+            - test_3_jdk8_jvm
+            - test_3_jdk11_jvm
             - mdoc
           filters:
             branches:

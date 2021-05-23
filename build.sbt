@@ -12,22 +12,15 @@ inThisBuild(
         "john@degoes.net",
         url("http://degoes.net")
       )
-    ),
-    pgpPassphrase := sys.env.get("PGP_PASSWORD").map(_.toArray),
-    pgpPublicRing := file("/tmp/public.asc"),
-    pgpSecretRing := file("/tmp/secret.asc"),
-    scmInfo := Some(
-      ScmInfo(url("https://github.com/zio/zio-process/"), "scm:git:git@github.com:zio/zio-process.git")
     )
   )
 )
-
-ThisBuild / publishTo := sonatypePublishToBundle.value
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
 
 val zioVersion = "1.0.8"
+
 libraryDependencies ++= Seq(
   "dev.zio"                %% "zio"                     % zioVersion,
   "dev.zio"                %% "zio-streams"             % zioVersion,

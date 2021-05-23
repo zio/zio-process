@@ -31,7 +31,7 @@ object ProcessInput {
    * Returns a ProcessInput from an array of bytes.
    */
   def fromByteArray(bytes: Array[Byte]): ProcessInput =
-    ProcessInput(Some(Stream.fromInputStream(new ByteArrayInputStream(bytes)).mapError(CommandError.IOError)))
+    ProcessInput(Some(Stream.fromInputStream(new ByteArrayInputStream(bytes)).mapError(CommandError.IOError.apply)))
 
   /**
    * Returns a ProcessInput from a stream of bytes.

@@ -1,25 +1,20 @@
-import sbt._
 import sbt.Keys._
+import sbt._
+import sbtbuildinfo.BuildInfoKeys._
 import sbtbuildinfo._
-import BuildInfoKeys._
 
 object BuildHelper {
   private val Scala211 = "2.11.12"
   private val Scala212 = "2.12.13"
   private val Scala213 = "2.13.6"
+  private val Scala3   = "3.0.0"
 
   private val stdOptions = Seq(
     "-encoding",
     "UTF-8",
-    "-explaintypes",
-    "-Yrangepos",
     "-feature",
     "-language:higherKinds",
     "-language:existentials",
-    "-Xlint:_,-type-parameter-shadow",
-    "-Xsource:2.13",
-    "-Ywarn-numeric-widen",
-    "-Ywarn-value-discard",
     "-unchecked",
     "-deprecation",
     "-Xfatal-warnings"
@@ -45,10 +40,19 @@ object BuildHelper {
     "-Ywarn-unused-import"
   )
 
+  private val stdOptsUpto211 = Seq(
+    "-explaintypes",
+    "-Yrangepos",
+    "-Ywarn-numeric-widen",
+    "-Ywarn-value-discard",
+    "-Xlint:_,-type-parameter-shadow",
+    "-Xsource:2.13"
+  )
+
   private def extraOptions(scalaVersion: String) =
     CrossVersion.partialVersion(scalaVersion) match {
       case Some((2, 13)) =>
-        stdOpts213
+        stdOpts213 ++ stdOptsUpto211
       case Some((2, 12)) =>
         Seq(
           "-opt-warnings",
@@ -57,9 +61,11 @@ object BuildHelper {
           "-Ywarn-unused:imports",
           "-opt:l:inline",
           "-opt-inline-from:<source>"
-        ) ++ stdOptsUpto212
+        ) ++ stdOptsUpto212 ++ stdOptsUpto211
+      case Some((3, 0))  =>
+        Seq("-noindent")
       case _             =>
-        Seq("-Xexperimental") ++ stdOptsUpto212
+        Seq("-Xexperimental") ++ stdOptsUpto212 ++ stdOptsUpto211
     }
 
   def buildInfoSettings(packageName: String) =
@@ -71,7 +77,7 @@ object BuildHelper {
 
   def stdSettings(prjName: String) = Seq(
     name := s"$prjName",
-    crossScalaVersions := Seq(Scala211, Scala212, Scala213),
+    crossScalaVersions := Seq(Scala211, Scala212, Scala213, Scala3),
     ThisBuild / scalaVersion := Scala213,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
     incOptions ~= (_.withLogRecompileOnMacro(false))

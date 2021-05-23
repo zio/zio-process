@@ -64,7 +64,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
    * Return the output of this process as a chunked stream of bytes.
    */
   def stream: ZStream[Blocking, CommandError, Byte] =
-    ZStream.fromInputStream(inputStream).mapError(CommandError.IOError)
+    ZStream.fromInputStream(inputStream).mapError(CommandError.IOError.apply)
 
   /**
    * Return the entire output of this process as a string (default encoding of UTF-8).

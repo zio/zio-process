@@ -86,6 +86,15 @@ flat-mapping and calling methods on <code>Process</code>, there are convenience 
 <p>When you don't care about the output (or there is no output), you can return just the exit code.</p>
 <pre><code class="hljs css language-scala">command.exitCode
 </code></pre>
+<p>Note that <code>Command#exitCode</code> will return the exit code in the ZIO's success channel whether it's 0 or not.
+If you want non-zero exit codes to be considered an error, use <code>Command#successfulExitCode</code> instead. This will
+return a <code>CommandError.NonZeroErrorCode</code> in ZIO's error channel when the exit code is not 0:</p>
+<pre><code class="hljs css language-scala"><span class="hljs-keyword">for</span> {
+  exitCode  &lt;- <span class="hljs-type">Command</span>(<span class="hljs-string">"java"</span>, <span class="hljs-string">"--non-existent-flag"</span>).successfulExitCode
+  <span class="hljs-comment">// Won't reach this 2nd command since the previous command failed with `CommandError.NonZeroErrorCode`:</span>
+  exitCode2 &lt;- <span class="hljs-type">Command</span>(<span class="hljs-string">"java"</span>, <span class="hljs-string">"--non-existent-flag"</span>).successfulExitCode
+} <span class="hljs-keyword">yield</span> ()
+</code></pre>
 <h3><a class="anchor" aria-hidden="true" id="stream-of-bytes"></a><a href="#stream-of-bytes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Stream of bytes</h3>
 <p>If you need lower-level access to the output's stream of bytes, you can access them directly like so:</p>
 <pre><code class="hljs css language-scala">command.stream

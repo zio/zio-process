@@ -1,4 +1,5 @@
 import BuildHelper._
+import sbtwelcome._
 
 inThisBuild(
   List(
@@ -18,6 +19,28 @@ inThisBuild(
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
+
+logo :=
+  s"""
+     |      _
+     |     (_)
+     |  _____  ___    _ __  _ __ ___   ___ ___  ___ ___
+     | |_  / |/ _ \\  | '_ \\| '__/ _ \\ / __/ _ \\/ __/ __|
+     |  / /| | (_) | | |_) | | | (_) | (_|  __/\\__ \\__ \\
+     | /___|_|\\___/  | .__/|_|  \\___/ \\___\\___||___/___/
+     |               | |
+     |               |_|
+     |
+     |   ${version.value}
+     |   
+     |""".stripMargin
+logoColor := scala.Console.RED
+usefulTasks := Seq(
+  UsefulTask("a", "~compile", "Compile all modules with file-watch enabled"),
+  UsefulTask("b", "fmt", "Run scalafmt on the entire project"),
+  UsefulTask("c", "docs/docusaurusCreateSite", "Generates the microsite"),
+  UsefulTask("", "testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term")
+)
 
 val zioVersion = "1.0.9"
 

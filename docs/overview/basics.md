@@ -59,6 +59,18 @@ When you don't care about the output (or there is no output), you can return jus
 command.exitCode
 ```
 
+Note that `Command#exitCode` will return the exit code in the ZIO's success channel whether it's 0 or not.
+If you want non-zero exit codes to be considered an error, use `Command#successfulExitCode` instead. This will
+return a `CommandError.NonZeroErrorCode` in ZIO's error channel when the exit code is not 0:
+
+```scala mdoc:silent
+for {
+  exitCode  <- Command("java", "--non-existent-flag").successfulExitCode
+  // Won't reach this 2nd command since the previous command failed with `CommandError.NonZeroErrorCode`:
+  exitCode2 <- Command("java", "--non-existent-flag").successfulExitCode
+} yield ()
+```
+
 ### Stream of bytes
 
 If you need lower-level access to the output's stream of bytes, you can access them directly like so:

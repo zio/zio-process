@@ -14,10 +14,6 @@ Here's list of contents available:
 
 Include ZIO Process in your project by adding the following to your `build.sbt`:
 
-```scala mdoc:passthrough
-println(s"""```""")
-if (zio.process.BuildInfo.isSnapshot)
-  println(s"""resolvers += Resolver.sonatypeRepo("snapshots")""")
-println(s"""libraryDependencies += "dev.zio" %% "zio-process" % "${zio.process.BuildInfo.version}"""")
-println(s"""```""")
+```scala
+libraryDependencies += "dev.zio" %% "zio-process" % <version>
 ```

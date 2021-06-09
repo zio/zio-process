@@ -77,6 +77,7 @@ If you want to kill a process before it's done terminating, you can use `kill` (
 `killForcibly` (the Unix SIGKILL equivalent):
 
 ```scala mdoc:invisible
+import zio.ZIO
 import zio.duration._
 ```
 

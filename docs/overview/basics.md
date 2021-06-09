@@ -71,6 +71,19 @@ for {
 } yield ()
 ```
 
+### Kill a process
+
+If you want to kill a process before it's done terminating, you can use `kill` (the Unix SIGTERM equivalent) or
+`killForcibly` (the Unix SIGKILL equivalent):
+
+```scala mdoc:silent
+for {
+  process <- Command("long-running-process").run
+  _       <- ZIO.sleep(5.seconds)
+  _       <- process.kill
+} yield ()
+```
+
 ### Stream of bytes
 
 If you need lower-level access to the output's stream of bytes, you can access them directly like so:

@@ -15,10 +15,10 @@
  */
 package zio.process
 
-import java.lang.{ Process => JProcess }
-
 import zio.blocking._
 import zio.{ ExitCode, UIO, ZIO }
+
+import java.lang.{ Process => JProcess }
 
 final case class Process(private val process: JProcess) {
 
@@ -36,16 +36,39 @@ final case class Process(private val process: JProcess) {
    * Access the underlying Java Process wrapped in a blocking ZIO.
    */
   def execute[T](f: JProcess => T): ZIO[Blocking, CommandError, T] =
-    effectBlockingInterrupt(f(process)).refineOrDie { case CommandThrowable.IOError(e) =>
-      e
-    }
+    effectBlockingInterrupt(f(process)).refineOrDie { case CommandThrowable.IOError(e) => e }
 
   /**
    * Return the exit code of this process.
    */
-  def exitCode: ZIO[Blocking, CommandError, ExitCode] =
+  def exitCode: ZIO[Blocking, CommandError, ExitCode]              =
     effectBlockingCancelable(ExitCode(process.waitFor()))(UIO(process.destroy())).refineOrDie {
       case CommandThrowable.IOError(e) => e
+    }
+
+  /**
+   * Tests whether the process is still alive (not terminated or completed).
+   */
+  def isAlive: UIO[Boolean] = UIO(process.isAlive)
+
+  /**
+   * Kills the process and will wait until completed. Equivalent to SIGTERM on Unix platforms.
+   */
+  def kill: ZIO[Blocking, CommandError, Unit] =
+    execute { process =>
+      process.destroy()
+      process.waitFor()
+      ()
+    }
+
+  /**
+   * Kills the process and will wait until completed. Equivalent to SIGKILL on Unix platforms.
+   */
+  def killForcibly: ZIO[Blocking, CommandError, Unit] =
+    execute { process =>
+      process.destroyForcibly()
+      process.waitFor()
+      ()
     }
 
   /**
@@ -55,4 +78,5 @@ final case class Process(private val process: JProcess) {
     effectBlockingCancelable(ExitCode(process.waitFor()))(UIO(process.destroy())).refineOrDie {
       case CommandThrowable.IOError(e) => e: CommandError
     }.filterOrElse(_ == ExitCode.success)(exitCode => ZIO.fail(CommandError.NonZeroErrorCode(exitCode)))
+
 }

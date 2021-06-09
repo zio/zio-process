@@ -15,14 +15,14 @@ object CommandSpec extends ZIOProcessBaseSpec {
 
   def spec = suite("CommandSpec")(
     testM("convert stdout to string") {
-      val zio = Command("echo", "-n", "test").string
-
-      assertM(zio)(equalTo("test"))
+      for {
+        output <- Command("echo", "-n", "test").string
+      } yield assertTrue(output == "test")
     },
     testM("convert stdout to list of lines") {
-      val zio = Command("echo", "-n", "1\n2\n3").lines
-
-      assertM(zio)(equalTo(Chunk("1", "2", "3")))
+      for {
+        lines <- Command("echo", "-n", "1\n2\n3").lines
+      } yield assertTrue(lines == Chunk("1", "2", "3"))
     },
     testM("stream lines of output") {
       assertM(Command("echo", "-n", "1\n2\n3").linesStream.runCollect)(equalTo(Chunk("1", "2", "3")))
@@ -121,18 +121,24 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(zio.run)(fails(isSubtype[CommandError.PermissionDenied](anything)))
     },
     testM("redirectErrorStream should merge stderr into stdout") {
-      val zio = for {
+      for {
         process <- Command("src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
         stdout  <- process.stdout.string
         stderr  <- process.stderr.string
-      } yield (stdout, stderr)
-
-      assertM(zio)(equalTo(("stdout1\nstderr1\nstdout2\nstderr2\n", "")))
+      } yield assertTrue(stdout == "stdout1\nstderr1\nstdout2\nstderr2\n", stderr.isEmpty)
+    },
+    testM("be able to kill a process that's running") {
+      for {
+        process           <- Command("src/test/bash/echo-repeat.sh").run
+        isAliveBeforeKill <- process.isAlive
+        _                 <- process.kill
+        isAliveAfterKill  <- process.isAlive
+      } yield assertTrue(isAliveBeforeKill, !isAliveAfterKill)
     },
     testM("typed error for non-existent working directory") {
-      val zio = Command("ls").workingDirectory(new File("/some/bad/path")).lines
-
-      assertM(zio.run)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
+      for {
+        exit <- Command("ls").workingDirectory(new File("/some/bad/path")).lines.run
+      } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
     }
   )
 }

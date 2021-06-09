@@ -71,6 +71,36 @@ for {
 } yield ()
 ```
 
+### Kill a process
+
+You can kill a process by calling `interrupt` on the running `Fiber`:
+
+```scala mdoc:invisible
+import zio.ZIO
+import zio.duration._
+```
+
+```scala mdoc:silent
+for {
+  fiber <- Command("long-running-process").exitCode.forkDaemon
+  _     <- ZIO.sleep(5.seconds)
+  _     <- fiber.interrupt
+  _     <- fiber.join
+} yield ()
+```
+
+If you use `Command#run` then you receive a handle to underlying `Process` immediately, which means ZIO's built-in
+interruption model no longer applies. In this case, if you want to kill a process before it's done terminating,
+you can use `kill` (the Unix SIGTERM equivalent) or `killForcibly` (the Unix SIGKILL equivalent):
+
+```scala mdoc:silent
+for {
+  process <- Command("long-running-process").run
+  _       <- ZIO.sleep(5.seconds)
+  _       <- process.kill
+} yield ()
+```
+
 ### Stream of bytes
 
 If you need lower-level access to the output's stream of bytes, you can access them directly like so:

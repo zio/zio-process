@@ -76,6 +76,10 @@ for {
 If you want to kill a process before it's done terminating, you can use `kill` (the Unix SIGTERM equivalent) or
 `killForcibly` (the Unix SIGKILL equivalent):
 
+```scala mdoc:invisible
+import zio.duration._
+```
+
 ```scala mdoc:silent
 for {
   process <- Command("long-running-process").run

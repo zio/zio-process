@@ -52,14 +52,22 @@ final case class Process(private val process: JProcess) {
   def isAlive: UIO[Boolean] = UIO(process.isAlive)
 
   /**
-   * Kills the process. Equivalent to SIGTERM on Unix platforms.
+   * Kills the process and will wait until completed. Equivalent to SIGTERM on Unix platforms.
    */
-  def kill: ZIO[Blocking, CommandError, Unit] = execute(_.destroy())
+  def kill: ZIO[Blocking, CommandError, Unit] =
+    for {
+      _ <- execute(_.destroy())
+      _ <- ZIO.fromCompletionStage(process.onExit()).refineOrDie { case CommandThrowable.IOError(e) => e }
+    } yield ()
 
   /**
-   * Kills the process. Equivalent to SIGKILL on Unix platforms.
+   * Kills the process and will wait until completed. Equivalent to SIGKILL on Unix platforms.
    */
-  def killForcibly: ZIO[Blocking, CommandError, Unit] = execute(_.destroyForcibly()).unit
+  def killForcibly: ZIO[Blocking, CommandError, Unit] =
+    for {
+      _ <- execute(_.destroyForcibly())
+      _ <- ZIO.fromCompletionStage(process.onExit()).refineOrDie { case CommandThrowable.IOError(e) => e }
+    } yield ()
 
   /**
    * Return the exit code of this process if it is zero. If non-zero, it will fail with `CommandError.NonZeroErrorCode`.

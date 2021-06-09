@@ -15,14 +15,14 @@ object CommandSpec extends ZIOProcessBaseSpec {
 
   def spec = suite("CommandSpec")(
     testM("convert stdout to string") {
-      val zio = Command("echo", "-n", "test").string
-
-      assertM(zio)(equalTo("test"))
+      for {
+        output <- Command("echo", "-n", "test").string
+      } yield assertTrue(output == "test")
     },
     testM("convert stdout to list of lines") {
-      val zio = Command("echo", "-n", "1\n2\n3").lines
-
-      assertM(zio)(equalTo(Chunk("1", "2", "3")))
+      for {
+        lines <- Command("echo", "-n", "1\n2\n3").lines
+      } yield assertTrue(lines == Chunk("1", "2", "3"))
     },
     testM("stream lines of output") {
       assertM(Command("echo", "-n", "1\n2\n3").linesStream.runCollect)(equalTo(Chunk("1", "2", "3")))

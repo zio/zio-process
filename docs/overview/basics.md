@@ -73,13 +73,25 @@ for {
 
 ### Kill a process
 
-If you want to kill a process before it's done terminating, you can use `kill` (the Unix SIGTERM equivalent) or
-`killForcibly` (the Unix SIGKILL equivalent):
+You can kill a process by calling `interrupt` on the running `Fiber`:
 
 ```scala mdoc:invisible
 import zio.ZIO
 import zio.duration._
 ```
+
+```scala mdoc:silent
+for {
+  fiber <- Command("long-running-process").exitCode.forkDaemon
+  _     <- ZIO.sleep(5.seconds)
+  _     <- process.interrupt
+  _     <- fiber.join
+} yield ()
+```
+
+If you use `Command#run` then you receive a handle to underlying `Process` immediately, which means ZIO's built-in
+interruption model no longer applies. In this case, if you want to kill a process before it's done terminating,
+you can use `kill` (the Unix SIGTERM equivalent) or `killForcibly` (the Unix SIGKILL equivalent):
 
 ```scala mdoc:silent
 for {

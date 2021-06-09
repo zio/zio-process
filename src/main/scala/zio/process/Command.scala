@@ -249,7 +249,7 @@ sealed trait Command {
 object Command {
 
   final case class Standard(
-    command: ::[String],
+    command: NonEmptyChunk[String],
     env: Map[String, String],
     workingDirectory: Option[File],
     stdin: ProcessInput,
@@ -265,7 +265,7 @@ object Command {
    */
   def apply(processName: String, args: String*): Command.Standard =
     Command.Standard(
-      ::(processName, args.toList),
+      NonEmptyChunk(processName, args: _*),
       Map.empty,
       Option.empty[File],
       ProcessInput.inherit,

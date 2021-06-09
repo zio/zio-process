@@ -121,18 +121,24 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(zio.run)(fails(isSubtype[CommandError.PermissionDenied](anything)))
     },
     testM("redirectErrorStream should merge stderr into stdout") {
-      val zio = for {
+      for {
         process <- Command("src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
         stdout  <- process.stdout.string
         stderr  <- process.stderr.string
-      } yield (stdout, stderr)
-
-      assertM(zio)(equalTo(("stdout1\nstderr1\nstdout2\nstderr2\n", "")))
+      } yield assertTrue(stdout == "stdout1\nstderr1\nstdout2\nstderr2\n", stderr.isEmpty)
+    },
+    testM("be able to kill a process that's running") {
+      for {
+        process           <- Command("src/test/bash/echo-repeat.sh").run
+        isAliveBeforeKill <- process.isAlive
+        _                 <- process.kill
+        isAliveAfterKill  <- process.isAlive
+      } yield assertTrue(isAliveBeforeKill, !isAliveAfterKill)
     },
     testM("typed error for non-existent working directory") {
-      val zio = Command("ls").workingDirectory(new File("/some/bad/path")).lines
-
-      assertM(zio.run)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
+      for {
+        exit <- Command("ls").workingDirectory(new File("/some/bad/path")).lines.run
+      } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
     }
   )
 }

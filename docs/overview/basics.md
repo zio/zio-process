@@ -84,7 +84,7 @@ import zio.duration._
 for {
   fiber <- Command("long-running-process").exitCode.forkDaemon
   _     <- ZIO.sleep(5.seconds)
-  _     <- process.interrupt
+  _     <- fiber.interrupt
   _     <- fiber.join
 } yield ()
 ```

@@ -42,7 +42,7 @@ usefulTasks := Seq(
   UsefulTask("", "testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term")
 )
 
-val zioVersion = "1.0.9"
+val zioVersion = "1.0.10"
 
 libraryDependencies ++= Seq(
   "dev.zio"                %% "zio"                     % zioVersion,

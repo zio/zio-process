@@ -1,6 +1,6 @@
 package zio.process
 
-import zio.duration._
+import zio.durationInt
 import zio.test._
 
 trait ZIOProcessBaseSpec extends DefaultRunnableSpec {

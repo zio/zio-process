@@ -15,13 +15,12 @@
  */
 package zio.process
 
-import java.io._
-import java.nio.charset.{ Charset, StandardCharsets }
-
-import zio.blocking.{ effectBlockingCancelable, Blocking }
+import zio.ZIO.attemptBlockingCancelable
 import zio.stream.{ ZStream, ZTransducer }
 import zio.{ Chunk, UIO, ZIO, ZManaged }
 
+import java.io._
+import java.nio.charset.{ Charset, StandardCharsets }
 import scala.collection.mutable.ArrayBuffer
 
 final case class ProcessStream(private val inputStream: InputStream) {
@@ -29,16 +28,16 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a list of lines (default encoding of UTF-8).
    */
-  def lines: ZIO[Blocking, CommandError, Chunk[String]] = lines(StandardCharsets.UTF_8)
+  def lines: ZIO[Any, CommandError, Chunk[String]] = lines(StandardCharsets.UTF_8)
 
   /**
    * Return the output of this process as a list of lines with the specified encoding.
    */
-  def lines(charset: Charset): ZIO[Blocking, CommandError, Chunk[String]] =
+  def lines(charset: Charset): ZIO[Any, CommandError, Chunk[String]] =
     ZManaged
       .fromAutoCloseable(UIO(new BufferedReader(new InputStreamReader(inputStream, charset))))
       .use { reader =>
-        effectBlockingCancelable {
+        attemptBlockingCancelable {
           val lines = new ArrayBuffer[String]
 
           var line: String = null
@@ -55,7 +54,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
    */
-  def linesStream: ZStream[Blocking, CommandError, String] =
+  def linesStream: ZStream[Any, CommandError, String] =
     stream
       .aggregate(ZTransducer.utf8Decode)
       .aggregate(ZTransducer.splitLines)
@@ -63,22 +62,22 @@ final case class ProcessStream(private val inputStream: InputStream) {
   /**
    * Return the output of this process as a chunked stream of bytes.
    */
-  def stream: ZStream[Blocking, CommandError, Byte] =
+  def stream: ZStream[Any, CommandError, Byte] =
     ZStream.fromInputStream(inputStream).mapError(CommandError.IOError.apply)
 
   /**
    * Return the entire output of this process as a string (default encoding of UTF-8).
    */
-  def string: ZIO[Blocking, CommandError, String] = string(StandardCharsets.UTF_8)
+  def string: ZIO[Any, CommandError, String] = string(StandardCharsets.UTF_8)
 
   /**
    * Return the entire output of this process as a string with the specified encoding.
    */
-  def string(charset: Charset): ZIO[Blocking, CommandError, String] =
+  def string(charset: Charset): ZIO[Any, CommandError, String] =
     ZManaged
       .fromAutoCloseable(UIO(inputStream))
-      .use_ {
-        effectBlockingCancelable {
+      .useDiscard {
+        attemptBlockingCancelable {
           val buffer = new Array[Byte](4096)
           val result = new ByteArrayOutputStream
           var length = 0

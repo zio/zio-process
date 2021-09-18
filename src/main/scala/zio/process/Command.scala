@@ -20,7 +20,6 @@ import java.lang.ProcessBuilder.Redirect
 import java.nio.charset.Charset
 
 import zio._
-import zio.blocking.Blocking
 import zio.stream.{ ZSink, ZStream }
 
 import scala.jdk.CollectionConverters._
@@ -38,7 +37,7 @@ sealed trait Command {
   /**
    * Runs the command returning only the exit code.
    */
-  def exitCode: ZIO[Blocking, CommandError, ExitCode] =
+  def exitCode: ZIO[Any, CommandError, ExitCode] =
     run.flatMap(_.exitCode)
 
   /**
@@ -60,20 +59,20 @@ sealed trait Command {
   /**
    * Runs the command returning the output as a list of lines (default encoding of UTF-8).
    */
-  def lines: ZIO[Blocking, CommandError, Chunk[String]] =
+  def lines: ZIO[Any, CommandError, Chunk[String]] =
     run.flatMap(_.stdout.lines)
 
   /**
    * Runs the command returning the output as a list of lines with the specified encoding.
    */
-  def lines(charset: Charset): ZIO[Blocking, CommandError, Chunk[String]] =
+  def lines(charset: Charset): ZIO[Any, CommandError, Chunk[String]] =
     run.flatMap(_.stdout.lines(charset))
 
   /**
    * Runs the command returning the output as a stream of lines (default encoding of UTF-8).
    */
-  def linesStream: ZStream[Blocking, CommandError, String] =
-    ZStream.fromEffect(run).flatMap(_.stdout.linesStream)
+  def linesStream: ZStream[Any, CommandError, String] =
+    ZStream.fromZIO(run).flatMap(_.stdout.linesStream)
 
   /**
    * A named alias for `|`
@@ -98,11 +97,11 @@ sealed trait Command {
   /**
    * Start running the command returning a handle to the running process.
    */
-  def run: ZIO[Blocking, CommandError, Process] =
+  def run: ZIO[Any, CommandError, Process] =
     this match {
       case c: Command.Standard =>
         for {
-          _       <- ZIO.foreach_(c.workingDirectory) { workingDirectory =>
+          _       <- ZIO.foreachDiscard(c.workingDirectory) { workingDirectory =>
                        ZIO
                          .fail(CommandError.WorkingDirectoryMissing(workingDirectory))
                          .unless(workingDirectory.exists())
@@ -195,25 +194,25 @@ sealed trait Command {
   /**
    * Runs the command returning the entire output as a string (default encoding of UTF-8).
    */
-  def string: ZIO[Blocking, CommandError, String] =
+  def string: ZIO[Any, CommandError, String] =
     run.flatMap(_.stdout.string)
 
   /**
    * Runs the command returning the entire output as a string with the specified encoding.
    */
-  def string(charset: Charset): ZIO[Blocking, CommandError, String] =
+  def string(charset: Charset): ZIO[Any, CommandError, String] =
     run.flatMap(_.stdout.string(charset))
 
   /**
    * Runs the command returning the output as a chunked stream of bytes.
    */
-  def stream: ZStream[Blocking, CommandError, Byte] =
-    ZStream.fromEffect(run).flatMap(_.stdout.stream)
+  def stream: ZStream[Any, CommandError, Byte] =
+    ZStream.fromZIO(run).flatMap(_.stdout.stream)
 
   /**
    * Runs the command returning only the exit code if zero.
    */
-  def successfulExitCode: ZIO[Blocking, CommandError, ExitCode] =
+  def successfulExitCode: ZIO[Any, CommandError, ExitCode] =
     run.flatMap(_.successfulExitCode)
 
   /**

@@ -77,6 +77,6 @@ final case class Process(private val process: JProcess) {
   def successfulExitCode: ZIO[Any, CommandError, ExitCode] =
     attemptBlockingCancelable(ExitCode(process.waitFor()))(UIO(process.destroy())).refineOrDie {
       case CommandThrowable.IOError(e) => e: CommandError
-    }.filterOrElse(_ == ExitCode.success)(ZIO.fail(CommandError.NonZeroErrorCode(ExitCode.failure)))
+    }.filterOrElseWith(_ == ExitCode.success)(exitCode => ZIO.fail(CommandError.NonZeroErrorCode(exitCode)))
 
 }

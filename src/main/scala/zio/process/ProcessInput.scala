@@ -16,11 +16,11 @@
 package zio.process
 
 import java.io.ByteArrayInputStream
-import java.nio.charset.{ Charset, StandardCharsets }
+import java.nio.charset.{Charset, StandardCharsets}
 
 import zio.Chunk
 import zio.blocking.Blocking
-import zio.stream.{ Stream, ZStream }
+import zio.stream.{Stream, ZStream}
 
 final case class ProcessInput(source: Option[ZStream[Blocking, CommandError, Byte]])
 

@@ -8,7 +8,7 @@ import zio.stream.ZTransducer
 import zio.test.Assertion._
 import zio.test._
 import zio.test.environment.TestClock
-import zio.{ Chunk, ExitCode, ZIO }
+import zio.{Chunk, ExitCode, ZIO}
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {

@@ -2,7 +2,7 @@ name: Website
 
 on:
   push:
-    branches: ['series/2.x']
+    branches: ['master']
   release:
     types:
       - published

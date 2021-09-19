@@ -77,7 +77,7 @@ You can kill a process by calling `interrupt` on the running `Fiber`:
 
 ```scala mdoc:invisible
 import zio.ZIO
-import zio.duration._
+import zio.durationInt
 ```
 
 ```scala mdoc:silent

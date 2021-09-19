@@ -2,7 +2,7 @@ package zio.process
 
 import java.io.File
 
-import zio.{ Chunk, NonEmptyChunk }
+import zio.{Chunk, NonEmptyChunk}
 import zio.test.Assertion._
 import zio.test._
 

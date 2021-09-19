@@ -15,7 +15,7 @@
  */
 package zio.process
 
-import java.io.{ File, IOException }
+import java.io.{File, IOException}
 
 import zio.ExitCode
 

@@ -21,7 +21,7 @@ import java.nio.charset.Charset
 
 import zio._
 import zio.blocking.Blocking
-import zio.stream.{ ZSink, ZStream }
+import zio.stream.{ZSink, ZStream}
 
 import scala.jdk.CollectionConverters._
 
@@ -102,11 +102,11 @@ sealed trait Command {
     this match {
       case c: Command.Standard =>
         for {
-          _       <- ZIO.foreach_(c.workingDirectory) { workingDirectory =>
-                       ZIO
-                         .fail(CommandError.WorkingDirectoryMissing(workingDirectory))
-                         .unless(workingDirectory.exists())
-                     }
+          _ <- ZIO.foreach_(c.workingDirectory) { workingDirectory =>
+                 ZIO
+                   .fail(CommandError.WorkingDirectoryMissing(workingDirectory))
+                   .unless(workingDirectory.exists())
+               }
           process <- Task {
                        val builder = new ProcessBuilder(c.command: _*)
                        builder.redirectErrorStream(c.redirectErrorStream)
@@ -141,23 +141,23 @@ sealed trait Command {
                        case CommandThrowable.PermissionDenied(e) => e
                        case CommandThrowable.IOError(e)          => e
                      }
-          _       <- c.stdin match {
-                       case ProcessInput(None)        => ZIO.unit
-                       case ProcessInput(Some(input)) =>
-                         for {
-                           outputStream <- process.execute(_.getOutputStream)
-                           _            <- input
-                                             .run(ZSink.fromOutputStream(outputStream))
-                                             .ensuring(UIO(outputStream.close()))
-                                             .forkDaemon
-                         } yield ()
-                     }
+          _ <- c.stdin match {
+                 case ProcessInput(None) => ZIO.unit
+                 case ProcessInput(Some(input)) =>
+                   for {
+                     outputStream <- process.execute(_.getOutputStream)
+                     _ <- input
+                            .run(ZSink.fromOutputStream(outputStream))
+                            .ensuring(UIO(outputStream.close()))
+                            .forkDaemon
+                   } yield ()
+               }
         } yield process
 
       case c: Command.Piped =>
         c.flatten match {
           case chunk if chunk.length == 1 => chunk.head.run
-          case chunk                      =>
+          case chunk =>
             val stream = chunk.tail.init.foldLeft(chunk.head.stream) { case (s, command) =>
               command.stdin(ProcessInput.fromStream(s)).stream
             }

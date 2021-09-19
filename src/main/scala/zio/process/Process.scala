@@ -16,9 +16,9 @@
 package zio.process
 
 import zio.blocking._
-import zio.{ ExitCode, UIO, ZIO }
+import zio.{ExitCode, UIO, ZIO}
 
-import java.lang.{ Process => JProcess }
+import java.lang.{Process => JProcess}
 
 final case class Process(private val process: JProcess) {
 
@@ -41,7 +41,7 @@ final case class Process(private val process: JProcess) {
   /**
    * Return the exit code of this process.
    */
-  def exitCode: ZIO[Blocking, CommandError, ExitCode]              =
+  def exitCode: ZIO[Blocking, CommandError, ExitCode] =
     effectBlockingCancelable(ExitCode(process.waitFor()))(UIO(process.destroy())).refineOrDie {
       case CommandThrowable.IOError(e) => e
     }

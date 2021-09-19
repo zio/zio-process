@@ -16,11 +16,11 @@
 package zio.process
 
 import java.io._
-import java.nio.charset.{ Charset, StandardCharsets }
+import java.nio.charset.{Charset, StandardCharsets}
 
-import zio.blocking.{ effectBlockingCancelable, Blocking }
-import zio.stream.{ ZStream, ZTransducer }
-import zio.{ Chunk, UIO, ZIO, ZManaged }
+import zio.blocking.{effectBlockingCancelable, Blocking}
+import zio.stream.{ZStream, ZTransducer}
+import zio.{Chunk, UIO, ZIO, ZManaged}
 
 import scala.collection.mutable.ArrayBuffer
 

@@ -5,12 +5,12 @@ import sbtbuildinfo._
 
 object BuildHelper {
   private val versions: Map[String, String] = {
-    import org.snakeyaml.engine.v2.api.{ Load, LoadSettings }
+    import org.snakeyaml.engine.v2.api.{Load, LoadSettings}
 
-    import java.util.{ List => JList, Map => JMap }
+    import java.util.{List => JList, Map => JMap}
     import scala.jdk.CollectionConverters._
 
-    val doc  = new Load(LoadSettings.builder().build())
+    val doc = new Load(LoadSettings.builder().build())
       .loadFromReader(scala.io.Source.fromFile(".github/workflows/ci.yml").bufferedReader())
     val yaml = doc.asInstanceOf[JMap[String, JMap[String, JMap[String, JMap[String, JMap[String, JList[String]]]]]]]
     val list = yaml.get("jobs").get("test").get("strategy").get("matrix").get("scala").asScala
@@ -75,24 +75,24 @@ object BuildHelper {
           "-opt:l:inline",
           "-opt-inline-from:<source>"
         ) ++ stdOptsUpto212 ++ stdOptsUpto211
-      case Some((3, 0))  =>
+      case Some((3, 0)) =>
         Seq("-noindent")
-      case _             =>
+      case _ =>
         Seq("-Xexperimental") ++ stdOptsUpto212 ++ stdOptsUpto211
     }
 
   def buildInfoSettings(packageName: String) =
     Seq(
-      buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, isSnapshot),
+      buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, isSnapshot),
       buildInfoPackage := packageName,
-      buildInfoObject := "BuildInfo"
+      buildInfoObject  := "BuildInfo"
     )
 
   def stdSettings(prjName: String) = Seq(
-    name := s"$prjName",
-    crossScalaVersions := Seq(Scala211, Scala212, Scala213, Scala3),
+    name                     := s"$prjName",
+    crossScalaVersions       := Seq(Scala211, Scala212, Scala213, Scala3),
     ThisBuild / scalaVersion := Scala213,
-    scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
+    scalacOptions            := stdOptions ++ extraOptions(scalaVersion.value),
     incOptions ~= (_.withLogRecompileOnMacro(false))
   )
 }

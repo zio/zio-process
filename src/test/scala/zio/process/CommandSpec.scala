@@ -9,7 +9,7 @@ import zio.test._
 import zio.test.environment.TestClock
 import zio.{Chunk, ExitCode, ZIO}
 
-import scala.jdk.OptionConverters.RichOptional
+import java.util.Optional
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {
@@ -152,7 +152,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
                   .map(_.map(_.toInt))
         _ <- process.kill
         pidsAlive = pids.map { pid =>
-                      ProcessHandle.of(pid.toLong).toScala.exists(_.isAlive)
+                      toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, true, true))
     },
@@ -167,7 +167,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
                   .map(_.map(_.toInt))
         _ <- process.killTree
         pidsAlive = pids.map { pid =>
-                      ProcessHandle.of(pid.toLong).toScala.exists(_.isAlive)
+                      toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, false, false))
     },
@@ -182,9 +182,11 @@ object CommandSpec extends ZIOProcessBaseSpec {
                   .map(_.map(_.toInt))
         _ <- process.killTree
         pidsAlive = pids.map { pid =>
-                      ProcessHandle.of(pid.toLong).toScala.exists(_.isAlive)
+                      toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, false, false))
     }
   )
+
+  private def toScalaOption[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None
 }

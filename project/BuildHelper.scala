@@ -30,7 +30,8 @@ object BuildHelper {
     "-language:existentials",
     "-unchecked",
     "-deprecation",
-    "-Xfatal-warnings"
+    "-Xfatal-warnings",
+    "-target:jvm-1.8"
   )
 
   private val stdOpts213 = Seq(

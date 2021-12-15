@@ -16,7 +16,7 @@
 package zio.process
 
 import zio.ZIO.attemptBlockingCancelable
-import zio.stream.{ ZStream, ZTransducer }
+import zio.stream.{ ZPipeline, ZStream }
 import zio.{ Chunk, UIO, ZIO, ZManaged }
 
 import java.io._
@@ -55,9 +55,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
    */
   def linesStream: ZStream[Any, CommandError, String] =
-    stream
-      .aggregate(ZTransducer.utf8Decode)
-      .aggregate(ZTransducer.splitLines)
+    stream.via(ZPipeline.utf8Decode).via(ZPipeline.splitLines)
 
   /**
    * Return the output of this process as a chunked stream of bytes.

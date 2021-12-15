@@ -31,8 +31,10 @@ logo :=
      |               | |
      |               |_|
      |
-     |   ${version.value}
-     |   
+     | ${version.value}
+     |
+     | Scala ${scalaVersion.value}
+     |
      |""".stripMargin
 logoColor := scala.Console.RED
 usefulTasks := Seq(

@@ -150,7 +150,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
                       toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, true, true))
-    },
+    } @@ TestAspect.nonFlaky(25),
     test("killTree also kills child processes") {
       for {
         process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
@@ -165,7 +165,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
                       toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, false, false))
-    },
+    } @@ TestAspect.nonFlaky(25),
     test("killTreeForcibly also kills child processes") {
       for {
         process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
@@ -180,7 +180,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
                       toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, false, false))
-    }
+    } @@ TestAspect.nonFlaky(25)
   )
 
   private def toScalaOption[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None

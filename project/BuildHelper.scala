@@ -9,18 +9,19 @@ object BuildHelper {
 
     import java.util.{List => JList, Map => JMap}
     import scala.jdk.CollectionConverters._
-
     val doc = new Load(LoadSettings.builder().build())
       .loadFromReader(scala.io.Source.fromFile(".github/workflows/ci.yml").bufferedReader())
     val yaml = doc.asInstanceOf[JMap[String, JMap[String, JMap[String, JMap[String, JMap[String, JList[String]]]]]]]
     val list = yaml.get("jobs").get("test").get("strategy").get("matrix").get("scala").asScala
-    list.map(v => (v.split('.').take(2).mkString("."), v)).toMap
+    list.map { v =>
+      val vs = v.split('.'); val init = vs.take(vs(0) match { case "2" => 2; case _ => 1 }); (init.mkString("."), v)
+    }.toMap
   }
 
   private val Scala211: String = versions("2.11")
   private val Scala212: String = versions("2.12")
   private val Scala213: String = versions("2.13")
-  private val Scala3: String   = versions("3.0")
+  private val Scala3: String   = versions("3")
 
   private val stdOptions = Seq(
     "-encoding",
@@ -76,7 +77,7 @@ object BuildHelper {
           "-opt:l:inline",
           "-opt-inline-from:<source>"
         ) ++ stdOptsUpto212 ++ stdOptsUpto211
-      case Some((3, 0)) =>
+      case Some((3, _)) =>
         Seq("-noindent")
       case _ =>
         Seq("-Xexperimental") ++ stdOptsUpto212 ++ stdOptsUpto211

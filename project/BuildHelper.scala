@@ -59,7 +59,8 @@ object BuildHelper {
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard",
     "-Xlint:_,-type-parameter-shadow",
-    "-Xsource:2.13"
+    "-Xsource:2.13",
+    "-target:jvm-1.8"
   )
 
   private def extraOptions(scalaVersion: String) =

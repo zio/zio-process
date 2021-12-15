@@ -16,8 +16,7 @@
 package zio.process
 
 import zio.ZIO.{ attemptBlockingCancelable, attemptBlockingInterrupt }
-import zio.stream.ZStream
-import zio.{ ExitCode, Task, UIO, ZIO }
+import zio.{ ExitCode, UIO, ZIO }
 
 import java.lang.{ Process => JProcess }
 
@@ -87,6 +86,7 @@ final case class Process(private val process: JProcess) {
 
         if (p.isAlive) {
           p.onExit().get // `ProcessHandle` doesn't have waitFor
+          ()
         }
       }
     }
@@ -106,6 +106,7 @@ final case class Process(private val process: JProcess) {
 
         if (p.isAlive) {
           p.onExit().get // `ProcessHandle` doesn't have waitFor
+          ()
         }
       }
     }

@@ -72,6 +72,40 @@ final case class Process(private val process: JProcess) {
     }
 
   /**
+   * Kills the entire process tree and will wait until completed. Equivalent to SIGTERM on Unix platforms.
+   *
+   * Note: This method requires JDK 9+
+   */
+  def killTree: ZIO[Any, CommandError, Unit] =
+    execute { process =>
+      process.descendants().forEach { p =>
+        p.destroy()
+        ()
+      }
+
+      process.destroy()
+      process.waitFor()
+      ()
+    }
+
+  /**
+   * Kills the entire process tree and will wait until completed. Equivalent to SIGKILL on Unix platforms.
+   *
+   * Note: This method requires JDK 9+
+   */
+  def killTreeForcibly: ZIO[Any, CommandError, Unit] =
+    execute { process =>
+      process.descendants().forEach { p =>
+        p.destroyForcibly()
+        ()
+      }
+
+      process.destroyForcibly()
+      process.waitFor()
+      ()
+    }
+
+  /**
    * Return the exit code of this process if it is zero. If non-zero, it will fail with `CommandError.NonZeroErrorCode`.
    */
   def successfulExitCode: ZIO[Any, CommandError, ExitCode] =

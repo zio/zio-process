@@ -7,6 +7,7 @@ import zio.{ durationInt, Chunk, ExitCode, ZIO }
 
 import java.io.File
 import java.nio.charset.StandardCharsets
+import scala.jdk.OptionConverters.RichOptional
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {
@@ -134,6 +135,51 @@ object CommandSpec extends ZIOProcessBaseSpec {
       for {
         exit <- Command("ls").workingDirectory(new File("/some/bad/path")).lines.exit
       } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
+    },
+    test("kill only kills parent process") {
+      for {
+        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
+        pids     <- process.stdout.stream
+                      .via(ZPipeline.utf8Decode)
+                      .via(ZPipeline.splitLines)
+                      .take(3)
+                      .runCollect
+                      .map(_.map(_.toInt))
+        _        <- process.kill
+        pidsAlive = pids.map { pid =>
+                      ProcessHandle.of(pid.toLong).toScala.exists(_.isAlive)
+                    }
+      } yield assertTrue(pidsAlive == Chunk(false, true, true))
+    },
+    test("killTree also kills child processes") {
+      for {
+        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
+        pids     <- process.stdout.stream
+                      .via(ZPipeline.utf8Decode)
+                      .via(ZPipeline.splitLines)
+                      .take(3)
+                      .runCollect
+                      .map(_.map(_.toInt))
+        _        <- process.killTree
+        pidsAlive = pids.map { pid =>
+                      ProcessHandle.of(pid.toLong).toScala.exists(_.isAlive)
+                    }
+      } yield assertTrue(pidsAlive == Chunk(false, false, false))
+    },
+    test("killTreeForcibly also kills child processes") {
+      for {
+        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
+        pids     <- process.stdout.stream
+                      .via(ZPipeline.utf8Decode)
+                      .via(ZPipeline.splitLines)
+                      .take(3)
+                      .runCollect
+                      .map(_.map(_.toInt))
+        _        <- process.killTree
+        pidsAlive = pids.map { pid =>
+                      ProcessHandle.of(pid.toLong).toScala.exists(_.isAlive)
+                    }
+      } yield assertTrue(pidsAlive == Chunk(false, false, false))
     }
   )
 }

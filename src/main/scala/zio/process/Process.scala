@@ -16,7 +16,8 @@
 package zio.process
 
 import zio.ZIO.{ attemptBlockingCancelable, attemptBlockingInterrupt }
-import zio.{ ExitCode, UIO, ZIO }
+import zio.stream.ZStream
+import zio.{ ExitCode, Task, UIO, ZIO }
 
 import java.lang.{ Process => JProcess }
 
@@ -78,14 +79,16 @@ final case class Process(private val process: JProcess) {
    */
   def killTree: ZIO[Any, CommandError, Unit] =
     execute { process =>
-      process.descendants().forEach { p =>
-        p.destroy()
-        ()
-      }
-
       process.destroy()
       process.waitFor()
-      ()
+
+      process.descendants().forEach { p =>
+        p.destroy()
+
+        if (p.isAlive) {
+          p.onExit().get // `ProcessHandle` doesn't have waitFor
+        }
+      }
     }
 
   /**
@@ -95,14 +98,16 @@ final case class Process(private val process: JProcess) {
    */
   def killTreeForcibly: ZIO[Any, CommandError, Unit] =
     execute { process =>
-      process.descendants().forEach { p =>
-        p.destroyForcibly()
-        ()
-      }
-
       process.destroyForcibly()
       process.waitFor()
-      ()
+
+      process.descendants().forEach { p =>
+        p.destroyForcibly()
+
+        if (p.isAlive) {
+          p.onExit().get // `ProcessHandle` doesn't have waitFor
+        }
+      }
     }
 
   /**

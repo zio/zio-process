@@ -1,12 +1,12 @@
 package zio.process
 
-import java.io.File
-import java.nio.charset.StandardCharsets
-import zio.stream.ZTransducer
+import zio.stream.ZPipeline
 import zio.test.Assertion._
 import zio.test._
-import zio.test.environment.TestClock
 import zio.{ durationInt, Chunk, ExitCode, ZIO }
+
+import java.io.File
+import java.nio.charset.StandardCharsets
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {
@@ -26,10 +26,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertM(Command("echo", "-n", "1\n2\n3").linesStream.runCollect)(equalTo(Chunk("1", "2", "3")))
     },
     test("work with stream directly") {
-      val zio = Command("echo", "-n", "1\n2\n3").stream
-        .aggregate(ZTransducer.utf8Decode)
-        .aggregate(ZTransducer.splitLines)
-        .runCollect
+      val zio = Command("echo", "-n", "1\n2\n3").stream.via(ZPipeline.utf8Decode).via(ZPipeline.splitLines).runCollect
 
       assertM(zio)(equalTo(Chunk("1", "2", "3")))
     },

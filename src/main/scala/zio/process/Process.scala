@@ -19,6 +19,7 @@ import zio.ZIO.{ attemptBlockingCancelable, attemptBlockingInterrupt }
 import zio.{ ExitCode, UIO, ZIO }
 
 import java.lang.{ Process => JProcess }
+import scala.jdk.CollectionConverters._
 
 final case class Process(private val process: JProcess) {
 
@@ -69,6 +70,48 @@ final case class Process(private val process: JProcess) {
       process.destroyForcibly()
       process.waitFor()
       ()
+    }
+
+  /**
+   * Kills the entire process tree and will wait until completed. Equivalent to SIGTERM on Unix platforms.
+   *
+   * Note: This method requires JDK 9+
+   */
+  def killTree: ZIO[Any, CommandError, Unit] =
+    execute { process =>
+      val descendants = process.descendants().iterator().asScala.toSeq
+      descendants.foreach(_.destroy())
+
+      process.destroy()
+      process.waitFor()
+
+      descendants.foreach { p =>
+        if (p.isAlive) {
+          p.onExit().get // `ProcessHandle` doesn't have waitFor
+          ()
+        }
+      }
+    }
+
+  /**
+   * Kills the entire process tree and will wait until completed. Equivalent to SIGKILL on Unix platforms.
+   *
+   * Note: This method requires JDK 9+
+   */
+  def killTreeForcibly: ZIO[Any, CommandError, Unit] =
+    execute { process =>
+      val descendants = process.descendants().iterator().asScala.toSeq
+      descendants.foreach(_.destroyForcibly())
+
+      process.destroyForcibly()
+      process.waitFor()
+
+      descendants.foreach { p =>
+        if (p.isAlive) {
+          p.onExit().get // `ProcessHandle` doesn't have waitFor
+          ()
+        }
+      }
     }
 
   /**

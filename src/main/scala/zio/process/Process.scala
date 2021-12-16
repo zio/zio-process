@@ -19,6 +19,7 @@ import zio.blocking._
 import zio.{ExitCode, UIO, ZIO}
 
 import java.lang.{Process => JProcess}
+import scala.jdk.CollectionConverters._
 
 final case class Process(private val process: JProcess) {
 
@@ -78,14 +79,18 @@ final case class Process(private val process: JProcess) {
    */
   def killTree: ZIO[Blocking, CommandError, Unit] =
     execute { process =>
-      process.descendants().forEach { p =>
-        p.destroy()
-        ()
-      }
+      val descendants = process.descendants().iterator().asScala.toSeq
+      descendants.foreach(_.destroy())
 
       process.destroy()
       process.waitFor()
-      ()
+
+      descendants.foreach { p =>
+        if (p.isAlive) {
+          p.onExit().get // `ProcessHandle` doesn't have waitFor
+          ()
+        }
+      }
     }
 
   /**
@@ -95,14 +100,18 @@ final case class Process(private val process: JProcess) {
    */
   def killTreeForcibly: ZIO[Blocking, CommandError, Unit] =
     execute { process =>
-      process.descendants().forEach { p =>
-        p.destroyForcibly()
-        ()
-      }
+      val descendants = process.descendants().iterator().asScala.toSeq
+      descendants.foreach(_.destroyForcibly())
 
       process.destroyForcibly()
       process.waitFor()
-      ()
+
+      descendants.foreach { p =>
+        if (p.isAlive) {
+          p.onExit().get // `ProcessHandle` doesn't have waitFor
+          ()
+        }
+      }
     }
 
   /**

@@ -6,6 +6,6 @@ addSbtPlugin("org.scalameta"       % "sbt-mdoc"       % "2.2.24")
 addSbtPlugin("ch.epfl.scala"       % "sbt-bloop"      % "1.4.11")
 addSbtPlugin("com.github.sbt"      % "sbt-unidoc"     % "0.5.0")
 addSbtPlugin("com.geirsson"        % "sbt-ci-release" % "1.5.7")
-addSbtPlugin("com.github.reibitto" % "sbt-welcome"    % "0.2.1")
+addSbtPlugin("com.github.reibitto" % "sbt-welcome"    % "0.2.2")
 
 libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.3"

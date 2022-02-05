@@ -15,13 +15,12 @@
  */
 package zio.process
 
-import java.io.File
-import java.lang.ProcessBuilder.Redirect
-import java.nio.charset.Charset
-
 import zio._
 import zio.stream.{ ZSink, ZStream }
 
+import java.io.{ File, OutputStream }
+import java.lang.ProcessBuilder.Redirect
+import java.nio.charset.Charset
 import scala.jdk.CollectionConverters._
 
 sealed trait Command {
@@ -54,7 +53,7 @@ sealed trait Command {
    * Inherit standard input, standard output, and standard error.
    */
   def inheritIO: Command =
-    stdin(ProcessInput.inherit).stdout(ProcessOutput.Inherit).stderr(ProcessOutput.Inherit)
+    stdin(ProcessInput.Inherit).stdout(ProcessOutput.Inherit).stderr(ProcessOutput.Inherit)
 
   /**
    * Runs the command returning the output as a list of lines (default encoding of UTF-8).
@@ -116,8 +115,9 @@ sealed trait Command {
                        }
 
                        c.stdin match {
-                         case ProcessInput(None)    => builder.redirectInput(Redirect.INHERIT)
-                         case ProcessInput(Some(_)) => ()
+                         case ProcessInput.Inherit          => builder.redirectInput(Redirect.INHERIT)
+                         case ProcessInput.Pipe             => builder.redirectInput(Redirect.PIPE)
+                         case ProcessInput.FromStream(_, _) => ()
                        }
 
                        c.stdout match {
@@ -141,12 +141,14 @@ sealed trait Command {
                        case CommandThrowable.IOError(e)          => e
                      }
           _       <- c.stdin match {
-                       case ProcessInput(None)        => ZIO.unit
-                       case ProcessInput(Some(input)) =>
+                       case ProcessInput.Inherit | ProcessInput.Pipe    => ZIO.unit
+                       case ProcessInput.FromStream(input, flushChunks) =>
                          for {
                            outputStream <- process.execute(_.getOutputStream)
+                           sink          = if (flushChunks) fromOutputStreamFlushChunksEagerly(outputStream)
+                                           else ZSink.fromOutputStream(outputStream)
                            _            <- input
-                                             .run(ZSink.fromOutputStream(outputStream))
+                                             .run(sink)
                                              .ensuring(UIO(outputStream.close()))
                                              .forkDaemon
                          } yield ()
@@ -157,11 +159,16 @@ sealed trait Command {
         c.flatten match {
           case chunk if chunk.length == 1 => chunk.head.run
           case chunk                      =>
-            val stream = chunk.tail.init.foldLeft(chunk.head.stream) { case (s, command) =>
-              command.stdin(ProcessInput.fromStream(s)).stream
+            val flushChunksEagerly = chunk.head.stdin match {
+              case ProcessInput.FromStream(_, eager)        => eager
+              case ProcessInput.Inherit | ProcessInput.Pipe => false
             }
 
-            chunk.last.stdin(ProcessInput.fromStream(stream)).run
+            val stream = chunk.tail.init.foldLeft(chunk.head.stream) { case (s, command) =>
+              command.stdin(ProcessInput.fromStream(s, flushChunksEagerly)).stream
+            }
+
+            chunk.last.stdin(ProcessInput.fromStream(stream, flushChunksEagerly)).run
         }
     }
 
@@ -243,6 +250,14 @@ sealed trait Command {
   def <<(input: String): Command =
     stdin(ProcessInput.fromUTF8String(input))
 
+  private def fromOutputStreamFlushChunksEagerly(os: OutputStream): ZSink[Any, Throwable, Byte, Nothing, Unit] =
+    ZSink.foreachChunk { (chunk: Chunk[Byte]) =>
+      ZIO.attemptBlockingInterrupt {
+        os.write(chunk.toArray)
+        os.flush()
+      }
+    }
+
 }
 
 object Command {
@@ -267,7 +282,7 @@ object Command {
       NonEmptyChunk(processName, args: _*),
       Map.empty,
       Option.empty[File],
-      ProcessInput.inherit,
+      ProcessInput.Inherit,
       ProcessOutput.Pipe,
       ProcessOutput.Pipe,
       redirectErrorStream = false

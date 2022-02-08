@@ -3,7 +3,7 @@ package zio.process
 import zio.stream.ZPipeline
 import zio.test.Assertion._
 import zio.test._
-import zio.{ durationInt, Chunk, ExitCode, ZIO }
+import zio.{ durationInt, Chunk, ExitCode, Queue, ZIO }
 
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -43,7 +43,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
     },
     test("accept streaming stdin") {
       val stream = Command("echo", "-n", "a", "b", "c").stream
-      val zio    = Command("cat").stdin(ProcessInput.fromStream(stream)).string
+      val zio    = Command("cat").stdin(ProcessInput.fromStream(stream, flushChunksEagerly = false)).string
 
       assertM(zio)(equalTo("a b c"))
     },
@@ -51,6 +51,11 @@ object CommandSpec extends ZIOProcessBaseSpec {
       val zio = Command("cat").stdin(ProcessInput.fromUTF8String("piped in")).string
 
       assertM(zio)(equalTo("piped in"))
+    },
+    test("accept file stdin") {
+      for {
+        lines <- Command("cat").stdin(ProcessInput.fromFile(new File("src/test/bash/echo-repeat.sh"))).lines
+      } yield assertTrue(lines.head == "#!/bin/bash")
     },
     test("support different encodings") {
       val zio =
@@ -135,6 +140,19 @@ object CommandSpec extends ZIOProcessBaseSpec {
       for {
         exit <- Command("ls").workingDirectory(new File("/some/bad/path")).lines.exit
       } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
+    },
+    test("connect to a repl-like process and flush the chunks eagerly and get responses right away") {
+      for {
+        commandQueue <- Queue.unbounded[Chunk[Byte]]
+        process      <- Command("./stdin-echo.sh")
+                          .workingDirectory(new File("src/test/bash"))
+                          .stdin(ProcessInput.fromQueue(commandQueue))
+                          .run
+        _            <- commandQueue.offer(Chunk.fromArray("line1\nline2\n".getBytes(StandardCharsets.UTF_8)))
+        _            <- commandQueue.offer(Chunk.fromArray("line3\n".getBytes(StandardCharsets.UTF_8)))
+        lines        <- process.stdout.linesStream.take(3).runCollect
+        _            <- process.kill
+      } yield assertTrue(lines == Chunk("line1", "line2", "line3"))
     },
     test("kill only kills parent process") {
       for {

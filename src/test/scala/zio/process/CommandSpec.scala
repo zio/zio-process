@@ -7,7 +7,7 @@ import zio.stream.ZTransducer
 import zio.test.Assertion._
 import zio.test._
 import zio.test.environment.TestClock
-import zio.{Chunk, ExitCode, ZIO}
+import zio.{Chunk, ExitCode, Queue, ZIO}
 
 import java.util.Optional
 
@@ -56,6 +56,11 @@ object CommandSpec extends ZIOProcessBaseSpec {
       val zio = Command("cat").stdin(ProcessInput.fromUTF8String("piped in")).string
 
       assertM(zio)(equalTo("piped in"))
+    },
+    testM("accept file stdin") {
+      for {
+        lines <- Command("cat").stdin(ProcessInput.fromFile(new File("src/test/bash/echo-repeat.sh"))).lines
+      } yield assertTrue(lines.head == "#!/bin/bash")
     },
     testM("support different encodings") {
       val zio =
@@ -140,6 +145,19 @@ object CommandSpec extends ZIOProcessBaseSpec {
       for {
         exit <- Command("ls").workingDirectory(new File("/some/bad/path")).lines.run
       } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
+    },
+    testM("connect to a repl-like process and flush the chunks eagerly and get responses right away") {
+      for {
+        commandQueue <- Queue.unbounded[Chunk[Byte]]
+        process <- Command("./stdin-echo.sh")
+                     .workingDirectory(new File("src/test/bash"))
+                     .stdin(ProcessInput.fromQueue(commandQueue))
+                     .run
+        _     <- commandQueue.offer(Chunk.fromArray("line1\nline2\n".getBytes(StandardCharsets.UTF_8)))
+        _     <- commandQueue.offer(Chunk.fromArray("line3\n".getBytes(StandardCharsets.UTF_8)))
+        lines <- process.stdout.linesStream.take(3).runCollect
+        _     <- process.kill
+      } yield assertTrue(lines == Chunk("line1", "line2", "line3"))
     },
     testM("kill only kills parent process") {
       for {

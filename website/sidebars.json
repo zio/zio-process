@@ -4,6 +4,7 @@
       "overview/overview_index",
       "overview/overview_basics",
       "overview/overview_piping",
+      "overview/overview_interactive_processes",
       "overview/overview_other"
     ]
   },

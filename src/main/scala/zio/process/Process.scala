@@ -43,14 +43,14 @@ final case class Process(private val process: JProcess) {
    * Return the exit code of this process.
    */
   def exitCode: ZIO[Any, CommandError, ExitCode]              =
-    attemptBlockingCancelable(ExitCode(process.waitFor()))(UIO(process.destroy())).refineOrDie {
+    attemptBlockingCancelable(ExitCode(process.waitFor()))(ZIO.succeed(process.destroy())).refineOrDie {
       case CommandThrowable.IOError(e) => e
     }
 
   /**
    * Tests whether the process is still alive (not terminated or completed).
    */
-  def isAlive: UIO[Boolean] = UIO(process.isAlive)
+  def isAlive: UIO[Boolean] = ZIO.succeed(process.isAlive)
 
   /**
    * Kills the process and will wait until completed. Equivalent to SIGTERM on Unix platforms.
@@ -118,7 +118,7 @@ final case class Process(private val process: JProcess) {
    * Return the exit code of this process if it is zero. If non-zero, it will fail with `CommandError.NonZeroErrorCode`.
    */
   def successfulExitCode: ZIO[Any, CommandError, ExitCode] =
-    attemptBlockingCancelable(ExitCode(process.waitFor()))(UIO(process.destroy())).refineOrDie {
+    attemptBlockingCancelable(ExitCode(process.waitFor()))(ZIO.succeed(process.destroy())).refineOrDie {
       case CommandThrowable.IOError(e) => e: CommandError
     }.filterOrElseWith(_ == ExitCode.success)(exitCode => ZIO.fail(CommandError.NonZeroErrorCode(exitCode)))
 

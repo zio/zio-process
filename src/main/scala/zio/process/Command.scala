@@ -105,7 +105,7 @@ sealed trait Command {
                          .fail(CommandError.WorkingDirectoryMissing(workingDirectory))
                          .unless(workingDirectory.exists())
                      }
-          process <- Task {
+          process <- ZIO.attempt {
                        val builder = new ProcessBuilder(c.command: _*)
                        builder.redirectErrorStream(c.redirectErrorStream)
                        c.workingDirectory.foreach(builder.directory)
@@ -149,7 +149,7 @@ sealed trait Command {
                                            else ZSink.fromOutputStream(outputStream)
                            _            <- input
                                              .run(sink)
-                                             .ensuring(UIO(outputStream.close()))
+                                             .ensuring(ZIO.succeed(outputStream.close()))
                                              .forkDaemon
                          } yield ()
                      }

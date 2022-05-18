@@ -55,7 +55,11 @@ final case class ProcessStream(private val inputStream: InputStream) {
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
    */
   def linesStream: ZStream[Any, CommandError, String] =
-    stream.via(ZPipeline.utf8Decode).via(ZPipeline.splitLines)
+    stream
+      .via(
+        ZPipeline.fromChannel(ZPipeline.utf8Decode.channel.orDie)
+      )
+      .via(ZPipeline.splitLines)
 
   /**
    * Return the output of this process as a chunked stream of bytes.

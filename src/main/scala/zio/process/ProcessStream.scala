@@ -57,7 +57,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
   def linesStream: ZStream[Any, CommandError, String] =
     stream
       .via(
-        ZPipeline.fromChannel(ZPipeline.utf8Decode.channel.orDie)
+        ZPipeline.fromChannel(ZPipeline.utf8Decode.channel.mapError(CommandError.IOError))
       )
       .via(ZPipeline.splitLines)
 

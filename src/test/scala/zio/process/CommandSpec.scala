@@ -7,7 +7,7 @@ import zio.{ durationInt, Chunk, ExitCode, Queue, ZIO }
 
 import java.io.File
 import java.nio.charset.StandardCharsets
-import java.util.Optional
+import java.util.{ Optional, UUID }
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
 object CommandSpec extends ZIOProcessBaseSpec {
@@ -140,6 +140,16 @@ object CommandSpec extends ZIOProcessBaseSpec {
       for {
         exit <- Command("ls").workingDirectory(new File("/some/bad/path")).lines.exit
       } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
+    },
+    test("end of stream also closes underlying process") {
+      val uniqueId = UUID.randomUUID().toString
+      for {
+        lines      <- Command("yes", uniqueId).linesStream.take(2).runCollect
+        grepOutput <- (Command("ps", "aux") | Command("grep", "yes")).string
+      } yield assertTrue(
+        lines == Chunk(uniqueId, uniqueId),
+        !grepOutput.contains(uniqueId)
+      )
     },
     test("connect to a repl-like process and flush the chunks eagerly and get responses right away") {
       for {

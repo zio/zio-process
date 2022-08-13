@@ -5,7 +5,7 @@ addSbtPlugin("org.scoverage"       % "sbt-scoverage"  % "2.0.2")
 addSbtPlugin("org.scalameta"       % "sbt-mdoc"       % "2.2.24")
 addSbtPlugin("ch.epfl.scala"       % "sbt-bloop"      % "1.5.3")
 addSbtPlugin("com.github.sbt"      % "sbt-unidoc"     % "0.5.0")
-addSbtPlugin("com.geirsson"        % "sbt-ci-release" % "1.5.7")
+addSbtPlugin("com.geirsson"        % "sbt-ci-release" % "1.5.10")
 addSbtPlugin("com.github.reibitto" % "sbt-welcome"    % "0.2.2")
 
 libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.3"

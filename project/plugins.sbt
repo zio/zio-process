@@ -16,4 +16,4 @@ addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.10")
 
 addSbtPlugin("com.github.reibitto" % "sbt-welcome" % "0.2.2")
 
-libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.3"
+libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.4"

@@ -1,5 +1,5 @@
 ---
-id: overview_basics
+id: basics
 title: "Basics"
 ---
 

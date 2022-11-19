@@ -8,14 +8,14 @@
 Purely functional command and process library based on ZIO.
 
 # Documentation
-[ZIO Process Microsite](https://zio.github.io/zio-process/)
+[ZIO Process Microsite](https://zio.dev/zio-process/)
 
 # Contributing
-[Documentation for contributors](https://zio.github.io/zio-process/docs/about/about_contributing)
+[Documentation for contributors](https://zio.dev/about/contributing)
 
 ## Code of Conduct
 
-See the [Code of Conduct](https://zio.github.io/zio-process/docs/about/about_coc)
+See the [Code of Conduct](https://zio.dev/about/code-of-conduct)
 
 ## Support
 

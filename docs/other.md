@@ -1,5 +1,5 @@
 ---
-id: overview_other
+id: other
 title: "Other"
 ---
 

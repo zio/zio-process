@@ -1,6 +1,7 @@
 ---
-id: about_index
-title:  "About ZIO Process"
+id: index
+title:  "Introduction to ZIO Process"
+sidebar_label: "ZIO Process"
 ---
 
 _Purely functional command and process library based on ZIO._

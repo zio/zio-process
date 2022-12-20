@@ -1,11 +1,19 @@
 const sidebars = {
   sidebar: [
-    "index",
-    "getting-started",
-    "basics",
-    "piping",
-    "interactive-processes",
-    "other"
+    {
+      type: "category",
+      label: "ZIO Process",
+      collapsed: false,
+      link: { type: "doc", id: "index" },
+      items: [
+        "index",
+        "getting-started",
+        "basics",
+        "piping",
+        "interactive-processes",
+        "other"
+      ]
+    }
   ]
 };
 

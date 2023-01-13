@@ -18,6 +18,6 @@ addSbtPlugin("com.github.reibitto" % "sbt-welcome" % "0.2.2")
 
 addSbtPlugin("dev.zio" % "zio-sbt-website" % "0.1.5+21-de576a1e-SNAPSHOT")
 
-libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.5"
+libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.6"
 
 resolvers += Resolver.sonatypeRepo("public")

@@ -72,11 +72,13 @@ lazy val zioProcess =
 
 lazy val docs = project
   .in(file("zio-process-docs"))
+  .settings(stdSettings("zio-process-docs"))
   .settings(
     publish / skip := true,
     moduleName := "zio-process-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",
+    crossScalaVersions -= Scala211,
     libraryDependencies ++= Seq("dev.zio" %% "zio" % zioVersion),
     projectName := "ZIO Process",
     mainModuleName := (zioProcess / moduleName).value,

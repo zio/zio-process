@@ -46,23 +46,28 @@ usefulTasks := Seq(
 
 val zioVersion = "2.0.0"
 
-libraryDependencies ++= Seq(
-  "dev.zio"                %% "zio"                     % zioVersion,
-  "dev.zio"                %% "zio-streams"             % zioVersion,
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1",
-  "dev.zio"                %% "zio-test"                % zioVersion % "test",
-  "dev.zio"                %% "zio-test-sbt"            % zioVersion % "test"
-)
-
 testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
 
 lazy val root =
   project
     .in(file("."))
-    .settings(
-      stdSettings("zio-process")
-    )
+    .settings(publish / skip := true)
+    .aggregate(zioProcess, docs)
+
+lazy val zioProcess =
+  project
+    .in(file("zio-process"))
+    .settings(stdSettings("zio-process"))
     .settings(buildInfoSettings("zio.process"))
+    .settings(
+      libraryDependencies ++= Seq(
+        "dev.zio"                %% "zio"                     % zioVersion,
+        "dev.zio"                %% "zio-streams"             % zioVersion,
+        "org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1",
+        "dev.zio"                %% "zio-test"                % zioVersion % "test",
+        "dev.zio"                %% "zio-test-sbt"            % zioVersion % "test"
+      )
+    )
     .enablePlugins(BuildInfoPlugin)
 
 lazy val docs = project
@@ -72,17 +77,12 @@ lazy val docs = project
     moduleName := "zio-process-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",
-    libraryDependencies ++= Seq(
-      "dev.zio" %% "zio" % zioVersion
-    ),
+    libraryDependencies ++= Seq("dev.zio" %% "zio" % zioVersion),
     projectName := "ZIO Process",
-    badgeInfo := Some(
-      BadgeInfo(
-        artifact = "zio-process_2.12",
-        projectStage = ProjectStage.ProductionReady
-      )
-    ),
+    mainModuleName := (zioProcess / moduleName).value,
+    projectStage := ProjectStage.ProductionReady,
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioProcess),
     docsPublishBranch := "series/2.x"
   )
-  .dependsOn(root)
+  .dependsOn(zioProcess)
   .enablePlugins(WebsitePlugin)

@@ -46,7 +46,6 @@ usefulTasks := Seq(
 
 val zioVersion = "2.0.0"
 
-testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
 
 lazy val root =
   project
@@ -60,6 +59,7 @@ lazy val zioProcess =
     .settings(stdSettings("zio-process"))
     .settings(buildInfoSettings("zio.process"))
     .settings(
+      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
       libraryDependencies ++= Seq(
         "dev.zio"                %% "zio"                     % zioVersion,
         "dev.zio"                %% "zio-streams"             % zioVersion,

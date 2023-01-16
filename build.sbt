@@ -74,7 +74,6 @@ lazy val docs = project
   .in(file("zio-process-docs"))
   .settings(stdSettings("zio-process-docs"))
   .settings(
-    publish / skip := true,
     moduleName := "zio-process-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",

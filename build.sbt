@@ -1,5 +1,4 @@
 import BuildHelper._
-import com.sun.source.doctree.DocTypeTree
 import sbtwelcome._
 
 inThisBuild(
@@ -50,10 +49,7 @@ val zioVersion = "2.0.0"
 lazy val root =
   project
     .in(file("."))
-    .settings(
-      publish / skip := true,
-      crossScalaVersions := Seq(Scala211, Scala212, Scala213, Scala3)
-    )
+    .settings(publish / skip := true)
     .aggregate(zioProcess, docs)
 
 lazy val zioProcess =

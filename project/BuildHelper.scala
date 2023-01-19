@@ -18,10 +18,10 @@ object BuildHelper {
     }.toMap
   }
 
-  private val Scala211: String = versions("2.11")
-  private val Scala212: String = versions("2.12")
-  private val Scala213: String = versions("2.13")
-  private val Scala3: String   = versions("3")
+  val Scala211: String = versions("2.11")
+  val Scala212: String = versions("2.12")
+  val Scala213: String = versions("2.13")
+  val Scala3: String   = versions("3")
 
   private val stdOptions = Seq(
     "-encoding",

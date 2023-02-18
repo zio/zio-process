@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Scala and Java
-        uses: olafurpg/setup-scala@v13
+        uses: olafurpg/setup-scala@v14
         with:
           java-version: adopt@1.11
       - name: Cache scala dependencies
@@ -37,7 +37,7 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v3.3.0
       - name: Setup Scala and Java
-        uses: olafurpg/setup-scala@v13
+        uses: olafurpg/setup-scala@v14
         with:
           java-version: adopt@1.11
       - name: Cache scala dependencies
@@ -59,7 +59,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Scala and Java
-        uses: olafurpg/setup-scala@v13
+        uses: olafurpg/setup-scala@v14
         with:
           java-version: ${{ matrix.java }}
       - name: Cache scala dependencies
@@ -87,7 +87,7 @@ jobs:
       - name: Setup Scala and Java
         with:
           java-version: adopt@1.11
-        uses: olafurpg/setup-scala@v13
+        uses: olafurpg/setup-scala@v14
       - name: Cache scala dependencies
         uses: coursier/cache-action@v6
       - name: Release artifacts

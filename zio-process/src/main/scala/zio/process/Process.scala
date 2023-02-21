@@ -128,8 +128,7 @@ final case class Process(private val process: JProcess) {
    * Note: This method requires JDK 9+
    */
   def pid: ZIO[Any, CommandError, Long] =
-    ZIO.attemptBlocking(process.pid()).refineOrDie { case CommandThrowable.IOError(e) =>
-      e
+    execute { process =>
+      process.pid()
     }
-
 }

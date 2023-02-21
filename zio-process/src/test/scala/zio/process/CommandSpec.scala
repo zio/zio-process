@@ -214,14 +214,13 @@ object CommandSpec extends ZIOProcessBaseSpec {
         commandQueue <- Queue.unbounded[Chunk[Byte]]
         process      <- Command("node", "-i").stdin(ProcessInput.fromQueue(commandQueue)).run
         sep          <- System.lineSeparator
-        fib          <- process.stdout.linesStream.foreach { line =>
-                          ZIO.sleep(200.millis) *> // sleep in order to simulate processing ...
-                            ZIO.debug(s"Response from REPL: $line")
+        fiber        <- process.stdout.linesStream.foreach { line =>
+                          ZIO.debug(s"Response from REPL: $line")
                         }.fork
         _            <- commandQueue.offer(Chunk.fromArray(s"1+1${sep}".getBytes(StandardCharsets.UTF_8)))
         _            <- commandQueue.offer(Chunk.fromArray(s"2**8${sep}".getBytes(StandardCharsets.UTF_8)))
         _            <- commandQueue.offer(Chunk.fromArray(s"process.exit(0)${sep}".getBytes(StandardCharsets.UTF_8)))
-        _            <- fib.join
+        _            <- fiber.join
       } yield assertCompletes
     } @@ TestAspect.withLiveClock
   )

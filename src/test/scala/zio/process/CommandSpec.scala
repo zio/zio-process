@@ -208,7 +208,13 @@ object CommandSpec extends ZIOProcessBaseSpec {
                       toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, false, false))
-    } @@ TestAspect.nonFlaky(25)
+    } @@ TestAspect.nonFlaky(25),
+    test("get pid of a running process") {
+      for {
+        process <- Command("ls").run
+        pid     <- process.pid
+      } yield assertTrue(pid > 0)
+    }
   )
 
   private def toScalaOption[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None

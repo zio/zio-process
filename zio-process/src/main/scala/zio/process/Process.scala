@@ -122,4 +122,14 @@ final case class Process(private val process: JProcess) {
       case CommandThrowable.IOError(e) => e: CommandError
     }.filterOrElseWith(_ == ExitCode.success)(exitCode => ZIO.fail(CommandError.NonZeroErrorCode(exitCode)))
 
+  /**
+   * Returns the native process ID of the process.
+   *
+   * Note: This method requires JDK 9+
+   */
+  def pid: ZIO[Any, CommandError, Long] =
+    ZIO.attemptBlocking(process.pid()).refineOrDie { case CommandThrowable.IOError(e) =>
+      e
+    }
+
 }

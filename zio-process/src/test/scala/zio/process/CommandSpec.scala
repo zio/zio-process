@@ -3,7 +3,7 @@ package zio.process
 import zio.stream.ZPipeline
 import zio.test.Assertion._
 import zio.test._
-import zio.{ durationInt, Chunk, ExitCode, Queue, ZIO }
+import zio.{ durationInt, Chunk, ExitCode, Queue, System, ZIO }
 
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -208,7 +208,21 @@ object CommandSpec extends ZIOProcessBaseSpec {
                       toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
                     }
       } yield assertTrue(pidsAlive == Chunk(false, false, false))
-    } @@ TestAspect.nonFlaky(25)
+    } @@ TestAspect.nonFlaky(25),
+    test("interactive processes") {
+      for {
+        commandQueue <- Queue.unbounded[Chunk[Byte]]
+        process      <- Command("node", "-i").stdin(ProcessInput.fromQueue(commandQueue)).run
+        sep          <- System.lineSeparator
+        fiber        <- process.stdout.linesStream.foreach { line =>
+                          ZIO.debug(s"Response from REPL: $line")
+                        }.fork
+        _            <- commandQueue.offer(Chunk.fromArray(s"1+1${sep}".getBytes(StandardCharsets.UTF_8)))
+        _            <- commandQueue.offer(Chunk.fromArray(s"2**8${sep}".getBytes(StandardCharsets.UTF_8)))
+        _            <- commandQueue.offer(Chunk.fromArray(s"process.exit(0)${sep}".getBytes(StandardCharsets.UTF_8)))
+        _            <- fiber.join
+      } yield assertCompletes
+    } @@ TestAspect.withLiveClock
   )
 
   private def toScalaOption[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None

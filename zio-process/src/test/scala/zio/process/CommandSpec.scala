@@ -222,7 +222,13 @@ object CommandSpec extends ZIOProcessBaseSpec {
         _            <- commandQueue.offer(Chunk.fromArray(s"process.exit(0)${sep}".getBytes(StandardCharsets.UTF_8)))
         _            <- fiber.join
       } yield assertCompletes
-    } @@ TestAspect.withLiveClock
+    } @@ TestAspect.withLiveClock,
+    test("get pid of a running process") {
+      for {
+        process <- Command("ls").run
+        pid     <- process.pid
+      } yield assertTrue(pid > 0L)
+    }
   )
 
   private def toScalaOption[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None

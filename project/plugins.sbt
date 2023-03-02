@@ -16,7 +16,7 @@ addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.11")
 
 addSbtPlugin("com.github.reibitto" % "sbt-welcome" % "0.2.2")
 
-addSbtPlugin("dev.zio" % "zio-sbt-website" % "0.3.4")
+addSbtPlugin("dev.zio" % "zio-sbt-website" % "0.3.10")
 
 libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "2.6"
 

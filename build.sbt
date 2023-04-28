@@ -62,7 +62,7 @@ lazy val zioProcess =
       libraryDependencies ++= Seq(
         "dev.zio"                %% "zio"                     % zioVersion,
         "dev.zio"                %% "zio-streams"             % zioVersion,
-        "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0",
+        "org.scala-lang.modules" %% "scala-collection-compat" % "2.10.0",
         "dev.zio"                %% "zio-test"                % zioVersion % "test",
         "dev.zio"                %% "zio-test-sbt"            % zioVersion % "test"
       )

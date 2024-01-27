@@ -27,9 +27,24 @@ object CommandError {
   final case class WorkingDirectoryMissing(workingDirectory: File) extends CommandError(null)
   final case class NonZeroErrorCode(exitCode: ExitCode)            extends CommandError(null)
   final case class IOError(cause: IOException)                     extends CommandError(cause)
+  final case class Error(cause: Throwable)                         extends CommandError(cause)
 }
 
 private[process] object CommandThrowable {
+
+  def classify(throwable: Throwable): CommandError =
+    throwable match {
+      case c: CommandError => c
+      case e: IOException  =>
+        val notFoundErrorCode         = 2
+        val permissionDeniedErrorCode = if (OS.os == OS.Windows) 5 else 13
+        if (e.getMessage.contains(s"error=$notFoundErrorCode,")) {
+          CommandError.ProgramNotFound(e)
+        } else if (e.getMessage.contains(s"error=$permissionDeniedErrorCode,")) CommandError.PermissionDenied(e)
+        else CommandError.IOError(e)
+      case e               => CommandError.Error(e)
+    }
+
   object ProgramNotFound {
     def unapply(throwable: Throwable): Option[CommandError.ProgramNotFound] =
       throwable match {
@@ -61,5 +76,10 @@ private[process] object CommandThrowable {
         case e: IOException => Some(CommandError.IOError(e))
         case _              => None
       }
+  }
+
+  object Error {
+    def unapply(throwable: Throwable): Option[CommandError.Error] =
+      Some(CommandError.Error(throwable))
   }
 }

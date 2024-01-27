@@ -23,7 +23,16 @@ import java.io._
 import java.nio.charset.{ Charset, StandardCharsets }
 import scala.collection.mutable.ArrayBuffer
 
-final case class ProcessStream(private val inputStream: InputStream) {
+final case class ProcessStream(
+  private[process] val inputStream: InputStream,
+  private[process] val outputStream: Option[OutputStream] = None
+) {
+
+  private def close: ZIO[Any, Nothing, Unit] =
+    outputStream match {
+      case None      => ZIO.unit
+      case Some(out) => ZIO.succeed(out.close())
+    }
 
   /**
    * Return the output of this process as a list of lines (default encoding of UTF-8).
@@ -36,6 +45,7 @@ final case class ProcessStream(private val inputStream: InputStream) {
   def lines(charset: Charset): ZIO[Any, CommandError, Chunk[String]] =
     ZIO.scoped {
       for {
+        _      <- close
         reader <- ZIO.fromAutoCloseable(ZIO.succeed(new BufferedReader(new InputStreamReader(inputStream, charset))))
         chunks <- attemptBlockingCancelable {
                     val lines = new ArrayBuffer[String]
@@ -65,7 +75,10 @@ final case class ProcessStream(private val inputStream: InputStream) {
    * Return the output of this process as a chunked stream of bytes.
    */
   def stream: ZStream[Any, CommandError, Byte] =
-    ZStream.fromInputStreamZIO(ZIO.succeed(inputStream)).mapError(CommandError.IOError.apply)
+    ZStream
+      .fromInputStreamZIO(close *> ZIO.succeed(inputStream))
+      .ensuring(ZIO.succeed(inputStream.close()))
+      .mapError(CommandError.IOError.apply)
 
   /**
    * Return the entire output of this process as a string (default encoding of UTF-8).
@@ -74,18 +87,14 @@ final case class ProcessStream(private val inputStream: InputStream) {
 
   /**
    * Return the entire output of this process as a string with the specified encoding.
+   *
+   * Note: Needs Java 9 or greater.
    */
   def string(charset: Charset): ZIO[Any, CommandError, String] =
-    attemptBlockingCancelable {
-      val buffer = new Array[Byte](4096)
-      val result = new ByteArrayOutputStream
-      var length = 0
-
-      while ({ length = inputStream.read(buffer); length != -1 })
-        result.write(buffer, 0, length)
-
-      new String(result.toByteArray, charset)
-    }(ZIO.succeed(inputStream.close())).refineOrDie { case CommandThrowable.IOError(e) =>
-      e
-    }
+    close *>
+      ZIO.attemptBlockingCancelable {
+        new String(inputStream.readAllBytes(), charset)
+      }(ZIO.succeed(inputStream.close())).refineOrDie { case CommandThrowable.IOError(e) =>
+        e
+      }
 }

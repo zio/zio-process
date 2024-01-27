@@ -29,6 +29,9 @@ In order to use this library, we need to add the following line in our `build.sb
 libraryDependencies += "dev.zio" %% "zio-process" % "@VERSION@" 
 ```
 
+## Native support
+Some features might have a different behaviour when using Scala Native. Creating non-existent commands do not throw a corresponding error. `bash` command might be needed when executing a script. In some cases, using `ZStreams` as standard input might block the process. Instead, a Java `InputStream` can be used to write to the standard input of the process.
+
 ## Example
 
 Here is a simple example of using ZIO Process:

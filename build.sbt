@@ -1,5 +1,7 @@
 import BuildHelper._
 import sbtwelcome._
+import sbt.addSbtPlugin
+//import sbtcrossproject.CrossPlugin.autoImport._
 
 inThisBuild(
   List(
@@ -44,30 +46,47 @@ usefulTasks := Seq(
   UsefulTask("", "testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term")
 )
 
-val zioVersion = "2.0.9"
+val zioVersion = "2.0.21"
 
 lazy val root =
   project
     .in(file("."))
-    .settings(publish / skip := true)
-    .aggregate(zioProcess, docs)
+    .settings(
+      publish / skip := true,
+      crossScalaVersions := Nil
+    )
+    .aggregate(zioProcess.jvm, zioProcess.native, docs)
 
 lazy val zioProcess =
-  project
+  crossProject(JVMPlatform, NativePlatform)
     .in(file("zio-process"))
     .settings(stdSettings("zio-process"))
+    .settings(crossProjectSettings)
     .settings(buildInfoSettings("zio.process"))
-    .settings(
-      testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
+    .jvmSettings(testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")))
+    .jvmSettings(
       libraryDependencies ++= Seq(
         "dev.zio"                %% "zio"                     % zioVersion,
         "dev.zio"                %% "zio-streams"             % zioVersion,
         "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0",
-        "dev.zio"                %% "zio-test"                % zioVersion % "test",
-        "dev.zio"                %% "zio-test-sbt"            % zioVersion % "test"
+        "dev.zio"                %% "zio-test"                % zioVersion,
+        "dev.zio"                %% "zio-test-sbt"            % zioVersion
       )
     )
     .enablePlugins(BuildInfoPlugin)
+    .jvmSettings(dottySettings)
+    .nativeSettings(Test / fork := false)
+    .nativeSettings(testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")))
+    .nativeSettings(
+      libraryDependencies ++= Seq(
+        "dev.zio"                %%% "zio"                     % zioVersion,
+        "dev.zio"                %%% "zio-streams"             % zioVersion,
+        "org.scala-lang.modules" %%% "scala-collection-compat" % "2.9.0",
+        "dev.zio"                %%% "zio-test"                % zioVersion,
+        "dev.zio"                %%% "zio-test-sbt"            % zioVersion,
+        "io.github.cquiroz"      %%% "scala-java-time"         % "2.5.0" % Test
+      )
+    )
 
 lazy val docs = project
   .in(file("zio-process-docs"))
@@ -76,13 +95,12 @@ lazy val docs = project
     moduleName := "zio-process-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",
-    crossScalaVersions -= Scala211,
     libraryDependencies ++= Seq("dev.zio" %% "zio" % zioVersion),
     projectName := "ZIO Process",
-    mainModuleName := (zioProcess / moduleName).value,
+    mainModuleName := (zioProcess.jvm / moduleName).value,
     projectStage := ProjectStage.ProductionReady,
-    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioProcess),
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioProcess.jvm),
     docsPublishBranch := "series/2.x"
   )
-  .dependsOn(zioProcess)
+  .dependsOn(zioProcess.jvm)
   .enablePlugins(WebsitePlugin)

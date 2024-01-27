@@ -18,34 +18,28 @@ package zio.process
 import zio.stream.ZStream
 import zio.{ Chunk, Queue }
 
-import java.io.{ ByteArrayInputStream, File }
+import java.io.ByteArrayInputStream
 import java.nio.charset.{ Charset, StandardCharsets }
+import java.io.File
 import java.nio.file.Path
+import java.io.InputStream
+import java.io.FileInputStream
 
 sealed trait ProcessInput
 
 object ProcessInput {
   final case class FromStream(stream: ZStream[Any, CommandError, Byte], flushChunksEagerly: Boolean)
       extends ProcessInput
-
-  case object Inherit extends ProcessInput
-  case object Pipe    extends ProcessInput
-
-  /**
-   * Returns a ProcessInput from an array of bytes.
-   */
-  def fromByteArray(bytes: Array[Byte]): ProcessInput =
-    ProcessInput.FromStream(
-      ZStream.fromInputStream(new ByteArrayInputStream(bytes)).mapError(CommandError.IOError.apply),
-      flushChunksEagerly = false
-    )
+  final case class JavaStream(stream: InputStream, flushChunksEagerly: Boolean) extends ProcessInput
+  case object Inherit                                                           extends ProcessInput
+  case object Pipe                                                              extends ProcessInput
 
   /**
    * Returns a ProcessInput from a file.
    */
-  def fromFile(file: File, chunkSize: Int = ZStream.DefaultChunkSize): ProcessInput =
-    ProcessInput.FromStream(
-      ZStream.fromFile(file, chunkSize).refineOrDie { case CommandThrowable.IOError(e) => e },
+  def fromFile(file: File): ProcessInput =
+    ProcessInput.JavaStream(
+      new FileInputStream(file),
       flushChunksEagerly = false
     )
 
@@ -55,6 +49,15 @@ object ProcessInput {
   def fromPath(path: Path, chunkSize: Int = ZStream.DefaultChunkSize): ProcessInput =
     ProcessInput.FromStream(
       ZStream.fromPath(path, chunkSize).refineOrDie { case CommandThrowable.IOError(e) => e },
+      flushChunksEagerly = false
+    )
+
+  /**
+   * Returns a ProcessInput from an array of bytes.
+   */
+  def fromByteArray(bytes: Array[Byte]): ProcessInput =
+    ProcessInput.FromStream(
+      ZStream.fromInputStream(new ByteArrayInputStream(bytes)).mapError(CommandError.IOError.apply),
       flushChunksEagerly = false
     )
 
@@ -77,14 +80,14 @@ object ProcessInput {
    * Returns a ProcessInput from a String with the given charset.
    */
   def fromString(text: String, charset: Charset): ProcessInput =
-    ProcessInput.FromStream(ZStream.fromChunks(Chunk.fromArray(text.getBytes(charset))), flushChunksEagerly = false)
+    ProcessInput.JavaStream(new ByteArrayInputStream(text.getBytes(charset)), flushChunksEagerly = false)
 
   /**
    * Returns a ProcessInput from a UTF-8 String.
    */
   def fromUTF8String(text: String): ProcessInput =
-    ProcessInput.FromStream(
-      ZStream.fromChunks(Chunk.fromArray(text.getBytes(StandardCharsets.UTF_8))),
+    ProcessInput.JavaStream(
+      new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)),
       flushChunksEagerly = false
     )
 }

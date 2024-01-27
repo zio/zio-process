@@ -2,6 +2,7 @@ import sbt.Keys._
 import sbt._
 import sbtbuildinfo.BuildInfoKeys._
 import sbtbuildinfo._
+import sbtcrossproject.CrossPlugin.autoImport._
 
 object BuildHelper {
   private val versions: Map[String, String] = {
@@ -18,7 +19,6 @@ object BuildHelper {
     }.toMap
   }
 
-  val Scala211: String = versions("2.11")
   val Scala212: String = versions("2.12")
   val Scala213: String = versions("2.13")
   val Scala3: String   = versions("3")
@@ -93,9 +93,85 @@ object BuildHelper {
   def stdSettings(prjName: String) = Seq(
     name := s"$prjName",
     fork := true,
-    crossScalaVersions := Seq(Scala211, Scala212, Scala213, Scala3),
+    crossScalaVersions := Seq(Scala212, Scala213, Scala3),
     ThisBuild / scalaVersion := Scala213,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
     incOptions ~= (_.withLogRecompileOnMacro(false))
   )
+
+  def platformSpecificSources(platform: String, conf: String, baseDirectory: File)(versions: String*) =
+    for {
+      platform <- List("shared", platform)
+      version  <- "scala" :: versions.toList.map("scala-" + _)
+      result    = baseDirectory.getParentFile / platform.toLowerCase / "src" / conf / version
+      if result.exists
+    } yield result
+
+  def crossPlatformSources(scalaVer: String, platform: String, conf: String, baseDir: File) = {
+    val versions = CrossVersion.partialVersion(scalaVer) match {
+      case Some((2, 11)) =>
+        List("2.11", "2.11+", "2.11-2.12", "2.x")
+      case Some((2, 12)) =>
+        List("2.12", "2.11+", "2.12+", "2.11-2.12", "2.12-2.13", "2.x")
+      case Some((2, 13)) =>
+        List("2.13", "2.11+", "2.12+", "2.13+", "2.12-2.13", "2.x")
+      case Some((3, 0))  =>
+        List("dotty", "2.11+", "2.12+", "2.13+", "3.x")
+      case _             =>
+        List()
+    }
+    platformSpecificSources(platform, conf, baseDir)(versions: _*)
+  }
+
+  lazy val crossProjectSettings = Seq(
+    Compile / unmanagedSourceDirectories ++= {
+      crossPlatformSources(
+        scalaVersion.value,
+        crossProjectPlatform.value.identifier,
+        "main",
+        baseDirectory.value
+      )
+    },
+    Test / unmanagedSourceDirectories ++= {
+      crossPlatformSources(
+        scalaVersion.value,
+        crossProjectPlatform.value.identifier,
+        "test",
+        baseDirectory.value
+      )
+    }
+  )
+
+  val dottySettings = Seq(
+    crossScalaVersions += Scala3,
+    scalacOptions ++= {
+      if (scalaVersion.value == Scala3)
+        Seq("-noindent")
+      else
+        Seq()
+    },
+    scalacOptions --= {
+      if (scalaVersion.value == Scala3)
+        Seq("-Xfatal-warnings")
+      else
+        Seq()
+    },
+    Compile / doc / sources := {
+      val old = (Compile / doc / sources).value
+      if (scalaVersion.value == Scala3) {
+        Nil
+      } else {
+        old
+      }
+    },
+    Test / parallelExecution := {
+      val old = (Test / parallelExecution).value
+      if (scalaVersion.value == Scala3) {
+        false
+      } else {
+        old
+      }
+    }
+  )
+
 }

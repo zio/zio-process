@@ -22,8 +22,6 @@ import java.io.File
 import java.lang.ProcessBuilder.Redirect
 import java.nio.charset.Charset
 import scala.jdk.CollectionConverters._
-import java.io.InputStream
-import java.io.IOException
 import java.io.OutputStream
 
 sealed trait Command extends CommandPlatformSpecific {

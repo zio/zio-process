@@ -69,8 +69,8 @@ lazy val zioProcess =
         "dev.zio"                %% "zio"                     % zioVersion,
         "dev.zio"                %% "zio-streams"             % zioVersion,
         "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0",
-        "dev.zio"                %% "zio-test"                % zioVersion,
-        "dev.zio"                %% "zio-test-sbt"            % zioVersion
+        "dev.zio"                %% "zio-test"                % zioVersion % Test,
+        "dev.zio"                %% "zio-test-sbt"            % zioVersion % Test
       )
     )
     .enablePlugins(BuildInfoPlugin)
@@ -82,9 +82,9 @@ lazy val zioProcess =
         "dev.zio"                %%% "zio"                     % zioVersion,
         "dev.zio"                %%% "zio-streams"             % zioVersion,
         "org.scala-lang.modules" %%% "scala-collection-compat" % "2.9.0",
-        "dev.zio"                %%% "zio-test"                % zioVersion,
-        "dev.zio"                %%% "zio-test-sbt"            % zioVersion,
-        "io.github.cquiroz"      %%% "scala-java-time"         % "2.5.0" % Test
+        "dev.zio"                %%% "zio-test"                % zioVersion % Test,
+        "dev.zio"                %%% "zio-test-sbt"            % zioVersion % Test,
+        "io.github.cquiroz"      %%% "scala-java-time"         % "2.5.0"    % Test
       )
     )
 

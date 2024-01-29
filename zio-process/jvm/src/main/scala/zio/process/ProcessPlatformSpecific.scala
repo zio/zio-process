@@ -15,62 +15,21 @@
  */
 package zio.process
 
-import zio.ZIO.{ attemptBlockingCancelable, attemptBlockingInterrupt }
-import zio.{ ExitCode, UIO, ZIO }
+import zio.ZIO
 
-import java.lang.{ Process => JProcess }
 import scala.jdk.CollectionConverters._
 
-final case class Process(private val process: JProcess) {
+private[process] trait ProcessPlatformSpecific { self: Process =>
 
   /**
    * Access the standard output stream.
    */
-  val stdout: ProcessStream = ProcessStream(process.getInputStream())
+  val stdout: ProcessStream = ProcessStream(self.process.getInputStream(), None)
 
   /**
    * Access the standard error stream.
    */
-  val stderr: ProcessStream = ProcessStream(process.getErrorStream())
-
-  /**
-   * Access the underlying Java Process wrapped in a blocking ZIO.
-   */
-  def execute[T](f: JProcess => T): ZIO[Any, CommandError, T] =
-    attemptBlockingInterrupt(f(process)).refineOrDie { case CommandThrowable.IOError(e) => e }
-
-  /**
-   * Return the exit code of this process.
-   */
-  def exitCode: ZIO[Any, CommandError, ExitCode]              =
-    attemptBlockingCancelable(ExitCode(process.waitFor()))(ZIO.succeed(process.destroy())).refineOrDie {
-      case CommandThrowable.IOError(e) => e
-    }
-
-  /**
-   * Tests whether the process is still alive (not terminated or completed).
-   */
-  def isAlive: UIO[Boolean] = ZIO.succeed(process.isAlive)
-
-  /**
-   * Kills the process and will wait until completed. Equivalent to SIGTERM on Unix platforms.
-   */
-  def kill: ZIO[Any, CommandError, Unit] =
-    execute { process =>
-      process.destroy()
-      process.waitFor()
-      ()
-    }
-
-  /**
-   * Kills the process and will wait until completed. Equivalent to SIGKILL on Unix platforms.
-   */
-  def killForcibly: ZIO[Any, CommandError, Unit] =
-    execute { process =>
-      process.destroyForcibly()
-      process.waitFor()
-      ()
-    }
+  val stderr: ProcessStream = ProcessStream(self.process.getErrorStream(), None)
 
   /**
    * Kills the entire process tree and will wait until completed. Equivalent to SIGTERM on Unix platforms.
@@ -78,7 +37,7 @@ final case class Process(private val process: JProcess) {
    * Note: This method requires JDK 9+
    */
   def killTree: ZIO[Any, CommandError, Unit] =
-    execute { process =>
+    self.execute { process =>
       val descendants = process.descendants().iterator().asScala.toSeq
       descendants.foreach(_.destroy())
 
@@ -99,7 +58,7 @@ final case class Process(private val process: JProcess) {
    * Note: This method requires JDK 9+
    */
   def killTreeForcibly: ZIO[Any, CommandError, Unit] =
-    execute { process =>
+    self.execute { process =>
       val descendants = process.descendants().iterator().asScala.toSeq
       descendants.foreach(_.destroyForcibly())
 
@@ -115,20 +74,13 @@ final case class Process(private val process: JProcess) {
     }
 
   /**
-   * Return the exit code of this process if it is zero. If non-zero, it will fail with `CommandError.NonZeroErrorCode`.
-   */
-  def successfulExitCode: ZIO[Any, CommandError, ExitCode] =
-    attemptBlockingCancelable(ExitCode(process.waitFor()))(ZIO.succeed(process.destroy())).refineOrDie {
-      case CommandThrowable.IOError(e) => e: CommandError
-    }.filterOrElseWith(_ == ExitCode.success)(exitCode => ZIO.fail(CommandError.NonZeroErrorCode(exitCode)))
-
-  /**
    * Returns the native process ID of the process.
    *
    * Note: This method requires JDK 9+
    */
   def pid: ZIO[Any, CommandError, Long] =
-    execute { process =>
+    self.execute { process =>
       process.pid()
     }
+
 }

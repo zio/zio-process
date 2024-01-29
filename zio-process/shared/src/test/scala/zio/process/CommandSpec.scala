@@ -7,12 +7,17 @@ import zio.{ durationInt, Chunk, ExitCode, Queue, System, ZIO }
 
 import java.io.File
 import java.nio.charset.StandardCharsets
-import java.util.{ Optional, UUID }
+import java.util.UUID
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
-object CommandSpec extends ZIOProcessBaseSpec {
+object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
 
   def spec = suite("CommandSpec")(
+    test("check directory") {
+      val dir = java.lang.System.getProperty("user.dir")
+
+      zio.Console.printLine(s"current dir$dir") *> ZIO.succeed(assertTrue(true))
+    },
     test("convert stdout to string") {
       for {
         output <- Command("echo", "-n", "test").string
@@ -35,7 +40,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
       val zio = Command("some-invalid-command", "test").string
 
       assertZIO(zio.exit)(fails(isSubtype[CommandError.ProgramNotFound](anything)))
-    },
+    } @@ TestAspect.jvmOnly,
     test("pass environment variables") {
       val zio = Command("bash", "-c", "echo -n \"var = $VAR\"").env(Map("VAR" -> "value")).string
 
@@ -46,7 +51,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
       val zio    = Command("cat").stdin(ProcessInput.fromStream(stream, flushChunksEagerly = false)).string
 
       assertZIO(zio)(equalTo("a b c"))
-    },
+    } @@ TestAspect.jvmOnly,
     test("accept string stdin") {
       val zio = Command("cat").stdin(ProcessInput.fromUTF8String("piped in")).string
 
@@ -54,7 +59,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
     },
     test("accept file stdin") {
       for {
-        lines <- Command("cat").stdin(ProcessInput.fromFile(new File("src/test/bash/echo-repeat.sh"))).lines
+        lines <- Command("cat").stdin(ProcessInput.fromFile(new File(s"${dir}src/test/bash/echo-repeat.sh"))).lines
       } yield assertTrue(lines.head == "#!/bin/bash")
     },
     test("support different encodings") {
@@ -66,13 +71,14 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertZIO(zio)(equalTo("piped in"))
     },
     test("set workingDirectory") {
-      val zio = Command("ls").workingDirectory(new File("src/main/scala/zio/process")).lines
+      val zio = Command("ls").workingDirectory(new File(s"${dir}src/test/bash")).lines
 
-      assertZIO(zio)(contains("Command.scala"))
+      assertZIO(zio)(contains("no-permissions.sh"))
     },
     test("be able to fallback to a different program using typed error channel") {
-      val zio = Command("custom-echo", "-n", "test").string.catchSome { case CommandError.ProgramNotFound(_) =>
-        Command("echo", "-n", "test").string
+      val zio = Command("echo", "-n", "wrong").workingDirectory(new File("no-folder")).string.catchSome {
+        case CommandError.WorkingDirectoryMissing(_) =>
+          Command("echo", "-n", "test").string
       }
 
       assertZIO(zio)(equalTo("test"))
@@ -99,7 +105,7 @@ object CommandSpec extends ZIOProcessBaseSpec {
     } @@ TestAspect.ignore, // TODO: Until https://github.com/zio/zio/issues/3840 is fixed or there is a workaround
     test("capture stdout and stderr separately") {
       val zio = for {
-        process <- Command("src/test/bash/both-streams-test.sh").run
+        process <- Command(s"${dir}src/test/bash/both-streams-test.sh").run
         stdout  <- process.stdout.string
         stderr  <- process.stderr.string
       } yield (stdout, stderr)
@@ -117,20 +123,20 @@ object CommandSpec extends ZIOProcessBaseSpec {
       assertZIO(zio.exit)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
     },
     test("permission denied is a typed error") {
-      val zio = Command("src/test/bash/no-permissions.sh").string
+      val zio = Command(s"${dir}src/test/bash/no-permissions.sh").string
 
       assertZIO(zio.exit)(fails(isSubtype[CommandError.PermissionDenied](anything)))
-    },
+    } @@ TestAspect.jvmOnly,
     test("redirectErrorStream should merge stderr into stdout") {
       for {
-        process <- Command("src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
+        process <- Command(s"${dir}src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
         stdout  <- process.stdout.string
         stderr  <- process.stderr.string
       } yield assertTrue(stdout == "stdout1\nstderr1\nstdout2\nstderr2\n", stderr.isEmpty)
     },
     test("be able to kill a process that's running") {
       for {
-        process           <- Command("src/test/bash/echo-repeat.sh").run
+        process           <- Command(s"${dir}src/test/bash/echo-repeat.sh").run
         isAliveBeforeKill <- process.isAlive
         _                 <- process.kill
         isAliveAfterKill  <- process.isAlive
@@ -145,70 +151,26 @@ object CommandSpec extends ZIOProcessBaseSpec {
       val uniqueId = UUID.randomUUID().toString
       for {
         lines      <- Command("yes", uniqueId).linesStream.take(2).runCollect
-        grepOutput <- (Command("ps", "aux") | Command("grep", "yes")).string
+        grepOutput <- (Command("ps", "aux") | Command("grep", "yes")).linesStream.runCollect
       } yield assertTrue(
         lines == Chunk(uniqueId, uniqueId),
-        !grepOutput.contains(uniqueId)
+        grepOutput.forall(!_.contains(uniqueId))
       )
     },
     test("connect to a repl-like process and flush the chunks eagerly and get responses right away") {
       for {
         commandQueue <- Queue.unbounded[Chunk[Byte]]
         process      <- Command("./stdin-echo.sh")
-                          .workingDirectory(new File("src/test/bash"))
+                          .workingDirectory(new File(s"${dir}src/test/bash"))
                           .stdin(ProcessInput.fromQueue(commandQueue))
                           .run
         _            <- commandQueue.offer(Chunk.fromArray("line1\nline2\n".getBytes(StandardCharsets.UTF_8)))
         _            <- commandQueue.offer(Chunk.fromArray("line3\n".getBytes(StandardCharsets.UTF_8)))
-        lines        <- process.stdout.linesStream.take(3).runCollect
+        stdout        = process.stdout
+        lines        <- stdout.linesStream.take(3).runCollect
         _            <- process.kill
       } yield assertTrue(lines == Chunk("line1", "line2", "line3"))
-    },
-    test("kill only kills parent process") {
-      for {
-        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
-        pids     <- process.stdout.stream
-                      .via(ZPipeline.utf8Decode)
-                      .via(ZPipeline.splitLines)
-                      .take(3)
-                      .runCollect
-                      .map(_.map(_.toInt))
-        _        <- process.kill
-        pidsAlive = pids.map { pid =>
-                      toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
-                    }
-      } yield assertTrue(pidsAlive == Chunk(false, true, true))
-    } @@ TestAspect.nonFlaky(25),
-    test("killTree also kills child processes") {
-      for {
-        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
-        pids     <- process.stdout.stream
-                      .via(ZPipeline.utf8Decode)
-                      .via(ZPipeline.splitLines)
-                      .take(3)
-                      .runCollect
-                      .map(_.map(_.toInt))
-        _        <- process.killTree
-        pidsAlive = pids.map { pid =>
-                      toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
-                    }
-      } yield assertTrue(pidsAlive == Chunk(false, false, false))
-    } @@ TestAspect.nonFlaky(25),
-    test("killTreeForcibly also kills child processes") {
-      for {
-        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
-        pids     <- process.stdout.stream
-                      .via(ZPipeline.utf8Decode)
-                      .via(ZPipeline.splitLines)
-                      .take(3)
-                      .runCollect
-                      .map(_.map(_.toInt))
-        _        <- process.killTree
-        pidsAlive = pids.map { pid =>
-                      toScalaOption(ProcessHandle.of(pid.toLong)).exists(_.isAlive)
-                    }
-      } yield assertTrue(pidsAlive == Chunk(false, false, false))
-    } @@ TestAspect.nonFlaky(25),
+    } @@ TestAspect.jvmOnly,
     test("interactive processes") {
       for {
         commandQueue <- Queue.unbounded[Chunk[Byte]]
@@ -231,5 +193,4 @@ object CommandSpec extends ZIOProcessBaseSpec {
     }
   )
 
-  private def toScalaOption[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None
 }

@@ -25,13 +25,13 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
 
   import ProcessPlatformSpecific._
 
-  def waitForUnsafe: Int = self.process.waitFor()
+  protected def waitForUnsafe: Int = self.process.waitFor()
 
-  def isAliveUnsafe: Boolean          = self.process.isAlive()
-  def destroyUnsafe(): Unit           = self.process.destroy()
-  def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
+  protected def isAliveUnsafe: Boolean          = self.process.isAlive()
+  protected def destroyUnsafe(): Unit           = self.process.destroy()
+  protected def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
 
-  def pidUnsafe: Long = findFirstNumber(self.process.toString()).toLong
+  protected def pidUnsafe: Long = findFirstNumber(self.process.toString()).toLong
 
   private def findFirstNumber(str: String): String =
     str.headOption match {
@@ -45,10 +45,10 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
       case Some(c) => if (!c.isDigit) "" else s"$c${getFirstNumber(str.tail)}"
     }
 
-  def getInputStream: InputStream   = self.process.getInputStream()
-  def getOutputStream: OutputStream = self.process.getOutputStream()
-  def getErrorStream: InputStream   = self.process.getErrorStream()
-  def get: Option[OutputStream]     = Some(getOutputStream)
+  protected def getInputStream: InputStream   = self.process.getInputStream()
+  protected def getOutputStream: OutputStream = self.process.getOutputStream()
+  protected def getErrorStream: InputStream   = self.process.getErrorStream()
+  protected def get: Option[OutputStream]     = Some(getOutputStream)
 
 }
 

@@ -28,36 +28,33 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
   import ProcessPlatformSpecific._
 
   private var killed = false
-  /*self.process.on("exit", { (_: js.Dynamic) =>
-    alive = false
-  })*/
 
-  def waitForUnsafe: Int = self.process.exitCode
+  protected def waitForUnsafe: Int = self.process.exitCode
 
-  def isAliveUnsafe: Boolean = !killed
-  def destroyUnsafe(): Unit = {
+  protected def isAliveUnsafe: Boolean = !killed
+  protected def destroyUnsafe(): Unit = {
     val wasKilled = self.process.kill()
     killed = wasKilled
   }
 
-  def destroyForciblyUnsafe: JProcess = {
+  protected def destroyForciblyUnsafe: JProcess = {
     self.process.kill()
     self.process
   }
 
-  def pidUnsafe: Long = {
+  protected def pidUnsafe: Long = {
     val pid = self.process.pid
     if (js.isUndefined(pid)) null.asInstanceOf[Long] else pid.asInstanceOf[Int].toLong
   }
 
-  lazy val stdinInternal            = ProcessPlatformSpecific.JSOutputStream(self.process.stdin)
-  lazy val stdoutInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stdout)
-  lazy val stderrInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stderr)
-  def getInputStream: InputStream   = stdoutInternal
-  def getOutputStream: OutputStream = stdinInternal
-  def getErrorStream: InputStream   = stderrInternal
+  protected lazy val stdinInternal            = ProcessPlatformSpecific.JSOutputStream(self.process.stdin)
+  protected lazy val stdoutInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stdout)
+  protected lazy val stderrInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stderr)
+  protected def getInputStream: InputStream   = stdoutInternal
+  protected def getOutputStream: OutputStream = stdinInternal
+  protected def getErrorStream: InputStream   = stderrInternal
 
-  def get: Option[OutputStream] = Some(stdinInternal)
+  protected def get: Option[OutputStream] = Some(stdinInternal)
 
 }
 

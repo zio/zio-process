@@ -25,23 +25,23 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
 
   import ProcessPlatformSpecific._
 
-  def waitForUnsafe: Int = self.process.waitFor()
+  protected def waitForUnsafe: Int = self.process.waitFor()
 
-  def isAliveUnsafe: Boolean          = self.process.isAlive()
-  def destroyUnsafe(): Unit           = self.process.destroy()
-  def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
+  protected def isAliveUnsafe: Boolean          = self.process.isAlive()
+  protected def destroyUnsafe(): Unit           = self.process.destroy()
+  protected def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
 
-  def pidUnsafe: Long = self.process.pid
+  protected def pidUnsafe: Long = self.process.pid
 
-  def getInputStream: InputStream   = self.process.getInputStream()
-  def getOutputStream: OutputStream = self.process.getOutputStream()
-  def getErrorStream: InputStream   = self.process.getErrorStream()
-  def get: Option[OutputStream]     = None
+  protected def getInputStream: InputStream   = self.process.getInputStream()
+  protected def getOutputStream: OutputStream = self.process.getOutputStream()
+  protected def getErrorStream: InputStream   = self.process.getErrorStream()
+  protected def get: Option[OutputStream]     = None
 
-  def destroyHandle(handle: ProcessHandle): Boolean         = handle.destroy()
-  def destroyForciblyHandle(handle: ProcessHandle): Boolean = handle.destroyForcibly()
-  def isAliveHandle(handle: ProcessHandle): Boolean         = handle.isAlive()
-  def onExitHandle(handle: ProcessHandle)                   = handle.onExit()
+  protected def destroyHandle(handle: ProcessHandle): Boolean         = handle.destroy()
+  protected def destroyForciblyHandle(handle: ProcessHandle): Boolean = handle.destroyForcibly()
+  protected def isAliveHandle(handle: ProcessHandle): Boolean         = handle.isAlive()
+  protected def onExitHandle(handle: ProcessHandle)                   = handle.onExit()
 
   /**
    * Kills the entire process tree and will wait until completed. Equivalent to SIGTERM on Unix platforms.

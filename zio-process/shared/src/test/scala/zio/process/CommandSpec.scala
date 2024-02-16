@@ -177,7 +177,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
         _            <- commandQueue.offer(Chunk.fromArray(s"process.exit(0)${sep}".getBytes(StandardCharsets.UTF_8)))
         _            <- fiber.join
       } yield assertCompletes
-    } @@ TestAspect.withLiveClock @@ TestAspect.jvmOnly,
+    } @@ TestAspect.withLiveClock @@ TestAspect.exceptJS,
     test("get pid of a running process") {
       for {
         process <- Command("ls").run

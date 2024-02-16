@@ -4,12 +4,12 @@ import ProcessPlatformSpecific._
 
 private[process] trait ProcessInterface {
 
-  def waitForUnsafe: Int
+  protected def waitForUnsafe: Int
 
-  def isAliveUnsafe: Boolean
-  def destroyUnsafe(): Unit
-  def destroyForciblyUnsafe: JProcess
+  protected def isAliveUnsafe: Boolean
+  protected def destroyUnsafe(): Unit
+  protected def destroyForciblyUnsafe: JProcess
 
-  def pidUnsafe: Long
+  protected def pidUnsafe: Long
 
 }

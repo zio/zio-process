@@ -33,10 +33,10 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
 
   protected def pidUnsafe: Long = self.process.pid
 
-  protected def getInputStream: InputStream   = self.process.getInputStream()
-  def getOutputStream: OutputStream = self.process.getOutputStream()
-  protected def getErrorStream: InputStream   = self.process.getErrorStream()
-  protected def get: Option[OutputStream]     = None
+  protected def getInputStream: InputStream = self.process.getInputStream()
+  def getOutputStream: OutputStream         = self.process.getOutputStream()
+  protected def getErrorStream: InputStream = self.process.getErrorStream()
+  protected def get: Option[OutputStream]   = None
 
   protected def destroyHandle(handle: ProcessHandle): Boolean         = handle.destroy()
   protected def destroyForciblyHandle(handle: ProcessHandle): Boolean = handle.destroyForcibly()

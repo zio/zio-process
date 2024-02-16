@@ -47,12 +47,12 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
     if (js.isUndefined(pid)) null.asInstanceOf[Long] else pid.asInstanceOf[Int].toLong
   }
 
-  protected lazy val stdinInternal            = ProcessPlatformSpecific.JSOutputStream(self.process.stdin)
-  protected lazy val stdoutInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stdout)
-  protected lazy val stderrInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stderr)
-  protected def getInputStream: InputStream   = stdoutInternal
-  def getOutputStream: OutputStream = stdinInternal
-  protected def getErrorStream: InputStream   = stderrInternal
+  protected lazy val stdinInternal          = ProcessPlatformSpecific.JSOutputStream(self.process.stdin)
+  protected lazy val stdoutInternal         = ProcessPlatformSpecific.JSInputStream(self.process.stdout)
+  protected lazy val stderrInternal         = ProcessPlatformSpecific.JSInputStream(self.process.stderr)
+  protected def getInputStream: InputStream = stdoutInternal
+  def getOutputStream: OutputStream         = stdinInternal
+  protected def getErrorStream: InputStream = stderrInternal
 
   protected def get: Option[OutputStream] = Some(stdinInternal)
 

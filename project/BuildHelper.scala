@@ -5,23 +5,10 @@ import sbtbuildinfo._
 import sbtcrossproject.CrossPlugin.autoImport._
 
 object BuildHelper {
-  private val versions: Map[String, String] = {
-    import org.snakeyaml.engine.v2.api.{ Load, LoadSettings }
 
-    import java.util.{ List => JList, Map => JMap }
-    import scala.jdk.CollectionConverters._
-    val doc  = new Load(LoadSettings.builder().build())
-      .loadFromReader(scala.io.Source.fromFile(".github/workflows/ci.yml").bufferedReader())
-    val yaml = doc.asInstanceOf[JMap[String, JMap[String, JMap[String, JMap[String, JMap[String, JList[String]]]]]]]
-    val list = yaml.get("jobs").get("test").get("strategy").get("matrix").get("scala").asScala
-    list.map { v =>
-      val vs = v.split('.'); val init = vs.take(vs(0) match { case "2" => 2; case _ => 1 }); (init.mkString("."), v)
-    }.toMap
-  }
-
-  val Scala212: String = versions("2.12")
-  val Scala213: String = versions("2.13")
-  val Scala3: String   = versions("3")
+  val Scala212 = "2.12.18"
+  val Scala213 = "2.13.11"
+  val Scala3   = "3.3.1"
 
   private val stdOptions = Seq(
     "-encoding",
@@ -30,8 +17,7 @@ object BuildHelper {
     "-language:higherKinds",
     "-language:existentials",
     "-unchecked",
-    "-deprecation",
-    "-Xfatal-warnings"
+    "-deprecation"
   )
 
   private val stdOpts213 = Seq(
@@ -51,7 +37,8 @@ object BuildHelper {
     "-Ywarn-infer-any",
     "-Ywarn-inaccessible",
     "-Ywarn-nullary-unit",
-    "-Ywarn-unused-import"
+    "-Ywarn-unused-import",
+    "-Xfatal-warnings"
   )
 
   private val stdOptsUpto211 = Seq(
@@ -145,10 +132,11 @@ object BuildHelper {
   val dottySettings = Seq(
     crossScalaVersions += Scala3,
     scalacOptions ++= {
-      if (scalaVersion.value == Scala3)
-        Seq("-noindent")
-      else
-        Seq()
+      (scalaVersion.value, crossProjectPlatform.value.identifier) match {
+        case (Scala3, "js") => Seq("-noindent", "-scalajs")
+        case (Scala3, _)    => Seq("-noindent")
+        case _              => Seq()
+      }
     },
     scalacOptions --= {
       if (scalaVersion.value == Scala3)

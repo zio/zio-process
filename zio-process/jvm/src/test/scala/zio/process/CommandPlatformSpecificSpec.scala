@@ -4,7 +4,7 @@ import zio.stream.ZPipeline
 import zio.test._
 import zio.Chunk
 
-import java.io.File
+import FilePlatformSpecific._
 import java.util.Optional
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place

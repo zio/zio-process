@@ -15,30 +15,23 @@
  */
 package zio.process
 
+import java.io.InputStream
+import java.io.OutputStream
 import zio.ZIO
+import java.io.PushbackInputStream
+import scala.annotation.nowarn
 
 private[process] trait ProcessPlatformSpecific { self: Process =>
 
-  /**
-   * Access the standard output stream.
-   */
-  val stdout: ProcessStream = ProcessStream(self.process.getInputStream(), Some(self.process.getOutputStream()))
+  import ProcessPlatformSpecific._
 
-  /**
-   * Access the standard error stream.
-   */
-  val stderr: ProcessStream = ProcessStream(self.process.getErrorStream(), Some(self.process.getOutputStream()))
+  def waitForUnsafe: Int = self.process.waitFor()
 
-  /**
-   * Returns the native process ID of the process.
-   *
-   * Note: This method needs to be implemented in scala-native `java.lang.Process`.
-   * Until then, this works.
-   */
-  def pid: ZIO[Any, CommandError, Long] =
-    self.execute { process =>
-      findFirstNumber(process.toString()).toLong
-    }
+  def isAliveUnsafe: Boolean          = self.process.isAlive()
+  def destroyUnsafe(): Unit           = self.process.destroy()
+  def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
+
+  def pidUnsafe: Long = findFirstNumber(self.process.toString()).toLong
 
   private def findFirstNumber(str: String): String =
     str.headOption match {
@@ -51,5 +44,54 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
       case None    => ""
       case Some(c) => if (!c.isDigit) "" else s"$c${getFirstNumber(str.tail)}"
     }
+
+  def getInputStream: InputStream   = self.process.getInputStream()
+  def getOutputStream: OutputStream = self.process.getOutputStream()
+  def getErrorStream: InputStream   = self.process.getErrorStream()
+  def get: Option[OutputStream]     = Some(getOutputStream)
+
+}
+
+private[process] object ProcessPlatformSpecific {
+
+  type JProcess = java.lang.Process
+
+  @nowarn
+  def wait(in: InputStream): ZIO[Any, Throwable, Unit] = ZIO.unit
+
+  /**
+   * Connect a Java `InputStream` to the standard input of the process.
+   */
+  def connectJavaStream(process: Process, stream: InputStream, flush: Boolean): ZIO[Any, CommandError, Unit] =
+    for {
+      outputStream <- process.execute(_.getOutputStream)
+      s             = new PushbackInputStream(stream)
+      _            <- loop {
+                        val r = s.read()
+                        if (r > 0) {
+                          s.unread(r)
+                          true
+                        } else false
+                      }(
+                        for {
+                          _ <- ZIO.attemptBlockingInterrupt {
+                                 s.transferTo(outputStream)
+                                 if (flush) outputStream.flush()
+                               }.mapError(CommandThrowable.classify)
+                        } yield ()
+                      ).ensuring(ZIO.succeed {
+                        s.close()
+                        outputStream.close()
+                      }).orDie
+      _            <- ZIO.succeed(s.close())
+      _            <- ZIO.succeed(stream.close())
+      _            <- ZIO.succeed(outputStream.close())
+    } yield ()
+
+  private def loop[A](cond: => Boolean)(z: ZIO[Any, CommandError, A]): ZIO[Any, CommandError, Unit] =
+    for {
+      bool <- ZIO.attemptBlockingInterrupt(cond).mapError(CommandThrowable.classify)
+      _    <- if (bool) z *> loop(cond)(z) else ZIO.unit
+    } yield ()
 
 }

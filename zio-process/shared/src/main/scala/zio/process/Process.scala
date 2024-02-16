@@ -18,22 +18,25 @@ package zio.process
 import zio.ZIO.{ attemptBlockingCancelable, attemptBlockingInterrupt }
 import zio.{ ExitCode, UIO, ZIO }
 
-import java.lang.{ Process => JProcess }
 import java.io.InputStream
-import java.io.PushbackInputStream
+import ProcessPlatformSpecific._
 
 final case class Process(private[process] val process: JProcess) extends ProcessPlatformSpecific { self =>
 
   /**
+   * Access the standard output stream.
+   */
+  val stdout: ProcessStream = ProcessStream(getInputStream, get)
+
+  /**
+   * Access the standard error stream.
+   */
+  val stderr: ProcessStream = ProcessStream(getErrorStream, get)
+
+  /**
    * Access the standard output as an Java `InputStream`.
    */
-  val stdoutJava: InputStream = process.getInputStream()
-
-  private[process] def closeStdIn = ZIO.attempt {
-    val out = process.getOutputStream()
-    out.flush()
-    out.close()
-  }.mapError(CommandThrowable.classify)
+  def stdoutJava: InputStream = getInputStream
 
   /**
    * Access the underlying Java Process wrapped in a blocking ZIO.
@@ -45,75 +48,50 @@ final case class Process(private[process] val process: JProcess) extends Process
    * Return the exit code of this process.
    */
   def exitCode: ZIO[Any, CommandError, ExitCode]              =
-    attemptBlockingCancelable(ExitCode(process.waitFor()))(ZIO.succeed(process.destroy())).refineOrDie {
+    attemptBlockingCancelable(ExitCode(waitForUnsafe))(ZIO.succeed(destroyUnsafe())).refineOrDie {
       case CommandThrowable.IOError(e) => e
     }
 
   /**
    * Tests whether the process is still alive (not terminated or completed).
    */
-  def isAlive: UIO[Boolean] = ZIO.succeed(process.isAlive)
+  def isAlive: UIO[Boolean] = ZIO.succeed(isAliveUnsafe)
+
+  /**
+   * Returns the native process ID of the process.
+   *
+   * This method requires JDK +9.
+   */
+  def pid: ZIO[Any, CommandError, Long] = attemptBlockingInterrupt(pidUnsafe).refineOrDie {
+    case CommandThrowable.IOError(e) => e
+  }
 
   /**
    * Kills the process and will wait until completed. Equivalent to SIGTERM on Unix platforms.
    */
-  def kill: ZIO[Any, CommandError, Unit] =
-    execute { process =>
-      process.destroy()
-      process.waitFor()
+  def kill: ZIO[Any, CommandError, Unit]                   =
+    attemptBlockingInterrupt {
+      destroyUnsafe()
+      waitForUnsafe
       ()
-    }
+    }.refineOrDie { case CommandThrowable.IOError(e) => e }
 
   /**
    * Kills the process and will wait until completed. Equivalent to SIGKILL on Unix platforms.
    */
-  def killForcibly: ZIO[Any, CommandError, Unit] =
-    execute { process =>
-      process.destroyForcibly()
-      process.waitFor()
+  def killForcibly: ZIO[Any, CommandError, Unit]           =
+    attemptBlockingInterrupt {
+      destroyForciblyUnsafe
+      waitForUnsafe
       ()
-    }
+    }.refineOrDie { case CommandThrowable.IOError(e) => e }
 
   /**
    * Return the exit code of this process if it is zero. If non-zero, it will fail with `CommandError.NonZeroErrorCode`.
    */
   def successfulExitCode: ZIO[Any, CommandError, ExitCode] =
-    attemptBlockingCancelable(ExitCode(process.waitFor()))(ZIO.succeed(process.destroy())).refineOrDie {
+    attemptBlockingCancelable(ExitCode(waitForUnsafe))(ZIO.succeed(destroyUnsafe())).refineOrDie {
       case CommandThrowable.IOError(e) => e: CommandError
     }.filterOrElseWith(_ == ExitCode.success)(exitCode => ZIO.fail(CommandError.NonZeroErrorCode(exitCode)))
 
-  /**
-   * Connect a Java `InputStream` to the standard input of the process.
-   */
-  private[process] def connectJavaStream(stream: InputStream, flush: Boolean): ZIO[Any, CommandError, Unit] =
-    for {
-      outputStream <- self.execute(_.getOutputStream())
-      s             = new PushbackInputStream(stream)
-      _            <- loop {
-                        val r = s.read()
-                        if (r > 0) {
-                          s.unread(r)
-                          true
-                        } else false
-                      }(
-                        for {
-                          _ <- ZIO.attemptBlockingInterrupt {
-                                 s.transferTo(outputStream)
-                                 if (flush) outputStream.flush()
-                               }.mapError(CommandThrowable.classify)
-                        } yield ()
-                      ).ensuring(ZIO.succeed {
-                        s.close()
-                        outputStream.close()
-                      }).orDie
-      _            <- ZIO.succeed(s.close())
-      _            <- ZIO.succeed(stream.close())
-      _            <- ZIO.succeed(outputStream.close())
-    } yield ()
-
-  private def loop[A](cond: => Boolean, i: Int = 0)(z: ZIO[Any, CommandError, A]): ZIO[Any, CommandError, Unit] =
-    for {
-      bool <- ZIO.attemptBlockingInterrupt(cond).mapError(CommandThrowable.classify)
-      _    <- if (bool) z *> loop(cond, i + 1)(z) else ZIO.unit
-    } yield ()
 }

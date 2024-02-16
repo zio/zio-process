@@ -15,42 +15,38 @@
  */
 package zio.process
 
-import java.io.{ File, IOException }
-
+import FilePlatformSpecific._
 import zio.ExitCode
 
-sealed abstract class CommandError(cause: Throwable) extends Exception(cause) with Product with Serializable
+sealed abstract class CommandError(cause: Throwable) extends Exception(cause) with Serializable
 
-object CommandError {
-  final case class ProgramNotFound(cause: IOException)             extends CommandError(cause)
-  final case class PermissionDenied(cause: IOException)            extends CommandError(cause)
-  final case class WorkingDirectoryMissing(workingDirectory: File) extends CommandError(null)
+object CommandError extends CommandErrorPlatformSpecific {
+
+  class NotStarted(cause: Throwable)                               extends CommandError(cause)
+  final case class ProgramNotFound(cause: IOException)             extends NotStarted(cause)
+  final case class PermissionDenied(cause: IOException)            extends NotStarted(cause)
+  final case class WorkingDirectoryMissing(workingDirectory: File) extends NotStarted(null)
   final case class NonZeroErrorCode(exitCode: ExitCode)            extends CommandError(null)
-  final case class IOError(cause: IOException)                     extends CommandError(cause)
+  final case class IOError(cause: java.io.IOException)             extends CommandError(cause)
   final case class Error(cause: Throwable)                         extends CommandError(cause)
 }
 
-private[process] object CommandThrowable {
+private[process] object CommandThrowable extends CommandErrorPlatformSpecific {
 
   def classify(throwable: Throwable): CommandError =
     throwable match {
-      case c: CommandError => c
-      case e: IOException  =>
-        val notFoundErrorCode         = 2
-        val permissionDeniedErrorCode = if (OS.os == OS.Windows) 5 else 13
-        if (e.getMessage.contains(s"error=$notFoundErrorCode,")) {
-          CommandError.ProgramNotFound(e)
-        } else if (e.getMessage.contains(s"error=$permissionDeniedErrorCode,")) CommandError.PermissionDenied(e)
-        else CommandError.IOError(e)
-      case e               => CommandError.Error(e)
+      case c: CommandError                                           => c
+      case e: IOException if e.getMessage.contains(notFound)         => CommandError.ProgramNotFound(e)
+      case e: IOException if e.getMessage.contains(permissionDenied) => CommandError.PermissionDenied(e)
+      case e: java.io.IOException                                    => CommandError.IOError(e)
+      case e                                                         => CommandError.Error(e)
     }
 
   object ProgramNotFound {
     def unapply(throwable: Throwable): Option[CommandError.ProgramNotFound] =
       throwable match {
         case e: IOException =>
-          val notFoundErrorCode = 2
-          if (e.getMessage.contains(s"error=$notFoundErrorCode,")) {
+          if (e.getMessage.contains(notFound)) {
             Some(CommandError.ProgramNotFound(e))
           } else None
 
@@ -62,8 +58,7 @@ private[process] object CommandThrowable {
     def unapply(throwable: Throwable): Option[CommandError.PermissionDenied] =
       throwable match {
         case e: IOException =>
-          val permissionDeniedErrorCode = if (OS.os == OS.Windows) 5 else 13
-          if (e.getMessage.contains(s"error=$permissionDeniedErrorCode,")) Some(CommandError.PermissionDenied(e))
+          if (e.getMessage.contains(permissionDenied)) Some(CommandError.PermissionDenied(e))
           else None
 
         case _ => None
@@ -73,8 +68,8 @@ private[process] object CommandThrowable {
   object IOError {
     def unapply(throwable: Throwable): Option[CommandError.IOError] =
       throwable match {
-        case e: IOException => Some(CommandError.IOError(e))
-        case _              => None
+        case e: java.io.IOException => Some(CommandError.IOError(e))
+        case _                      => None
       }
   }
 

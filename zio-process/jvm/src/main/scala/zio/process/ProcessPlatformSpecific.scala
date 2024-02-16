@@ -15,21 +15,33 @@
  */
 package zio.process
 
-import zio.ZIO
-
+import java.io.InputStream
+import java.io.OutputStream
 import scala.jdk.CollectionConverters._
+import zio.ZIO
+import scala.annotation.nowarn
 
 private[process] trait ProcessPlatformSpecific { self: Process =>
 
-  /**
-   * Access the standard output stream.
-   */
-  val stdout: ProcessStream = ProcessStream(self.process.getInputStream(), None)
+  import ProcessPlatformSpecific._
 
-  /**
-   * Access the standard error stream.
-   */
-  val stderr: ProcessStream = ProcessStream(self.process.getErrorStream(), None)
+  def waitForUnsafe: Int = self.process.waitFor()
+
+  def isAliveUnsafe: Boolean          = self.process.isAlive()
+  def destroyUnsafe(): Unit           = self.process.destroy()
+  def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
+
+  def pidUnsafe: Long = self.process.pid
+
+  def getInputStream: InputStream   = self.process.getInputStream()
+  def getOutputStream: OutputStream = self.process.getOutputStream()
+  def getErrorStream: InputStream   = self.process.getErrorStream()
+  def get: Option[OutputStream]     = None
+
+  def destroyHandle(handle: ProcessHandle): Boolean         = handle.destroy()
+  def destroyForciblyHandle(handle: ProcessHandle): Boolean = handle.destroyForcibly()
+  def isAliveHandle(handle: ProcessHandle): Boolean         = handle.isAlive()
+  def onExitHandle(handle: ProcessHandle)                   = handle.onExit()
 
   /**
    * Kills the entire process tree and will wait until completed. Equivalent to SIGTERM on Unix platforms.
@@ -38,15 +50,18 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    */
   def killTree: ZIO[Any, CommandError, Unit] =
     self.execute { process =>
-      val descendants = process.descendants().iterator().asScala.toSeq
-      descendants.foreach(_.destroy())
+      val d = process.descendants().toList().asScala
+      d.foreach { p =>
+        destroyHandle(p)
+        ()
+      }
 
-      process.destroy()
-      process.waitFor()
+      destroyUnsafe()
+      waitForUnsafe
 
-      descendants.foreach { p =>
-        if (p.isAlive) {
-          p.onExit().get // `ProcessHandle` doesn't have waitFor
+      d.foreach { p =>
+        if (isAliveHandle(p)) {
+          onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
           ()
         }
       }
@@ -59,28 +74,56 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    */
   def killTreeForcibly: ZIO[Any, CommandError, Unit] =
     self.execute { process =>
-      val descendants = process.descendants().iterator().asScala.toSeq
-      descendants.foreach(_.destroyForcibly())
+      val d = process.descendants().toList().asScala
+      d.foreach { p =>
+        destroyForciblyHandle(p)
+        ()
+      }
 
-      process.destroyForcibly()
-      process.waitFor()
+      destroyForciblyUnsafe
+      waitForUnsafe
 
-      descendants.foreach { p =>
-        if (p.isAlive) {
-          p.onExit().get // `ProcessHandle` doesn't have waitFor
+      d.foreach { p =>
+        if (isAliveHandle(p)) {
+          onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
           ()
         }
       }
     }
+}
+
+private[process] object ProcessPlatformSpecific {
+
+  type JProcess = java.lang.Process
+
+  @nowarn
+  def wait(in: InputStream): ZIO[Any, Throwable, Unit] = ZIO.unit
 
   /**
-   * Returns the native process ID of the process.
-   *
-   * Note: This method requires JDK 9+
+   * Connect a Java `InputStream` to the standard input of the process.
    */
-  def pid: ZIO[Any, CommandError, Long] =
-    self.execute { process =>
-      process.pid()
-    }
+  def connectJavaStream(process: Process, stream: InputStream, flush: Boolean): ZIO[Any, CommandError, Unit] =
+    for {
+      outputStream <- process.execute(_.getOutputStream)
+      _            <- loop {
+                        stream.transferTo(outputStream) > 0
+                      }(
+                        for {
+                          _ <- ZIO.attemptBlockingInterrupt {
+                                 if (flush) outputStream.flush()
+                               }.mapError(CommandThrowable.classify)
+                        } yield ()
+                      ).ensuring(ZIO.succeed {
+                        outputStream.close()
+                      }).orDie
+      _            <- ZIO.succeed(stream.close())
+      _            <- ZIO.succeed(outputStream.close())
+    } yield ()
+
+  private def loop[A](cond: => Boolean)(z: ZIO[Any, CommandError, A]): ZIO[Any, CommandError, Unit] =
+    for {
+      bool <- ZIO.attemptBlockingInterrupt(cond).mapError(CommandThrowable.classify)
+      _    <- if (bool) z *> loop(cond)(z) else ZIO.unit
+    } yield ()
 
 }

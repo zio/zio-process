@@ -16,13 +16,11 @@
 package zio.process
 
 import zio._
-import zio.stream.{ ZSink, ZStream }
+import zio.stream.ZStream
 
-import java.io.File
-import java.lang.ProcessBuilder.Redirect
 import java.nio.charset.Charset
-import scala.jdk.CollectionConverters._
-import java.io.OutputStream
+import FilePlatformSpecific._
+import java.io.InputStream
 
 sealed trait Command extends CommandPlatformSpecific {
 
@@ -97,66 +95,22 @@ sealed trait Command extends CommandPlatformSpecific {
   /**
    * Start running the command returning a handle to the running process.
    */
-  def run: ZIO[Any, CommandError, Process] =
+  def run: ZIO[Any, CommandError, Process] = run(None)
+
+  private[process] def run(piping: Option[InputStream]): ZIO[Any, CommandError, Process] =
     this match {
       case c: Command.Standard =>
         for {
-          _        <- ZIO.foreachDiscard(c.workingDirectory) { workingDirectory =>
-                        if (workingDirectory.exists()) ZIO.unit
-                        else
-                          ZIO
-                            .fail(CommandError.WorkingDirectoryMissing(workingDirectory))
-                      }
-          jProcess <- ZIO.attempt {
-                        val builder = new ProcessBuilder(adaptCommand(c.command): _*)
-                        builder.redirectErrorStream(c.redirectErrorStream)
-                        c.workingDirectory.foreach { dir =>
-                          if (!checkDirectory(dir)) throw CommandError.WorkingDirectoryMissing(dir)
-                          builder.directory(dir)
-                        }
+          _       <- c.workingDirectory match {
+                       case Some(workingDirectory) =>
+                         ZIO.when(
+                           !FilePlatformSpecific.exists(workingDirectory)
+                         )(ZIO.fail(CommandError.WorkingDirectoryMissing(workingDirectory)))
+                       case None                   => ZIO.unit
+                     }
+          process <- build(c, piping).mapError(CommandThrowable.classify)
+          _       <- connectStdin(process, c.stdin)
 
-                        if (c.env.nonEmpty) {
-                          builder.environment().putAll(c.env.asJava)
-                        }
-
-                        c.stdin match {
-                          case ProcessInput.Inherit => builder.redirectInput(Redirect.INHERIT)
-                          case ProcessInput.Pipe    => builder.redirectInput(Redirect.PIPE)
-                          case _                    => ()
-                        }
-
-                        c.stdout match {
-                          case ProcessOutput.FileRedirect(file)       => builder.redirectOutput(Redirect.to(file))
-                          case ProcessOutput.FileAppendRedirect(file) => builder.redirectOutput(Redirect.appendTo(file))
-                          case ProcessOutput.Inherit                  => builder.redirectOutput(Redirect.INHERIT)
-                          case ProcessOutput.Pipe                     => builder.redirectOutput(Redirect.PIPE)
-                        }
-
-                        c.stderr match {
-                          case ProcessOutput.FileRedirect(file)       => builder.redirectError(Redirect.to(file))
-                          case ProcessOutput.FileAppendRedirect(file) => builder.redirectError(Redirect.appendTo(file))
-                          case ProcessOutput.Inherit                  => builder.redirectError(Redirect.INHERIT)
-                          case ProcessOutput.Pipe                     => builder.redirectError(Redirect.PIPE)
-                        }
-
-                        builder.start()
-                      }.mapError(CommandThrowable.classify)
-          process   = Process(jProcess)
-          _        <- c.stdin match {
-                        case ProcessInput.Inherit | ProcessInput.Pipe    => ZIO.unit
-                        case ProcessInput.JavaStream(input, flushChunks) =>
-                          process.connectJavaStream(input, flushChunks)
-                        case ProcessInput.FromStream(input, flushChunks) =>
-                          for {
-                            outputStream <- process.execute(_.getOutputStream)
-                            sink          = if (flushChunks) fromOutputStreamFlushChunksEagerly(outputStream)
-                                            else ZSinkConstructor(outputStream).mk
-                            _            <- input
-                                              .run(sink)
-                                              .ensuring(ZIO.succeed(outputStream.close()))
-                                              .forkDaemon
-                          } yield ()
-                      }
         } yield process
 
       case c: Command.Piped =>
@@ -169,13 +123,19 @@ sealed trait Command extends CommandPlatformSpecific {
               case ProcessInput.Inherit | ProcessInput.Pipe => true
             }
 
-            chunk.tail.foldLeft(chunk.head.run) { case (process, command) =>
+            val process = chunk.tail.init.foldLeft(chunk.head.run(None)) { case (process, command) =>
               for {
                 p   <- process
-                //_ <- p.closeStdIn
-                res <- command.stdin(ProcessInput.JavaStream(p.stdoutJava, flushChunksEagerly)).run
+                _   <- ProcessPlatformSpecific.wait(p.stdoutJava).mapError(CommandThrowable.classify)
+                res <- command.stdin(ProcessInput.JavaStream(p.stdoutJava, flushChunksEagerly)).run(Some(p.stdoutJava))
               } yield res
             }
+
+            for {
+              p   <- process
+              _   <- ProcessPlatformSpecific.wait(p.stdoutJava).mapError(CommandThrowable.classify)
+              res <- chunk.last.stdin(ProcessInput.JavaStream(p.stdoutJava, flushChunksEagerly)).run(Some(p.stdoutJava))
+            } yield res
 
         }
     }
@@ -257,14 +217,6 @@ sealed trait Command extends CommandPlatformSpecific {
    */
   def <<(input: String): Command =
     stdin(ProcessInput.fromUTF8String(input))
-
-  private def fromOutputStreamFlushChunksEagerly(os: OutputStream): ZSink[Any, Throwable, Byte, Nothing, Unit] =
-    ZSink.foreachChunk { (chunk: Chunk[Byte]) =>
-      ZIO.attemptBlockingInterrupt {
-        os.write(chunk.toArray)
-        os.flush()
-      }
-    }
 
 }
 

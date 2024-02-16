@@ -43,23 +43,27 @@ final case class ProcessStream(
    * Return the output of this process as a list of lines with the specified encoding.
    */
   def lines(charset: Charset): ZIO[Any, CommandError, Chunk[String]] =
-    ZIO.scoped {
-      for {
-        _      <- close
-        reader <- ZIO.fromAutoCloseable(ZIO.succeed(new BufferedReader(new InputStreamReader(inputStream, charset))))
-        chunks <- attemptBlockingCancelable {
-                    val lines = new ArrayBuffer[String]
+    ZIO
+      .scoped[Any][Throwable, Chunk[String]] {
+        for {
+          _      <- zio.Console.printLine("reading")
+          _      <- close
+          _      <- ProcessPlatformSpecific.wait(inputStream)
+          reader <- ZIO.fromAutoCloseable(ZIO.succeed(new BufferedReader(new InputStreamReader(inputStream, charset))))
+          chunks <- attemptBlockingCancelable {
+                      val lines = new ArrayBuffer[String]
 
-                    var line: String = null
-                    while ({ line = reader.readLine; line != null })
-                      lines.append(line)
+                      var line: String = null
+                      while ({ line = reader.readLine; line != null })
+                        lines.append(line)
 
-                    Chunk.fromArray(lines.toArray)
-                  }(ZIO.succeed(reader.close()))
-      } yield chunks
-    }.refineOrDie { case CommandThrowable.IOError(e) =>
-      e
-    }
+                      Chunk.fromArray(lines.toArray)
+                    }(ZIO.succeed(reader.close()))
+        } yield chunks
+      }
+      .refineOrDie { case CommandThrowable.IOError(e) =>
+        e
+      }
 
   /**
    * Return the output of this process as a stream of lines (default encoding of UTF-8).
@@ -75,8 +79,8 @@ final case class ProcessStream(
    * Return the output of this process as a chunked stream of bytes.
    */
   def stream: ZStream[Any, CommandError, Byte] =
-    ZStream
-      .fromInputStreamZIO(close *> ZIO.succeed(inputStream))
+    Constructors
+      .fromInputStream(inputStream)
       .ensuring(ZIO.succeed(inputStream.close()))
       .mapError(CommandError.IOError.apply)
 
@@ -91,10 +95,9 @@ final case class ProcessStream(
    * Note: Needs Java 9 or greater.
    */
   def string(charset: Charset): ZIO[Any, CommandError, String] =
-    close *>
-      ZIO.attemptBlockingCancelable {
-        new String(inputStream.readAllBytes(), charset)
-      }(ZIO.succeed(inputStream.close())).refineOrDie { case CommandThrowable.IOError(e) =>
-        e
-      }
+    ZIO.attemptBlockingCancelable {
+      new String(inputStream.readAllBytes(), charset)
+    }(ZIO.succeed(inputStream.close())).refineOrDie { case CommandThrowable.IOError(e) =>
+      e
+    }
 }

@@ -1,7 +1,7 @@
 import BuildHelper._
 import sbtwelcome._
 import sbt.addSbtPlugin
-//import sbtcrossproject.CrossPlugin.autoImport._
+import org.scalajs.linker.interface.ModuleInitializer
 
 inThisBuild(
   List(
@@ -55,37 +55,40 @@ lazy val root =
       publish / skip := true,
       crossScalaVersions := Nil
     )
-    .aggregate(zioProcess.jvm, zioProcess.native, docs)
+    .aggregate(zioProcess.jvm, zioProcess.native, zioProcess.js, docs)
 
 lazy val zioProcess =
-  crossProject(JVMPlatform, NativePlatform)
+  crossProject(JVMPlatform, NativePlatform, JSPlatform)
     .in(file("zio-process"))
     .settings(stdSettings("zio-process"))
     .settings(crossProjectSettings)
     .settings(buildInfoSettings("zio.process"))
-    .jvmSettings(testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")))
-    .jvmSettings(
-      libraryDependencies ++= Seq(
-        "dev.zio"                %% "zio"                     % zioVersion,
-        "dev.zio"                %% "zio-streams"             % zioVersion,
-        "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0",
-        "dev.zio"                %% "zio-test"                % zioVersion % Test,
-        "dev.zio"                %% "zio-test-sbt"            % zioVersion % Test
-      )
-    )
-    .enablePlugins(BuildInfoPlugin)
-    .jvmSettings(dottySettings)
-    .nativeSettings(Test / fork := false)
-    .nativeSettings(testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")))
-    .nativeSettings(
+    .settings(testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework")))
+    .settings(
       libraryDependencies ++= Seq(
         "dev.zio"                %%% "zio"                     % zioVersion,
         "dev.zio"                %%% "zio-streams"             % zioVersion,
         "org.scala-lang.modules" %%% "scala-collection-compat" % "2.9.0",
         "dev.zio"                %%% "zio-test"                % zioVersion % Test,
-        "dev.zio"                %%% "zio-test-sbt"            % zioVersion % Test,
-        "io.github.cquiroz"      %%% "scala-java-time"         % "2.5.0"    % Test
+        "dev.zio"                %%% "zio-test-sbt"            % zioVersion % Test
       )
+    )
+    .enablePlugins(BuildInfoPlugin)
+    .settings(dottySettings)
+    .nativeSettings(Test / fork := false)
+    .nativeSettings(
+      libraryDependencies ++= Seq(
+        "io.github.cquiroz" %%% "scala-java-time" % "2.5.0" % Test
+      )
+    )
+    .jsSettings(Test / fork := false)
+    .jsSettings(
+      libraryDependencies ++= Seq(
+        "io.github.cquiroz" %%% "scala-java-time" % "2.5.0" % Test
+      )
+    )
+    .jsSettings(
+      scalaJSUseMainModuleInitializer := true
     )
 
 lazy val docs = project

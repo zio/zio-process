@@ -51,7 +51,7 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
   protected lazy val stdoutInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stdout)
   protected lazy val stderrInternal           = ProcessPlatformSpecific.JSInputStream(self.process.stderr)
   protected def getInputStream: InputStream   = stdoutInternal
-  protected def getOutputStream: OutputStream = stdinInternal
+  def getOutputStream: OutputStream = stdinInternal
   protected def getErrorStream: InputStream   = stderrInternal
 
   protected def get: Option[OutputStream] = Some(stdinInternal)

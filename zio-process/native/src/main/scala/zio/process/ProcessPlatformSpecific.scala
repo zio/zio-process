@@ -46,7 +46,7 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
     }
 
   protected def getInputStream: InputStream   = self.process.getInputStream()
-  protected def getOutputStream: OutputStream = self.process.getOutputStream()
+  def getOutputStream: OutputStream = self.process.getOutputStream()
   protected def getErrorStream: InputStream   = self.process.getErrorStream()
   protected def get: Option[OutputStream]     = Some(getOutputStream)
 

@@ -15,13 +15,10 @@
  */
 package zio.process
 
-import FilePlatformSpecific._
-
-sealed trait ProcessOutput
-
-object ProcessOutput {
-  final case class FileRedirect(file: File)       extends ProcessOutput
-  final case class FileAppendRedirect(file: File) extends ProcessOutput
-  case object Inherit                             extends ProcessOutput
-  case object Pipe                                extends ProcessOutput
+private[process] trait CommandErrorPlatformSpecific {
+  type IOException = java.io.IOException
+  private val notFoundErrorCode         = 2
+  val notFound                          = s"error=$notFoundErrorCode,"
+  private val permissionDeniedErrorCode = if (OS.os == OS.Windows) 5 else 1
+  val permissionDenied                  = s"error=$permissionDeniedErrorCode,"
 }

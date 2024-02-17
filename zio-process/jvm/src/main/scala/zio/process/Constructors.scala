@@ -15,13 +15,24 @@
  */
 package zio.process
 
-import FilePlatformSpecific._
+import zio.stream.ZSink
+import zio.stream.ZStream
 
-sealed trait ProcessOutput
+import java.io.OutputStream
+import java.io.InputStream
+import zio.Trace
+import java.io.IOException
 
-object ProcessOutput {
-  final case class FileRedirect(file: File)       extends ProcessOutput
-  final case class FileAppendRedirect(file: File) extends ProcessOutput
-  case object Inherit                             extends ProcessOutput
-  case object Pipe                                extends ProcessOutput
+private[process] object Constructors {
+
+  def zsink(outputStream: OutputStream) = ZSink.fromOutputStream(outputStream)
+
+  /**
+   * Creates a stream from a `java.io.InputStream`
+   */
+  def fromInputStream(
+    is: => InputStream,
+    chunkSize: => Int = ZStream.DefaultChunkSize
+  )(implicit trace: Trace): ZStream[Any, IOException, Byte] = ZStream.fromInputStream(is, chunkSize)
+
 }

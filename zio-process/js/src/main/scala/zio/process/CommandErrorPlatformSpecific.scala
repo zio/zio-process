@@ -15,12 +15,10 @@
  */
 package zio.process
 
-import zio.stream.ZSink
+import scala.scalajs.js
 
-import java.io.OutputStream
-
-private[process] case class ZSinkConstructor(outputStream: OutputStream) {
-
-  def mk = ZSink.fromOutputStream(outputStream)
-
+private[process] trait CommandErrorPlatformSpecific {
+  type IOException = js.JavaScriptException
+  val notFound         = "ENOENT"
+  val permissionDenied = "EACCES"
 }

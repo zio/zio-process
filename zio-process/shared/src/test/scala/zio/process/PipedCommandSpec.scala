@@ -1,12 +1,13 @@
 package zio.process
 
-import java.io.File
+import FilePlatformSpecific._
 
 import zio.{ Chunk, NonEmptyChunk }
 import zio.test.Assertion._
 import zio.test._
 
 object PipedCommandSpec extends ZIOProcessBaseSpec {
+
   def spec = suite("PipedCommandSpec")(
     test("support piping") {
       val zio = (Command("echo", "2\n1\n3") | Command("cat") | Command("sort")).lines

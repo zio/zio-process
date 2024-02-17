@@ -17,12 +17,12 @@ package zio.process
 
 import zio.stream.ZStream
 import zio.{ Chunk, Queue }
-
+import FilePlatformSpecific._
 import java.io.ByteArrayInputStream
 import java.nio.charset.{ Charset, StandardCharsets }
-import FilePlatformSpecific._
-import java.nio.file.Path
 import java.io.InputStream
+import scala.annotation.nowarn
+import scala.scalajs.js
 
 sealed trait ProcessInput
 
@@ -36,20 +36,22 @@ object ProcessInput {
   /**
    * Returns a ProcessInput from a file.
    */
-  def fromFile(file: File, chunkSize: Int = ZStream.DefaultChunkSize): ProcessInput =
-    ProcessInput.FromStream(
-      ZStream.fromFile(file, chunkSize).refineOrDie { case CommandThrowable.IOError(e) => e },
+  @nowarn def fromFile(file: File, chunkSize: Int = ZStream.DefaultChunkSize): ProcessInput = {
+    val fs = js.Dynamic.global.require("fs")
+    ProcessInput.JavaStream(
+      ProcessPlatformSpecific.JSInputStream(
+        fs.createReadStream(FilePlatformSpecific.getAbsolute(file)).asInstanceOf[JS.Readable],
+        true
+      ),
       flushChunksEagerly = false
     )
+  }
 
   /**
    * Returns a ProcessInput from a path to a file.
    */
   def fromPath(path: Path, chunkSize: Int = ZStream.DefaultChunkSize): ProcessInput =
-    ProcessInput.FromStream(
-      ZStream.fromPath(path, chunkSize).refineOrDie { case CommandThrowable.IOError(e) => e },
-      flushChunksEagerly = false
-    )
+    fromFile(path, chunkSize)
 
   /**
    * Returns a ProcessInput from an array of bytes.

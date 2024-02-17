@@ -20,7 +20,7 @@ import zio.{ Chunk, Queue }
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.{ Charset, StandardCharsets }
-import java.io.File
+import FilePlatformSpecific._
 import java.nio.file.Path
 import java.io.InputStream
 import java.io.FileInputStream

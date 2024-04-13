@@ -46,7 +46,7 @@ usefulTasks := Seq(
   UsefulTask("", "testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term")
 )
 
-val zioVersion = "2.0.21"
+val zioVersion = "2.0.22"
 
 lazy val root =
   project

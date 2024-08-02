@@ -46,12 +46,13 @@ usefulTasks := Seq(
   UsefulTask("", "testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term")
 )
 
-val zioVersion = "2.0.21"
+val zioVersion = "2.1.6"
 
 lazy val root =
   project
     .in(file("."))
     .settings(
+      name := "zio-process",
       publish / skip := true,
       crossScalaVersions := Nil
     )
@@ -84,7 +85,7 @@ lazy val zioProcess =
     .jsSettings(Test / fork := false)
     .jsSettings(
       libraryDependencies ++= Seq(
-        "io.github.cquiroz" %%% "scala-java-time" % "2.5.0" % Test
+        "io.github.cquiroz" %%% "scala-java-time" % "2.6.0" % Test
       )
     )
     .jsSettings(

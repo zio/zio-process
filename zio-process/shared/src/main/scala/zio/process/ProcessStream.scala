@@ -46,7 +46,6 @@ final case class ProcessStream(
     ZIO
       .scoped[Any][Throwable, Chunk[String]] {
         for {
-          _      <- zio.Console.printLine("reading")
           _      <- close
           _      <- ProcessPlatformSpecific.wait(inputStream)
           reader <- ZIO.fromAutoCloseable(ZIO.succeed(new BufferedReader(new InputStreamReader(inputStream, charset))))

@@ -40,10 +40,10 @@ logo :=
      |""".stripMargin
 logoColor := scala.Console.RED
 usefulTasks := Seq(
-  UsefulTask("a", "~compile", "Compile all modules with file-watch enabled"),
-  UsefulTask("b", "fmt", "Run scalafmt on the entire project"),
-  UsefulTask("c", "docs/docusaurusCreateSite", "Generates the microsite"),
-  UsefulTask("", "testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term")
+  UsefulTask("~compile", "Compile all modules with file-watch enabled"),
+  UsefulTask("fmt", "Run scalafmt on the entire project"),
+  UsefulTask("docs/docusaurusCreateSite", "Generates the microsite"),
+  UsefulTask("testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term").noAlias
 )
 
 val zioVersion = "2.1.6"

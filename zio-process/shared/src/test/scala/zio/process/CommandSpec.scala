@@ -3,7 +3,7 @@ package zio.process
 import zio.stream.ZPipeline
 import zio.test.Assertion._
 import zio.test._
-import zio.{ durationInt, Chunk, ExitCode, Queue, System, ZIO }
+import zio._
 
 import java.nio.charset.StandardCharsets
 
@@ -85,17 +85,6 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
 
       assertZIO(zio.exit)(isInterrupted)
     },
-    test("interrupt a process due to timeout") {
-      val zio = for {
-        fiber       <- Command("sleep", "20").exitCode.timeout(5.seconds).fork
-        adjustFiber <- TestClock.adjust(5.seconds).fork
-        _           <- ZIO.sleep(5.seconds)
-        _           <- adjustFiber.join
-        result      <- fiber.join
-      } yield result
-
-      assertZIO(zio)(isNone)
-    } @@ TestAspect.ignore, // TODO: Until https://github.com/zio/zio/issues/3840 is fixed or there is a workaround
     test("capture stdout and stderr separately") {
       val zio = for {
         process <- Command(s"${dir}src/test/bash/both-streams-test.sh").run
@@ -183,7 +172,34 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
         process <- Command("ls").run
         pid     <- process.pid
       } yield assertTrue(pid > 0L)
-    }
+    },
+    suite("interruption")(
+      test("interrupt a process due to timeout (exitCode)") {
+        for {
+          result       <- Command("sleep", "60").exitCode.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      },
+      test("interrupt a process due to timeout (stream)") {
+        val stream = Command("sleep", "60").stream
+
+        for {
+          result       <- stream.runDrain.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      },
+      test("interrupt a process due to timeout (linesStream)") {
+        val stream = Command("sleep", "60").linesStream
+
+        for {
+          result       <- stream.runDrain.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      },
+      test("interrupt a process due to timeout (stdout stream)") {
+        for {
+          process <- Command("sleep", "60").run
+          result       <- process.stdout.stream.runDrain.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      }
+    ) @@ TestAspect.withLiveClock @@ TestAspect.timeout(30.seconds)
   )
 
 }

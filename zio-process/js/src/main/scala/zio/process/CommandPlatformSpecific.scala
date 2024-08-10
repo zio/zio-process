@@ -17,7 +17,7 @@ package zio.process
 
 import FilePlatformSpecific._
 import ProcessPlatformSpecific._
-import zio.{ NonEmptyChunk, ZIO }
+import zio._
 import scala.annotation.nowarn
 import scala.scalajs.js
 import js.JSConverters._

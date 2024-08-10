@@ -15,12 +15,11 @@
  */
 package zio.process
 
-import zio.ZIO
+import zio._
 
-import java.io.{ InputStream, OutputStream }
+import java.io.{InputStream, OutputStream}
 import scala.scalajs.js.typedarray.Uint8Array
 import scala.scalajs.js
-import zio.Chunk
 import js.JSConverters._
 
 private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: Process =>
@@ -29,7 +28,16 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
 
   private var killed = false
 
-  protected def waitForUnsafe: Int = self.process.exitCode
+  def waitFor: IO[CommandError, ExitCode] = {
+    ProcessPlatformSpecific.wait(stdoutInternal).map(_ => ExitCode(self.process.exitCode))
+      .refineOrDie {
+        case CommandThrowable.IOError(e) => e
+      }
+  }
+
+  protected def waitForUnsafe: Int = {
+    self.process.exitCode
+  }
 
   protected def isAliveUnsafe: Boolean = !killed
   protected def destroyUnsafe(): Unit = {
@@ -139,6 +147,7 @@ private[process] object ProcessPlatformSpecific {
       }
 
     }
+
     override def readAllBytes(): Array[Byte] = {
       val arr = buffer.toArray
       buffer = Chunk.empty

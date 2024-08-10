@@ -16,7 +16,7 @@
 package zio.process
 
 import zio.stream.ZStream
-import zio.{ Chunk, Queue }
+import zio._
 import FilePlatformSpecific._
 import java.io.ByteArrayInputStream
 import java.nio.charset.{ Charset, StandardCharsets }

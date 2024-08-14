@@ -12,7 +12,7 @@ addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "1.5.18")
 
 addSbtPlugin("com.github.sbt" % "sbt-unidoc" % "0.5.0")
 
-addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.11")
+addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.6.0")
 
 addSbtPlugin("com.github.reibitto" % "sbt-welcome" % "0.4.0")
 

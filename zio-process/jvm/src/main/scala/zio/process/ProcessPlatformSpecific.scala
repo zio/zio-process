@@ -60,8 +60,8 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    */
   def killTree: ZIO[Any, CommandError, Unit] =
     for {
-      descendants <- ZIO.succeed(process.descendants().toList().asScala)
-      _           <- self.execute { process =>
+      descendants <- ZIO.succeed(process.descendants().toList.asScala)
+      _           <- self.execute { _ =>
                        descendants.foreach { p =>
                          destroyHandle(p)
                          ()
@@ -70,7 +70,7 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
                        destroyUnsafe()
                      }
       _           <- waitFor
-      _           <- self.execute { process =>
+      _           <- self.execute { _ =>
                        descendants.foreach { p =>
                          if (isAliveHandle(p)) {
                            onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
@@ -87,8 +87,8 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    */
   def killTreeForcibly: ZIO[Any, CommandError, Unit] =
     for {
-      descendants <- ZIO.succeed(process.descendants().toList().asScala)
-      _           <- self.execute { process =>
+      descendants <- ZIO.succeed(process.descendants().toList.asScala)
+      _           <- self.execute { _ =>
                        descendants.foreach { p =>
                          destroyForciblyHandle(p)
                          ()
@@ -97,7 +97,7 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
                        destroyForciblyUnsafe
                      }
       _           <- waitFor
-      _           <- self.execute { process =>
+      _           <- self.execute { _ =>
                        descendants.foreach { p =>
                          if (isAliveHandle(p)) {
                            onExitHandle(p).get // `ProcessHandle` doesn't have waitFor

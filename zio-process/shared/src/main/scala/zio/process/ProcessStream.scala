@@ -17,15 +17,15 @@ package zio.process
 
 import zio.ZIO.attemptBlockingCancelable
 import zio.process.ProcessPlatformSpecific.JProcess
-import zio.stream.{ZPipeline, ZStream}
+import zio.stream.{ ZPipeline, ZStream }
 import zio._
 
 import java.io._
-import java.nio.charset.{Charset, StandardCharsets}
+import java.nio.charset.{ Charset, StandardCharsets }
 import scala.collection.mutable.ArrayBuffer
 
 final case class ProcessStream(
-                                private[process] val process: JProcess,
+  private[process] val process: JProcess,
   private[process] val inputStream: InputStream,
   private[process] val outputStream: Option[OutputStream] = None
 ) {

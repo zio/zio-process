@@ -25,14 +25,15 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
 
   import ProcessPlatformSpecific._
 
-  protected def waitFor: IO[CommandError, ExitCode] = {
-    ZIO.attemptBlockingCancelable(waitForUnsafe)(ZIO.attemptBlocking(self.destroyUnsafe()).ignore)
+  protected def waitFor: IO[CommandError, ExitCode] =
+    ZIO
+      .attemptBlockingCancelable(waitForUnsafe)(
+        ZIO.attemptBlocking(self.destroyUnsafe()).ignore
+      )
       .map(x => ExitCode(x))
-//      .onInterrupt(ZIO.attemptBlocking(self.destroyUnsafe()).ignore)
-      .refineOrDie {
-        case CommandThrowable.IOError(e) => e
+      .refineOrDie { case CommandThrowable.IOError(e) =>
+        e
       }
-  }
 
   protected def waitForUnsafe: Int = self.process.waitFor()
 

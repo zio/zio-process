@@ -26,20 +26,18 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
 
   import ProcessPlatformSpecific._
 
-  // TODO:: awaitExitValue
-  protected def waitFor: IO[CommandError, ExitCode] = {
-    ZIO.fromCompletableFuture(self.process.onExit()).map(x => ExitCode(x.exitValue()))
+  protected def waitFor: IO[CommandError, ExitCode] =
+    ZIO
+      .fromCompletableFuture(self.process.onExit())
+      .map(x => ExitCode(x.exitValue()))
       .onInterrupt(ZIO.attemptBlocking(self.destroyUnsafe()).ignore)
-      .refineOrDie {
-        case CommandThrowable.IOError(e) => e
-      }
-  }
+      .refineOrDie { case CommandThrowable.IOError(e) => e }
 
-  protected def waitForUnsafe: Int = self.process.waitFor()
+  protected def waitForUnsafe: Int                  = self.process.waitFor()
 
-  protected def isAliveUnsafe: Boolean          = self.process.isAlive()
+  protected def isAliveUnsafe: Boolean = self.process.isAlive()
 
-  protected def destroyUnsafe(): Unit           = self.process.destroy()
+  protected def destroyUnsafe(): Unit = self.process.destroy()
 
   protected def destroyForciblyUnsafe: JProcess = self.process.destroyForcibly()
 
@@ -60,28 +58,27 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    *
    * Note: This method requires JDK 9+
    */
-  def killTree: ZIO[Any, CommandError, Unit] = {
+  def killTree: ZIO[Any, CommandError, Unit] =
     for {
       descendants <- ZIO.succeed(process.descendants().toList().asScala)
-      _ <- self.execute { process =>
-        descendants.foreach { p =>
-          destroyHandle(p)
-          ()
-        }
+      _           <- self.execute { process =>
+                       descendants.foreach { p =>
+                         destroyHandle(p)
+                         ()
+                       }
 
-        destroyUnsafe()
-      }
-      _ <- waitFor
-      _ <- self.execute { process =>
-        descendants.foreach { p =>
-          if (isAliveHandle(p)) {
-            onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
-            ()
-          }
-        }
-      }
+                       destroyUnsafe()
+                     }
+      _           <- waitFor
+      _           <- self.execute { process =>
+                       descendants.foreach { p =>
+                         if (isAliveHandle(p)) {
+                           onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
+                           ()
+                         }
+                       }
+                     }
     } yield ()
-  }
 
   /**
    * Kills the entire process tree and will wait until completed. Equivalent to SIGKILL on Unix platforms.
@@ -91,23 +88,23 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
   def killTreeForcibly: ZIO[Any, CommandError, Unit] =
     for {
       descendants <- ZIO.succeed(process.descendants().toList().asScala)
-      _ <- self.execute { process =>
-        descendants.foreach { p =>
-          destroyForciblyHandle(p)
-          ()
-        }
+      _           <- self.execute { process =>
+                       descendants.foreach { p =>
+                         destroyForciblyHandle(p)
+                         ()
+                       }
 
-        destroyForciblyUnsafe
-      }
-      _ <- waitFor
-      _ <- self.execute { process =>
-        descendants.foreach { p =>
-          if (isAliveHandle(p)) {
-            onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
-            ()
-          }
-        }
-      }
+                       destroyForciblyUnsafe
+                     }
+      _           <- waitFor
+      _           <- self.execute { process =>
+                       descendants.foreach { p =>
+                         if (isAliveHandle(p)) {
+                           onExitHandle(p).get // `ProcessHandle` doesn't have waitFor
+                           ()
+                         }
+                       }
+                     }
     } yield ()
 }
 

@@ -37,15 +37,18 @@ private[process] object Constructors {
       ZStream.repeatZIOChunkOption {
         for {
           bufArray  <- ZIO.succeed(Array.ofDim[Byte](chunkSize))
-          bytesRead <- ZIO.attemptBlockingCancelable(is.read(bufArray))(ZIO.attemptBlocking(process.destroy()).ignore).refineToOrDie[IOException].asSomeError
-          bytes <- if (bytesRead < 0)
-            ZIO.fail(None)
-          else if (bytesRead == 0)
-            ZIO.succeed(Chunk.empty)
-          else if (bytesRead < chunkSize)
-            ZIO.succeed(Chunk.fromArray(bufArray).take(bytesRead))
-          else
-            ZIO.succeed(Chunk.fromArray(bufArray))
+          bytesRead <- ZIO
+                         .attemptBlockingCancelable(is.read(bufArray))(ZIO.attemptBlocking(process.destroy()).ignore)
+                         .refineToOrDie[IOException]
+                         .asSomeError
+          bytes     <- if (bytesRead < 0)
+                         ZIO.fail(None)
+                       else if (bytesRead == 0)
+                         ZIO.succeed(Chunk.empty)
+                       else if (bytesRead < chunkSize)
+                         ZIO.succeed(Chunk.fromArray(bufArray).take(bytesRead))
+                       else
+                         ZIO.succeed(Chunk.fromArray(bufArray))
         } yield bytes
       }
     }

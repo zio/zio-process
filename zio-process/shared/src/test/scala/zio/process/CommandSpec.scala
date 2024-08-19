@@ -176,30 +176,31 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
     suite("interruption")(
       test("interrupt a process due to timeout (exitCode)") {
         for {
-          result       <- Command("sleep", "60").exitCode.timeout(3.seconds)
+          _      <- ZIO.debug("starting sleep")
+          result <- Command("sleep", "15").exitCode.timeout(3.seconds)
         } yield assertTrue(result.isEmpty)
       },
       test("interrupt a process due to timeout (stream)") {
         val stream = Command("sleep", "60").stream
 
         for {
-          result       <- stream.runDrain.timeout(3.seconds)
+          result <- stream.runDrain.timeout(3.seconds)
         } yield assertTrue(result.isEmpty)
       },
       test("interrupt a process due to timeout (linesStream)") {
         val stream = Command("sleep", "60").linesStream
 
         for {
-          result       <- stream.runDrain.timeout(3.seconds)
+          result <- stream.runDrain.timeout(3.seconds)
         } yield assertTrue(result.isEmpty)
       },
       test("interrupt a process due to timeout (stdout stream)") {
         for {
           process <- Command("sleep", "60").run
-          result       <- process.stdout.stream.runDrain.timeout(3.seconds)
+          result  <- process.stdout.stream.runDrain.timeout(3.seconds)
         } yield assertTrue(result.isEmpty)
       }
-    ) @@ TestAspect.withLiveClock @@ TestAspect.timeout(30.seconds)
+    ) @@ TestAspect.exceptNative @@ TestAspect.withLiveClock @@ TestAspect.timeout(30.seconds)
   )
 
 }

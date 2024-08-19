@@ -17,7 +17,7 @@ package zio.process
 
 import zio._
 
-import java.io.{InputStream, OutputStream}
+import java.io.{ InputStream, OutputStream }
 import scala.scalajs.js.typedarray.Uint8Array
 import scala.scalajs.js
 import js.JSConverters._
@@ -28,16 +28,13 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
 
   private var killed = false
 
-  def waitFor: IO[CommandError, ExitCode] = {
-    ProcessPlatformSpecific.wait(stdoutInternal).map(_ => ExitCode(self.process.exitCode))
-      .refineOrDie {
-        case CommandThrowable.IOError(e) => e
-      }
-  }
+  def waitFor: IO[CommandError, ExitCode] =
+    ProcessPlatformSpecific.wait(stdoutInternal).map(_ => ExitCode(self.process.exitCode)).refineOrDie {
+      case CommandThrowable.IOError(e) => e
+    }
 
-  protected def waitForUnsafe: Int = {
+  protected def waitForUnsafe: Int =
     self.process.exitCode
-  }
 
   protected def isAliveUnsafe: Boolean = !killed
   protected def destroyUnsafe(): Unit = {

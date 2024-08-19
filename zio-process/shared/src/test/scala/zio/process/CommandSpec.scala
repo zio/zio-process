@@ -4,11 +4,12 @@ import zio.stream.ZPipeline
 import zio.test.Assertion._
 import zio.test._
 import zio._
+import zio.process.FilePlatformSpecific.fileOf
 
 import java.nio.charset.StandardCharsets
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
-object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
+object CommandSpec extends ZIOProcessBaseSpec {
 
   def spec = suite("CommandSpec")(
     test("convert stdout to string") {
@@ -53,7 +54,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
     test("accept file stdin") {
       for {
         lines <-
-          Command("cat").stdin(ProcessInput.fromFile(mkFile(s"zio-process/shared/src/test/bash/echo-repeat.sh"))).lines
+          Command("cat").stdin(ProcessInput.fromFile(fileOf(s"zio-process/shared/src/test/bash/echo-repeat.sh"))).lines
       } yield assertTrue(lines.head == "#!/bin/bash")
     },
     test("support different encodings") {
@@ -65,12 +66,12 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       assertZIO(zio)(equalTo("piped in"))
     },
     test("set workingDirectory") {
-      val zio = Command("ls").workingDirectory(mkFile(s"zio-process/shared/src/test/bash")).lines
+      val zio = Command("ls").workingDirectory(fileOf(s"zio-process/shared/src/test/bash")).lines
 
       assertZIO(zio)(contains("no-permissions.sh"))
     },
     test("be able to fallback to a different program using typed error channel") {
-      val zio = Command("echo", "-n", "wrong").workingDirectory(mkFile("no-folder")).string.catchSome {
+      val zio = Command("echo", "-n", "wrong").workingDirectory(fileOf("no-folder")).string.catchSome {
         case CommandError.WorkingDirectoryMissing(_) =>
           Command("echo", "-n", "test").string
       }
@@ -136,7 +137,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
     },
     test("typed error for non-existent working directory") {
       for {
-        exit <- Command("ls").workingDirectory(mkFile("/some/bad/path")).lines.exit
+        exit <- Command("ls").workingDirectory(fileOf("/some/bad/path")).lines.exit
       } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
     },
     test("end of stream also closes underlying process") {
@@ -153,7 +154,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       for {
         commandQueue <- Queue.unbounded[Chunk[Byte]]
         process      <- Command("./stdin-echo.sh")
-                          .workingDirectory(mkFile(s"zio-process/shared/src/test/bash"))
+                          .workingDirectory(fileOf(s"zio-process/shared/src/test/bash"))
                           .stdin(ProcessInput.fromQueue(commandQueue))
                           .run
         _            <- commandQueue.offer(Chunk.fromArray("line1\nline2\n".getBytes(StandardCharsets.UTF_8)))

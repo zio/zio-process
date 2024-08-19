@@ -13,7 +13,8 @@ object CommandPlatformSpecificSpec extends ZIOProcessBaseSpec {
   def spec = suite("CommandSpec")(
     test("killTree also kills child processes") {
       for {
-        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
+        process  <-
+          Command("./sample-parent.sh").workingDirectory(fileOf("zio-process/shared/src/test/bash/kill-test")).run
         pids     <- process.stdout.stream
                       .via(ZPipeline.utf8Decode)
                       .via(ZPipeline.splitLines)
@@ -28,7 +29,8 @@ object CommandPlatformSpecificSpec extends ZIOProcessBaseSpec {
     } @@ TestAspect.nonFlaky(25),
     test("killTreeForcibly also kills child processes") {
       for {
-        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
+        process  <-
+          Command("./sample-parent.sh").workingDirectory(fileOf("zio-process/shared/src/test/bash/kill-test")).run
         pids     <- process.stdout.stream
                       .via(ZPipeline.utf8Decode)
                       .via(ZPipeline.splitLines)
@@ -43,7 +45,8 @@ object CommandPlatformSpecificSpec extends ZIOProcessBaseSpec {
     } @@ TestAspect.nonFlaky(25),
     test("kill only kills parent process") {
       for {
-        process  <- Command("./sample-parent.sh").workingDirectory(new File("src/test/bash/kill-test")).run
+        process  <-
+          Command("./sample-parent.sh").workingDirectory(fileOf("zio-process/shared/src/test/bash/kill-test")).run
         pids     <- process.stdout.stream
                       .via(ZPipeline.utf8Decode)
                       .via(ZPipeline.splitLines)

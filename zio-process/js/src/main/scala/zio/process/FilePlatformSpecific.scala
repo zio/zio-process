@@ -6,6 +6,8 @@ private[process] object FilePlatformSpecific {
   type File = String
   type Path = String
 
+  def fileOf(file: String): File = file
+
   def getAbsolute(file: File): js.Any = {
     val path   = js.Dynamic.global.require("path")
     val nodejs = js.Dynamic.global.require("process")

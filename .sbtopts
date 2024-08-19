@@ -1,0 +1,4 @@
+-J-Xmx4G
+-J-XX:MaxMetaspaceSize=1G
+-J-Dfile.encoding=UTF-8
+-J-Dsbt.io.implicit.relative.glob.conversion=allow

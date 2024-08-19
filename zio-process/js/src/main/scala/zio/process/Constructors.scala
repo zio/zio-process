@@ -71,7 +71,9 @@ private[process] object Constructors {
         for {
           bufArray  <- ZIO.succeed(Array.ofDim[Byte](chunkSize))
           bytesRead <- ZIO
-                         .attemptBlockingCancelable(is.read(bufArray))(ZIO.attemptBlocking(process.kill()).ignore)
+                         .attemptBlockingCancelable(is.read(bufArray))(
+                           ZIO.succeed(is.close()).ensuring(ZIO.attemptBlocking(process.kill()).ignore)
+                         )
                          .refineToOrDie[IOException]
                          .asSomeError
           bytes     <- if (bytesRead < 0)

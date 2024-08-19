@@ -41,7 +41,7 @@ object ProcessInput {
     ProcessInput.JavaStream(
       ProcessPlatformSpecific.JSInputStream(
         fs.createReadStream(FilePlatformSpecific.getAbsolute(file)).asInstanceOf[JS.Readable],
-        true
+        pause = true
       ),
       flushChunksEagerly = false
     )

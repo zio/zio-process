@@ -1,5 +1,6 @@
 package zio.process
 
+// TODO::
 trait SpecProperties {
   val dir = ""
 

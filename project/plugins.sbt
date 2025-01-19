@@ -8,7 +8,7 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.1.0")
 
 addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.3.7")
 
-addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "1.6.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "2.0.7")
 
 addSbtPlugin("com.github.sbt" % "sbt-unidoc" % "0.5.0")
 

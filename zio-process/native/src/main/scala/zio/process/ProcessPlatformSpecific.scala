@@ -17,13 +17,23 @@ package zio.process
 
 import java.io.InputStream
 import java.io.OutputStream
-import zio.ZIO
+import zio._
 import java.io.PushbackInputStream
 import scala.annotation.nowarn
 
 private[process] trait ProcessPlatformSpecific { self: Process =>
 
   import ProcessPlatformSpecific._
+
+  protected def waitFor: IO[CommandError, ExitCode] =
+    ZIO
+      .attemptBlockingCancelable(waitForUnsafe)(
+        ZIO.attemptBlocking(self.destroyUnsafe()).ignore
+      )
+      .map(x => ExitCode(x))
+      .refineOrDie { case CommandThrowable.IOError(e) =>
+        e
+      }
 
   protected def waitForUnsafe: Int = self.process.waitFor()
 

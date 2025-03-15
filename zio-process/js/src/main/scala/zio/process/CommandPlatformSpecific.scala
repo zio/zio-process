@@ -17,7 +17,7 @@ package zio.process
 
 import FilePlatformSpecific._
 import ProcessPlatformSpecific._
-import zio.{ NonEmptyChunk, ZIO }
+import zio._
 import scala.annotation.nowarn
 import scala.scalajs.js
 import js.JSConverters._
@@ -38,7 +38,7 @@ private[process] trait CommandPlatformSpecific {
       stdinStream <- c.stdin match {
                        case FromStream(stream, _) =>
                          stream.toInputStream.map(Some(_))
-                       case JavaStream(in, _)     => ZIO.succeed(Some(in))
+                       case JavaStream(in, _)     => ZIO.some(in)
                        case _                     => ZIO.none
                      }
       promise     <- ZIO.attempt {
@@ -97,7 +97,11 @@ private[process] trait CommandPlatformSpecific {
                                  process.stdin.write(new js.typedarray.Uint8Array(arr.take(read).map(_.toShort).toJSArray))
                                )
                              else if (read == -1)
-                               if (process.stdin != null) if (!process.stdin.writableEnded) { process.stdin.end(); () }
+                               if (process.stdin != null && !process.stdin.writableEnded) {
+                                 process.stdin.end()
+                                 ()
+                               }
+
                            }
 
                            write(true)
@@ -113,7 +117,10 @@ private[process] trait CommandPlatformSpecific {
                                    "end",
                                    { () =>
                                      connectStdin(s)
-                                     if (process.stdin != null) if (!process.stdin.writableEnded) process.stdin.end()
+
+                                     if (process.stdin != null && !process.stdin.writableEnded)
+                                       process.stdin.end()
+
                                      resolve(zioProcess)
                                    }
                                  )
@@ -122,7 +129,9 @@ private[process] trait CommandPlatformSpecific {
                              process.on("spawn", () => connectStdin(s))
                              in.on(
                                "end",
-                               () => if (process.stdin != null) if (!process.stdin.writableEnded) process.stdin.end()
+                               () =>
+                                 if (process.stdin != null && !process.stdin.writableEnded)
+                                   process.stdin.end()
                              )
                              val node = js.Dynamic.global.require("process")
                              process.on("spawn", () => node.nextTick(() => resolve(zioProcess)))

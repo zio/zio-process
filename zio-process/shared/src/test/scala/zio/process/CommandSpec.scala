@@ -3,12 +3,13 @@ package zio.process
 import zio.stream.ZPipeline
 import zio.test.Assertion._
 import zio.test._
-import zio.{ durationInt, Chunk, ExitCode, Queue, System, ZIO }
+import zio._
+import zio.process.FilePlatformSpecific.fileOf
 
 import java.nio.charset.StandardCharsets
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
-object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
+object CommandSpec extends ZIOProcessBaseSpec {
 
   def spec = suite("CommandSpec")(
     test("convert stdout to string") {
@@ -45,14 +46,15 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
 
       assertZIO(zio)(equalTo("a b c"))
     } @@ TestAspect.jvmOnly,
-    test("accept string stdin") { //
+    test("accept string stdin") {
       val zio = Command("cat").stdin(ProcessInput.fromUTF8String("piped in")).string
 
       assertZIO(zio)(equalTo("piped in"))
     },
     test("accept file stdin") {
       for {
-        lines <- Command("cat").stdin(ProcessInput.fromFile(mkFile(s"${dir}src/test/bash/echo-repeat.sh"))).lines
+        lines <-
+          Command("cat").stdin(ProcessInput.fromFile(fileOf(s"zio-process/shared/src/test/bash/echo-repeat.sh"))).lines
       } yield assertTrue(lines.head == "#!/bin/bash")
     },
     test("support different encodings") {
@@ -64,12 +66,12 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       assertZIO(zio)(equalTo("piped in"))
     },
     test("set workingDirectory") {
-      val zio = Command("ls").workingDirectory(mkFile(s"${dir}src/test/bash")).lines
+      val zio = Command("ls").workingDirectory(fileOf(s"zio-process/shared/src/test/bash")).lines
 
       assertZIO(zio)(contains("no-permissions.sh"))
     },
     test("be able to fallback to a different program using typed error channel") {
-      val zio = Command("echo", "-n", "wrong").workingDirectory(mkFile("no-folder")).string.catchSome {
+      val zio = Command("echo", "-n", "wrong").workingDirectory(fileOf("no-folder")).string.catchSome {
         case CommandError.WorkingDirectoryMissing(_) =>
           Command("echo", "-n", "test").string
       }
@@ -85,25 +87,23 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
 
       assertZIO(zio.exit)(isInterrupted)
     },
-    test("interrupt a process due to timeout") {
-      val zio = for {
-        fiber       <- Command("sleep", "20").exitCode.timeout(5.seconds).fork
-        adjustFiber <- TestClock.adjust(5.seconds).fork
-        _           <- ZIO.sleep(5.seconds)
-        _           <- adjustFiber.join
-        result      <- fiber.join
-      } yield result
-
-      assertZIO(zio)(isNone)
-    } @@ TestAspect.ignore, // TODO: Until https://github.com/zio/zio/issues/3840 is fixed or there is a workaround
     test("capture stdout and stderr separately") {
       val zio = for {
-        process <- Command(s"${dir}src/test/bash/both-streams-test.sh").run
+        process <- Command(s"zio-process/shared/src/test/bash/both-streams-test.sh").run
         stdout  <- process.stdout.string
         stderr  <- process.stderr.string
       } yield (stdout, stderr)
 
       assertZIO(zio)(equalTo(("stdout1\nstdout2\n", "stderr1\nstderr2\n")))
+    } @@ TestAspect.withLiveClock,
+    test("streaming entire result from stdout should wait for completion") {
+      val zio = for {
+        process <- Command(s"zio-process/shared/src/test/bash/echo-repeat-short.sh").run
+        _       <- ZIO.sleep(5.seconds) // TODO: This should not be needed. If you remove the sleep it fails.
+        stdout  <- process.stdout.string
+      } yield stdout
+
+      assertZIO(zio)(equalTo("iteration: 1\niteration: 2\niteration: 3\n"))
     },
     test("return non-zero exit code in success channel") {
       val zio = Command("ls", "--non-existent-flag").exitCode
@@ -116,20 +116,20 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       assertZIO(zio.exit)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
     },
     test("permission denied is a typed error") {
-      val zio = Command(s"${dir}src/test/bash/no-permissions.sh").string
+      val zio = Command(s"zio-process/shared/src/test/bash/no-permissions.sh").string
 
       assertZIO(zio.exit)(fails(isSubtype[CommandError.PermissionDenied](anything)))
     } @@ TestAspect.exceptNative,
     test("redirectErrorStream should merge stderr into stdout") {
       for {
-        process <- Command(s"${dir}src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
+        process <- Command(s"zio-process/shared/src/test/bash/both-streams-test.sh").redirectErrorStream(true).run
         stdout  <- process.stdout.string
         stderr  <- process.stderr.string
       } yield assertTrue(stdout == "stdout1\nstderr1\nstdout2\nstderr2\n", stderr.isEmpty)
     } @@ TestAspect.exceptJS,
     test("be able to kill a process that's running") {
       for {
-        process           <- Command(s"${dir}src/test/bash/echo-repeat.sh").run
+        process           <- Command(s"zio-process/shared/src/test/bash/echo-repeat.sh").run
         isAliveBeforeKill <- process.isAlive
         _                 <- process.kill
         isAliveAfterKill  <- process.isAlive
@@ -137,7 +137,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
     },
     test("typed error for non-existent working directory") {
       for {
-        exit <- Command("ls").workingDirectory(mkFile("/some/bad/path")).lines.exit
+        exit <- Command("ls").workingDirectory(fileOf("/some/bad/path")).lines.exit
       } yield assert(exit)(fails(isSubtype[CommandError.WorkingDirectoryMissing](anything)))
     },
     test("end of stream also closes underlying process") {
@@ -154,7 +154,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       for {
         commandQueue <- Queue.unbounded[Chunk[Byte]]
         process      <- Command("./stdin-echo.sh")
-                          .workingDirectory(mkFile(s"${dir}src/test/bash"))
+                          .workingDirectory(fileOf(s"zio-process/shared/src/test/bash"))
                           .stdin(ProcessInput.fromQueue(commandQueue))
                           .run
         _            <- commandQueue.offer(Chunk.fromArray("line1\nline2\n".getBytes(StandardCharsets.UTF_8)))
@@ -177,13 +177,40 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
         _            <- commandQueue.offer(Chunk.fromArray(s"process.exit(0)${sep}".getBytes(StandardCharsets.UTF_8)))
         _            <- fiber.join
       } yield assertCompletes
-    } @@ TestAspect.withLiveClock @@ TestAspect.exceptJS,
+    } @@ TestAspect.exceptJS,
     test("get pid of a running process") {
       for {
         process <- Command("ls").run
         pid     <- process.pid
       } yield assertTrue(pid > 0L)
-    }
-  )
+    },
+    suite("interruption")(
+      test("interrupt a process due to timeout (exitCode)") {
+        for {
+          result <- Command("sleep", "60").exitCode.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      },
+      test("interrupt a process due to timeout (stream)") {
+        val stream = Command("sleep", "60").stream
+
+        for {
+          result <- stream.runDrain.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      },
+      test("interrupt a process due to timeout (linesStream)") {
+        val stream = Command("sleep", "60").linesStream
+
+        for {
+          result <- stream.runDrain.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      },
+      test("interrupt a process due to timeout (stdout stream)") {
+        for {
+          process <- Command("sleep", "60").run
+          result  <- process.stdout.stream.runDrain.timeout(3.seconds)
+        } yield assertTrue(result.isEmpty)
+      }
+    ) @@ TestAspect.exceptNative @@ TestAspect.timeout(30.seconds)
+  ) @@ TestAspect.withLiveClock
 
 }

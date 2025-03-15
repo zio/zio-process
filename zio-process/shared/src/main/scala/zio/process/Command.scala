@@ -110,7 +110,6 @@ sealed trait Command extends CommandPlatformSpecific {
                      }
           process <- build(c, piping).mapError(CommandThrowable.classify)
           _       <- connectStdin(process, c.stdin)
-
         } yield process
 
       case c: Command.Piped =>

@@ -16,8 +16,7 @@
 package zio.process
 
 import scala.annotation.nowarn
-import zio.NonEmptyChunk
-import zio.{ Chunk, ZIO }
+import zio._
 import FilePlatformSpecific._
 import java.lang.ProcessBuilder.Redirect
 import scala.jdk.CollectionConverters._

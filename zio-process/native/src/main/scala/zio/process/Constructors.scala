@@ -20,10 +20,13 @@ import zio.stream.ZStream
 
 import java.io.OutputStream
 import zio.Trace
+
 import java.io.IOException
 import zio.ZIO
 import zio.Chunk
 import zio.Scope
+import zio.process.ProcessPlatformSpecific.JProcess
+
 import java.io.InputStream
 
 private[process] object Constructors {
@@ -52,21 +55,35 @@ private[process] object Constructors {
             val bytes = byteChunk.toArray
             out.write(bytes)
             bytesWritten + bytes.length
-          }.refineOrDie { case e: IOException =>
-            e
-          }
+          }.refineToOrDie[IOException]
         }
       }
     }
 
   def zsink(outputStream: OutputStream): ZSink[Any, IOException, Byte, Byte, Long] = fromOutputStream(outputStream)
 
-  /**
-   * Creates a stream from a `java.io.InputStream`
-   */
-  def fromInputStream(
+  def fromProcessInputStream(process: JProcess)(
     is: => InputStream,
     chunkSize: => Int = ZStream.DefaultChunkSize
-  )(implicit trace: Trace): ZStream[Any, IOException, Byte] = ZStream.fromInputStream(is, chunkSize)
+  )(implicit trace: Trace): ZStream[Any, IOException, Byte] =
+    ZStream.succeed((is, chunkSize)).flatMap { case (is, chunkSize) =>
+      ZStream.repeatZIOChunkOption {
+        for {
+          bufArray  <- ZIO.succeed(Array.ofDim[Byte](chunkSize))
+          bytesRead <- ZIO
+                         .attemptBlockingCancelable(is.read(bufArray))(ZIO.attemptBlocking(process.destroy()).ignore)
+                         .refineToOrDie[IOException]
+                         .asSomeError
+          bytes     <- if (bytesRead < 0)
+                         ZIO.fail(None)
+                       else if (bytesRead == 0)
+                         ZIO.succeed(Chunk.empty)
+                       else if (bytesRead < chunkSize)
+                         ZIO.succeed(Chunk.fromArray(bufArray).take(bytesRead))
+                       else
+                         ZIO.succeed(Chunk.fromArray(bufArray))
+        } yield bytes
+      }
+    }
 
 }

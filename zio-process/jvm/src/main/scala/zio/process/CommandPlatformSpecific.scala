@@ -15,17 +15,19 @@
  */
 package zio.process
 
+
 import scala.annotation.nowarn
 import FilePlatformSpecific._
-import zio.NonEmptyChunk
+import zio.{Chunk, Exit, NonEmptyChunk, Ref, UIO, Unsafe, ZIO}
+
 import java.lang.ProcessBuilder.Redirect
 import scala.jdk.CollectionConverters._
-import zio.ZIO
 import java.io.OutputStream
 import zio.stream.ZSink
-import zio.Chunk
 
 private[process] trait CommandPlatformSpecific {
+
+  type JProcess = java.lang.Process
 
   @nowarn
   protected def checkDirectory(dir: File): Boolean = true
@@ -34,39 +36,55 @@ private[process] trait CommandPlatformSpecific {
 
   @nowarn
   protected def build(c: Command.Standard, piping: Option[java.io.InputStream]): ZIO[Any, Throwable, Process] =
-    ZIO.attempt {
-      val builder = new ProcessBuilder(adaptCommand(c.command): _*)
-      builder.redirectErrorStream(c.redirectErrorStream)
-      c.workingDirectory.foreach { dir =>
-        if (!checkDirectory(dir)) throw CommandError.WorkingDirectoryMissing(dir)
-        builder.directory(dir)
+    ZIO.asyncInterrupt { cb =>
+      val ref: Ref.Atomic[JProcess] = Ref.unsafe.make[JProcess](null)(Unsafe.unsafe)
+
+      def unsafeRunCmd: Process = {
+        val builder = new ProcessBuilder(adaptCommand(c.command): _*)
+        builder.redirectErrorStream(c.redirectErrorStream)
+        c.workingDirectory.foreach { dir =>
+          if (!checkDirectory(dir)) throw CommandError.WorkingDirectoryMissing(dir)
+          builder.directory(dir)
+        }
+
+        if (c.env.nonEmpty) {
+          builder.environment().putAll(c.env.asJava)
+        }
+
+        c.stdin match {
+          case ProcessInput.Inherit => builder.redirectInput(Redirect.INHERIT)
+          case ProcessInput.Pipe    => builder.redirectInput(Redirect.PIPE)
+          case _                    => ()
+        }
+
+        c.stdout match {
+          case ProcessOutput.FileRedirect(file)       => builder.redirectOutput(Redirect.to(file))
+          case ProcessOutput.FileAppendRedirect(file) => builder.redirectOutput(Redirect.appendTo(file))
+          case ProcessOutput.Inherit                  => builder.redirectOutput(Redirect.INHERIT)
+          case ProcessOutput.Pipe                     => builder.redirectOutput(Redirect.PIPE)
+        }
+
+        c.stderr match {
+          case ProcessOutput.FileRedirect(file)       => builder.redirectError(Redirect.to(file))
+          case ProcessOutput.FileAppendRedirect(file) => builder.redirectError(Redirect.appendTo(file))
+          case ProcessOutput.Inherit                  => builder.redirectError(Redirect.INHERIT)
+          case ProcessOutput.Pipe                     => builder.redirectError(Redirect.PIPE)
+        }
+
+        val jProcess = builder.start()
+        ref.unsafe.set(jProcess)(Unsafe.unsafe)
+        Process(jProcess)
       }
 
-      if (c.env.nonEmpty) {
-        builder.environment().putAll(c.env.asJava)
-      }
+      val canceler: UIO[Unit] =
+        ref.get.flatMap {
+          case null    => Exit.unit
+          case process => ZIO.attempt(process.destroy()).ignoreLogged
+        }
 
-      c.stdin match {
-        case ProcessInput.Inherit => builder.redirectInput(Redirect.INHERIT)
-        case ProcessInput.Pipe    => builder.redirectInput(Redirect.PIPE)
-        case _                    => ()
-      }
+      cb(ZIO.attempt(unsafeRunCmd))
 
-      c.stdout match {
-        case ProcessOutput.FileRedirect(file)       => builder.redirectOutput(Redirect.to(file))
-        case ProcessOutput.FileAppendRedirect(file) => builder.redirectOutput(Redirect.appendTo(file))
-        case ProcessOutput.Inherit                  => builder.redirectOutput(Redirect.INHERIT)
-        case ProcessOutput.Pipe                     => builder.redirectOutput(Redirect.PIPE)
-      }
-
-      c.stderr match {
-        case ProcessOutput.FileRedirect(file)       => builder.redirectError(Redirect.to(file))
-        case ProcessOutput.FileAppendRedirect(file) => builder.redirectError(Redirect.appendTo(file))
-        case ProcessOutput.Inherit                  => builder.redirectError(Redirect.INHERIT)
-        case ProcessOutput.Pipe                     => builder.redirectError(Redirect.PIPE)
-      }
-
-      Process(builder.start())
+      Left(canceler)
     }
 
   protected def connectStdin(process: Process, stdin: ProcessInput): ZIO[Any, CommandError, Unit] =

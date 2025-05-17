@@ -103,8 +103,7 @@ lazy val docs = project
     projectName := "ZIO Process",
     mainModuleName := (zioProcess.jvm / moduleName).value,
     projectStage := ProjectStage.ProductionReady,
-    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioProcess.jvm),
-    docsPublishBranch := "series/2.x"
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioProcess.jvm)
   )
   .dependsOn(zioProcess.jvm)
   .enablePlugins(WebsitePlugin)

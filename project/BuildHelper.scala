@@ -72,17 +72,17 @@ object BuildHelper {
 
   def buildInfoSettings(packageName: String) =
     Seq(
-      buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, isSnapshot),
+      buildInfoKeys    := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, isSnapshot),
       buildInfoPackage := packageName,
-      buildInfoObject := "BuildInfo"
+      buildInfoObject  := "BuildInfo"
     )
 
   def stdSettings(prjName: String) = Seq(
-    name := s"$prjName",
-    fork := true,
-    crossScalaVersions := Seq(Scala212, Scala213),
+    name                     := s"$prjName",
+    fork                     := true,
+    crossScalaVersions       := Seq(Scala212, Scala213),
     ThisBuild / scalaVersion := Scala213,
-    scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
+    scalacOptions            := stdOptions ++ extraOptions(scalaVersion.value),
     incOptions ~= (_.withLogRecompileOnMacro(false))
   )
 
@@ -111,22 +111,20 @@ object BuildHelper {
   }
 
   lazy val crossProjectSettings = Seq(
-    Compile / unmanagedSourceDirectories ++= {
+    Compile / unmanagedSourceDirectories ++=
       crossPlatformSources(
         scalaVersion.value,
         crossProjectPlatform.value.identifier,
         "main",
         baseDirectory.value
-      )
-    },
-    Test / unmanagedSourceDirectories ++= {
+      ),
+    Test / unmanagedSourceDirectories ++=
       crossPlatformSources(
         scalaVersion.value,
         crossProjectPlatform.value.identifier,
         "test",
         baseDirectory.value
       )
-    }
   )
 
   val dottySettings = Seq(
@@ -144,7 +142,7 @@ object BuildHelper {
       else
         Seq()
     },
-    Compile / doc / sources := {
+    Compile / doc / sources  := {
       val old = (Compile / doc / sources).value
       if (scalaVersion.value == Scala3) {
         Nil

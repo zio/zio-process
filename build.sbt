@@ -6,9 +6,9 @@ import org.scalajs.linker.interface.ModuleInitializer
 inThisBuild(
   List(
     organization := "dev.zio",
-    homepage := Some(url("https://zio.dev/zio-process/")),
-    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-    developers := List(
+    homepage     := Some(url("https://zio.dev/zio-process/")),
+    licenses     := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    developers   := List(
       Developer(
         "jdegoes",
         "John De Goes",
@@ -22,7 +22,7 @@ inThisBuild(
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
 
-logo :=
+logo        :=
   s"""
      |      _
      |     (_)
@@ -38,7 +38,7 @@ logo :=
      | Scala ${scalaVersion.value}
      |
      |""".stripMargin
-logoColor := scala.Console.RED
+logoColor   := scala.Console.RED
 usefulTasks := Seq(
   UsefulTask("~compile", "Compile all modules with file-watch enabled"),
   UsefulTask("fmt", "Run scalafmt on the entire project"),
@@ -52,8 +52,8 @@ lazy val root =
   project
     .in(file("."))
     .settings(
-      name := "zio-process",
-      publish / skip := true,
+      name               := "zio-process",
+      publish / skip     := true,
       crossScalaVersions := Nil
     )
     .aggregate(zioProcess.jvm, zioProcess.native, zioProcess.js, docs)
@@ -96,13 +96,13 @@ lazy val docs = project
   .in(file("zio-process-docs"))
   .settings(stdSettings("zio-process-docs"))
   .settings(
-    moduleName := "zio-process-docs",
+    moduleName                                 := "zio-process-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq("dev.zio" %% "zio" % zioVersion),
-    projectName := "ZIO Process",
-    mainModuleName := (zioProcess.jvm / moduleName).value,
-    projectStage := ProjectStage.ProductionReady,
+    projectName                                := "ZIO Process",
+    mainModuleName                             := (zioProcess.jvm / moduleName).value,
+    projectStage                               := ProjectStage.ProductionReady,
     ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioProcess.jvm)
   )
   .dependsOn(zioProcess.jvm)

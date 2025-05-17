@@ -47,7 +47,7 @@ final case class Process(private[process] val process: JProcess) extends Process
   /**
    * Return the exit code of this process.
    */
-  def exitCode: ZIO[Any, CommandError, ExitCode]              =
+  def exitCode: ZIO[Any, CommandError, ExitCode] =
     attemptBlockingCancelable(ExitCode(waitForUnsafe))(ZIO.succeed(destroyUnsafe())).refineOrDie {
       case CommandThrowable.IOError(e) => e
     }
@@ -69,7 +69,7 @@ final case class Process(private[process] val process: JProcess) extends Process
   /**
    * Kills the process and will wait until completed. Equivalent to SIGTERM on Unix platforms.
    */
-  def kill: ZIO[Any, CommandError, Unit]                   =
+  def kill: ZIO[Any, CommandError, Unit] =
     attemptBlockingInterrupt {
       destroyUnsafe()
       waitForUnsafe
@@ -79,7 +79,7 @@ final case class Process(private[process] val process: JProcess) extends Process
   /**
    * Kills the process and will wait until completed. Equivalent to SIGKILL on Unix platforms.
    */
-  def killForcibly: ZIO[Any, CommandError, Unit]           =
+  def killForcibly: ZIO[Any, CommandError, Unit] =
     attemptBlockingInterrupt {
       destroyForciblyUnsafe
       waitForUnsafe

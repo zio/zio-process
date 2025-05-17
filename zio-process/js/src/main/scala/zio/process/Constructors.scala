@@ -35,12 +35,10 @@ private[process] object Constructors {
   )
 
   /**
-   * Uses the provided `OutputStream` resource to create a [[ZSink]] that
-   * consumes byte chunks and writes them to the `OutputStream`. The sink will
-   * yield the count of bytes written.
+   * Uses the provided `OutputStream` resource to create a [[ZSink]] that consumes byte chunks and writes them to the
+   * `OutputStream`. The sink will yield the count of bytes written.
    *
-   * The `OutputStream` will be automatically closed after the stream is
-   * finished or an error occurred.
+   * The `OutputStream` will be automatically closed after the stream is finished or an error occurred.
    */
   private def fromOutputStreamScoped(
     os: => ZIO[Scope, IOException, OutputStream]

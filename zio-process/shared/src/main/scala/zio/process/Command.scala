@@ -39,9 +39,9 @@ sealed trait Command extends CommandPlatformSpecific {
     run.flatMap(_.exitCode)
 
   /**
-   * Flatten this command to a non-empty chunk of standard commands.
-   * For the standard case, this simply returns a 1 element chunk.
-   * For the piped case, all the commands in the pipe will be extracted out into a chunk from left to right.
+   * Flatten this command to a non-empty chunk of standard commands. For the standard case, this simply returns a 1
+   * element chunk. For the piped case, all the commands in the pipe will be extracted out into a chunk from left to
+   * right.
    */
   def flatten: NonEmptyChunk[Command.Standard] = this match {
     case c: Command.Standard => NonEmptyChunk.single(c)
@@ -191,8 +191,8 @@ sealed trait Command extends CommandPlatformSpecific {
     run.flatMap(_.successfulExitCode)
 
   /**
-   * Set the working directory that will be used when this command will be run.
-   * For the piped case, each piped command's working directory will also be set.
+   * Set the working directory that will be used when this command will be run. For the piped case, each piped command's
+   * working directory will also be set.
    */
   def workingDirectory(workingDirectory: File): Command = this match {
     case c: Command.Standard => c.copy(workingDirectory = Some(workingDirectory))

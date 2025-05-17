@@ -32,7 +32,7 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
   protected def waitForUnsafe: Int = self.process.exitCode
 
   protected def isAliveUnsafe: Boolean = !killed
-  protected def destroyUnsafe(): Unit = {
+  protected def destroyUnsafe(): Unit  = {
     val wasKilled = self.process.kill()
     killed = wasKilled
   }

@@ -1,4 +1,4 @@
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.4")
 
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.4.5")
 
@@ -12,7 +12,7 @@ addSbtPlugin("ch.epfl.scala" % "sbt-bloop" % "2.0.10")
 
 addSbtPlugin("com.github.sbt" % "sbt-unidoc" % "0.5.0")
 
-addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.11")
+addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.9.3")
 
 addSbtPlugin("com.github.reibitto" % "sbt-welcome" % "0.5.0")
 

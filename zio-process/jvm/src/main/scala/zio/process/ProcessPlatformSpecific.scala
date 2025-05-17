@@ -20,6 +20,7 @@ import java.io.OutputStream
 import scala.jdk.CollectionConverters._
 import zio.ZIO
 import scala.annotation.nowarn
+import java.util.stream.Collectors
 
 private[process] trait ProcessPlatformSpecific { self: Process =>
 
@@ -50,7 +51,7 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    */
   def killTree: ZIO[Any, CommandError, Unit] =
     self.execute { process =>
-      val d = process.descendants().toList().asScala
+      val d = process.descendants().collect(Collectors.toList()).asScala
       d.foreach { p =>
         destroyHandle(p)
         ()
@@ -74,7 +75,7 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
    */
   def killTreeForcibly: ZIO[Any, CommandError, Unit] =
     self.execute { process =>
-      val d = process.descendants().toList().asScala
+      val d = process.descendants().collect(Collectors.toList()).asScala
       d.foreach { p =>
         destroyForciblyHandle(p)
         ()

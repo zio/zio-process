@@ -46,7 +46,11 @@ usefulTasks := Seq(
   UsefulTask("testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term").noAlias
 )
 
-val zioVersion = "2.1.6"
+val zioVersion = "2.1.18"
+
+val scalaCollectionCompatVersion = "2.13.0"
+
+val scalaJavaTimeVersion = "2.6.0"
 
 lazy val root =
   project
@@ -69,7 +73,7 @@ lazy val zioProcess =
       libraryDependencies ++= Seq(
         "dev.zio"                %%% "zio"                     % zioVersion,
         "dev.zio"                %%% "zio-streams"             % zioVersion,
-        "org.scala-lang.modules" %%% "scala-collection-compat" % "2.9.0",
+        "org.scala-lang.modules" %%% "scala-collection-compat" % scalaCollectionCompatVersion,
         "dev.zio"                %%% "zio-test"                % zioVersion % Test,
         "dev.zio"                %%% "zio-test-sbt"            % zioVersion % Test
       )
@@ -79,13 +83,13 @@ lazy val zioProcess =
     .nativeSettings(Test / fork := false)
     .nativeSettings(
       libraryDependencies ++= Seq(
-        "io.github.cquiroz" %%% "scala-java-time" % "2.5.0" % Test
+        "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion % Test
       )
     )
     .jsSettings(Test / fork := false)
     .jsSettings(
       libraryDependencies ++= Seq(
-        "io.github.cquiroz" %%% "scala-java-time" % "2.6.0" % Test
+        "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion % Test
       )
     )
     .jsSettings(

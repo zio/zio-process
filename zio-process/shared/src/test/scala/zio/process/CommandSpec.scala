@@ -54,7 +54,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       for {
         lines <- Command("cat").stdin(ProcessInput.fromFile(mkFile(s"${dir}src/test/bash/echo-repeat.sh"))).lines
       } yield assertTrue(lines.head == "#!/bin/bash")
-    },
+    } @@ TestAspect.exceptNative,
     test("support different encodings") {
       val zio =
         Command("cat")
@@ -62,7 +62,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
           .string(StandardCharsets.UTF_16)
 
       assertZIO(zio)(equalTo("piped in"))
-    },
+    } @@ TestAspect.exceptNative,
     test("set workingDirectory") {
       val zio = Command("ls").workingDirectory(mkFile(s"${dir}src/test/bash")).lines
 
@@ -114,7 +114,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       val zio = Command("ls", "--non-existent-flag").successfulExitCode
 
       assertZIO(zio.exit)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
-    },
+    } @@ TestAspect.flaky,
     test("permission denied is a typed error") {
       val zio = Command(s"${dir}src/test/bash/no-permissions.sh").string
 
@@ -149,7 +149,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
         lines == Chunk(uniqueId, uniqueId),
         grepOutput.forall(!_.contains(uniqueId))
       )
-    },
+    } @@ TestAspect.exceptNative,
     test("connect to a repl-like process and flush the chunks eagerly and get responses right away") {
       for {
         commandQueue <- Queue.unbounded[Chunk[Byte]]

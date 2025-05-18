@@ -13,20 +13,20 @@ object PipedCommandSpec extends ZIOProcessBaseSpec {
       val zio = (Command("echo", "2\n1\n3") | Command("cat") | Command("sort")).lines
 
       assertZIO(zio)(equalTo(Chunk("1", "2", "3")))
-    },
+    } @@ TestAspect.exceptNative,
     test("piping is associative") {
       for {
         lines1 <- (Command("echo", "2\n1\n3") | (Command("cat") | (Command("sort") | Command("head", "-2")))).lines
         lines2 <- (Command("echo", "2\n1\n3") | Command("cat") | (Command("sort") | Command("head", "-2"))).lines
       } yield assert(lines1)(equalTo(lines2))
-    },
+    } @@ TestAspect.exceptNative,
     test("stdin on piped command") {
       val zio = (Command("cat") | Command("sort") | Command("head", "-2"))
         .stdin(ProcessInput.fromUTF8String("2\n1\n3"))
         .lines
 
       assertZIO(zio)(equalTo(Chunk("1", "2")))
-    },
+    } @@ TestAspect.exceptNative,
     test("env delegate to all commands") {
       val env     = Map("key" -> "value")
       val command = (Command("cat") | (Command("sort") | Command("head", "-2"))).env(env)

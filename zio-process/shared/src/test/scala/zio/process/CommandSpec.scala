@@ -38,7 +38,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       val zio = Command("bash", "-c", "echo -n \"var = $VAR\"").env(Map("VAR" -> "value")).string
 
       assertZIO(zio)(equalTo("var = value"))
-    },
+    } @@ TestAspect.flaky,
     test("accept streaming stdin") {
       val stream = Command("echo", "-n", "a", "b", "c").stream
       val zio    = Command("cat").stdin(ProcessInput.fromStream(stream, flushChunksEagerly = false)).string

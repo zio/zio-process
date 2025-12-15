@@ -14,7 +14,7 @@ addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.9.3")
 
 addSbtPlugin("com.github.reibitto" % "sbt-welcome" % "0.5.0")
 
-addSbtPlugin("dev.zio" % "zio-sbt-website" % "0.4.0-alpha.31")
+addSbtPlugin("dev.zio" % "zio-sbt-website" % "0.4.7")
 
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2")
 

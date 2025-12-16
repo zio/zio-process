@@ -84,7 +84,7 @@ jobs:
         with:
           node-version: 21.6.1
       - name: Run tests
-        run: sbt ++${{ matrix.scala }} zioProcess${{ matrix.platform }}/test
+        run: sbt ++${{ matrix.scala }} 'zioProcess${{ matrix.platform }}/test'
 
   test_jvms:
     runs-on: ubuntu-latest
@@ -118,7 +118,7 @@ jobs:
         with:
           node-version: 21.6.1
       - name: Run tests
-        run: sbt ++${{ matrix.scala }} zioProcess${{ matrix.platform }}/test
+        run: sbt ++${{ matrix.scala }} 'zioProcess${{ matrix.platform }}/test'
 
 
   ci:

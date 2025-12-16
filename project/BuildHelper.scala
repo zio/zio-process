@@ -8,7 +8,7 @@ object BuildHelper {
 
   val Scala212 = "2.12.20"
   val Scala213 = "2.13.18"
-  val Scala3   = "3.3.6"
+  val Scala3   = "3.3.7"
 
   private val stdOptions = Seq(
     "-encoding",

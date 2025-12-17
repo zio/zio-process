@@ -1,8 +1,8 @@
 name: CI
 
 env:
-  JDK_JAVA_OPTIONS: -XX:+PrintCommandLineFlags # JDK_JAVA_OPTIONS is _the_ env. variable to use for modern Java
-  JVM_OPTS: -XX:+PrintCommandLineFlags # for Java 8 only (sadly, it is not modern enough for JDK_JAVA_OPTIONS)
+  JDK_JAVA_OPTIONS: -XX:+PrintCommandLineFlags -Xms2G -Xmx8G -Xss4M -XX:+UseG1GC -XX:ReservedCodeCacheSize=512M -XX:NonProfiledCodeHeapSize=256M # JDK_JAVA_OPTIONS is _the_ env. variable to use for modern Java
+  SBT_OPTS: -XX:+PrintCommandLineFlags -Xms2G -Xmx8G -Xss4M -XX:+UseG1GC -XX:ReservedCodeCacheSize=512M -XX:NonProfiledCodeHeapSize=256M # Needed for sbt
 
 on:
   pull_request:
@@ -18,16 +18,19 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Cache scala dependencies
-        uses: coursier/cache-action@v6
-      - name: Setup Action
-        uses: coursier/setup-action@v1
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          jvm: temurin:21
-          apps: sbt
+          distribution: corretto
+          java-version: 17
+          check-latest: true
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v7
       - name: Lint code
         run: sbt check
 
@@ -36,38 +39,44 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@v4.1.1
-      - name: Cache scala dependencies
-        uses: coursier/cache-action@v6
-      - name: Setup Action
-        uses: coursier/setup-action@v1
+        uses: actions/checkout@v6
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          jvm: temurin:21
-          apps: sbt
+          distribution: corretto
+          java-version: 17
+          check-latest: true
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v7
       - name: Check Document Generation
         run: sbt docs/compileDocs
 
-  test:
+  test_scala:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        java: ['11', '17', '21']
-        scala: ['2.12.20', '2.13.16', '3.3.3']
+        java: ['17']
+        scala: ['2.12.x', '2.13.x', '3.x']
         platform: ['JVM', 'Native', 'JS']
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Cache scala dependencies
-        uses: coursier/cache-action@v6
-      - name: Setup Action
-        uses: coursier/setup-action@v1
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          jvm: temurin:${{ matrix.java }}
-          apps: sbt
+          distribution: corretto
+          java-version: ${{ matrix.java }}
+          check-latest: true
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v7
       - name: Install libuv
         if: matrix.platform == 'Native'
         run: sudo apt-get update && sudo apt-get install -y libuv1-dev
@@ -77,11 +86,40 @@ jobs:
         with:
           node-version: 21.6.1
       - name: Run tests
-        run: sbt ++${{ matrix.scala }} zioProcess${{ matrix.platform }}/test
+        run: sbt ++${{ matrix.scala }} 'zioProcess${{ matrix.platform }}/test'
+
+  test_jvms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ '11', '21' ]
+        scala: [ '2.13.x' ]
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: corretto
+          java-version: ${{ matrix.java }}
+          check-latest: true
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v7
+      - name: Install libuv
+        run: sudo apt-get update && sudo apt-get install -y libuv1-dev
+      - name: Run tests
+        run: sbt ++${{ matrix.scala }} 'zioProcessJVM/test'
+
 
   ci:
     runs-on: ubuntu-latest
-    needs: [lint, website, test]
+    needs: [lint, website, test_scala, test_jvms]
     steps:
       - name: Aggregate job outcomes
         run: echo "build succeeded"
@@ -93,16 +131,19 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Cache scala dependencies
-        uses: coursier/cache-action@v6
-      - name: Setup Action
-        uses: coursier/setup-action@v1
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          jvm: temurin:21
-          apps: sbt
+          distribution: corretto
+          java-version: 17
+          check-latest: true
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+      - name: Cache scala dependencies
+        uses: coursier/cache-action@v7
       - name: Release artifacts
         run: sbt ci-release
         env:

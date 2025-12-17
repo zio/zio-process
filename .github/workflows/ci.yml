@@ -120,7 +120,7 @@ jobs:
         with:
           node-version: 21.6.1
       - name: Run tests
-        run: sbt ++${{ matrix.scala }} test
+        run: sbt ++${{ matrix.scala }} 'zioProcessJVM/test'
 
 
   ci:

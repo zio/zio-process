@@ -112,13 +112,7 @@ jobs:
       - name: Cache scala dependencies
         uses: coursier/cache-action@v7
       - name: Install libuv
-        if: matrix.platform == 'Native'
         run: sudo apt-get update && sudo apt-get install -y libuv1-dev
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-        if: matrix.platform == 'JS'
-        with:
-          node-version: 21.6.1
       - name: Run tests
         run: sbt ++${{ matrix.scala }} 'zioProcessJVM/test'
 

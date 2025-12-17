@@ -19,10 +19,12 @@ jobs:
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: correto
           java-version: 17
           check-latest: true
       - name: Setup sbt
@@ -41,7 +43,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: correto
           java-version: 17
           check-latest: true
       - name: Setup sbt
@@ -68,7 +70,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: correto
           java-version: ${{ matrix.java }}
           check-latest: true
       - name: Setup sbt
@@ -102,7 +104,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: correto
           java-version: ${{ matrix.java }}
           check-latest: true
       - name: Setup sbt
@@ -141,7 +143,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: correto
           java-version: 17
           check-latest: true
       - name: Setup sbt

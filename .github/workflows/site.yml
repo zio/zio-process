@@ -24,7 +24,7 @@ jobs:
     - name: Cache scala dependencies
       uses: coursier/cache-action@v7
     - name: Setup Action
-      uses: coursier/setup-action@v1
+      uses: coursier/setup-action@v2
       with:
         jvm: temurin:21
         apps: sbt
@@ -46,7 +46,7 @@ jobs:
     - name: Cache scala dependencies
       uses: coursier/cache-action@v7
     - name: Setup Action
-      uses: coursier/setup-action@v1
+      uses: coursier/setup-action@v2
       with:
         jvm: temurin:21
         apps: sbt
@@ -72,7 +72,7 @@ jobs:
     - name: Cache scala dependencies
       uses: coursier/cache-action@v7
     - name: Setup Action
-      uses: coursier/setup-action@v1
+      uses: coursier/setup-action@v2
       with:
         jvm: temurin:21
         apps: sbt

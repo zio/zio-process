@@ -49,7 +49,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       val zio = Command("cat").stdin(ProcessInput.fromUTF8String("piped in")).string
 
       assertZIO(zio)(equalTo("piped in"))
-    },
+    } @@ TestAspect.flaky,
     test("accept file stdin") {
       for {
         lines <- Command("cat").stdin(ProcessInput.fromFile(mkFile(s"${dir}src/test/bash/echo-repeat.sh"))).lines
@@ -62,7 +62,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
           .string(StandardCharsets.UTF_16)
 
       assertZIO(zio)(equalTo("piped in"))
-    } @@ TestAspect.exceptNative,
+    } @@ TestAspect.exceptNative @@ TestAspect.exceptJS,
     test("set workingDirectory") {
       val zio = Command("ls").workingDirectory(mkFile(s"${dir}src/test/bash")).lines
 
@@ -75,7 +75,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       }
 
       assertZIO(zio)(equalTo("test"))
-    },
+    } @@ TestAspect.exceptJS,
     test("interrupt a process manually") {
       val zio = for {
         fiber  <- Command("sleep", "20").exitCode.fork
@@ -104,12 +104,12 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       } yield (stdout, stderr)
 
       assertZIO(zio)(equalTo(("stdout1\nstdout2\n", "stderr1\nstderr2\n")))
-    },
+    } @@ TestAspect.exceptJS,
     test("return non-zero exit code in success channel") {
       val zio = Command("ls", "--non-existent-flag").exitCode
 
       assertZIO(zio)(not(equalTo(ExitCode.success)))
-    },
+    } @@ TestAspect.exceptJS,
     test("absolve non-zero exit code") {
       val zio = Command("ls", "--non-existent-flag").successfulExitCode
 

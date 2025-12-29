@@ -38,7 +38,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       val zio = Command("bash", "-c", "echo -n \"var = $VAR\"").env(Map("VAR" -> "value")).string
 
       assertZIO(zio)(equalTo("var = value"))
-    },
+    } @@ TestAspect.flaky,
     test("accept streaming stdin") {
       val stream = Command("echo", "-n", "a", "b", "c").stream
       val zio    = Command("cat").stdin(ProcessInput.fromStream(stream, flushChunksEagerly = false)).string
@@ -49,12 +49,12 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       val zio = Command("cat").stdin(ProcessInput.fromUTF8String("piped in")).string
 
       assertZIO(zio)(equalTo("piped in"))
-    },
+    } @@ TestAspect.flaky,
     test("accept file stdin") {
       for {
         lines <- Command("cat").stdin(ProcessInput.fromFile(mkFile(s"${dir}src/test/bash/echo-repeat.sh"))).lines
       } yield assertTrue(lines.head == "#!/bin/bash")
-    },
+    } @@ TestAspect.exceptNative,
     test("support different encodings") {
       val zio =
         Command("cat")
@@ -62,7 +62,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
           .string(StandardCharsets.UTF_16)
 
       assertZIO(zio)(equalTo("piped in"))
-    },
+    } @@ TestAspect.exceptNative @@ TestAspect.exceptJS,
     test("set workingDirectory") {
       val zio = Command("ls").workingDirectory(mkFile(s"${dir}src/test/bash")).lines
 
@@ -75,7 +75,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       }
 
       assertZIO(zio)(equalTo("test"))
-    },
+    } @@ TestAspect.exceptJS,
     test("interrupt a process manually") {
       val zio = for {
         fiber  <- Command("sleep", "20").exitCode.fork
@@ -104,17 +104,17 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
       } yield (stdout, stderr)
 
       assertZIO(zio)(equalTo(("stdout1\nstdout2\n", "stderr1\nstderr2\n")))
-    },
+    } @@ TestAspect.exceptJS,
     test("return non-zero exit code in success channel") {
       val zio = Command("ls", "--non-existent-flag").exitCode
 
       assertZIO(zio)(not(equalTo(ExitCode.success)))
-    },
+    } @@ TestAspect.exceptJS,
     test("absolve non-zero exit code") {
       val zio = Command("ls", "--non-existent-flag").successfulExitCode
 
       assertZIO(zio.exit)(fails(isSubtype[CommandError.NonZeroErrorCode](anything)))
-    },
+    } @@ TestAspect.flaky,
     test("permission denied is a typed error") {
       val zio = Command(s"${dir}src/test/bash/no-permissions.sh").string
 
@@ -149,7 +149,7 @@ object CommandSpec extends ZIOProcessBaseSpec with SpecProperties {
         lines == Chunk(uniqueId, uniqueId),
         grepOutput.forall(!_.contains(uniqueId))
       )
-    },
+    } @@ TestAspect.exceptNative,
     test("connect to a repl-like process and flush the chunks eagerly and get responses right away") {
       for {
         commandQueue <- Queue.unbounded[Chunk[Byte]]

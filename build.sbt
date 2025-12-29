@@ -80,6 +80,7 @@ lazy val zioProcess =
     )
     .enablePlugins(BuildInfoPlugin)
     .settings(dottySettings)
+    .nativeSettings(publish / skip := true)
     .nativeSettings(Test / fork := false)
     .nativeSettings(
       libraryDependencies ++= Seq(

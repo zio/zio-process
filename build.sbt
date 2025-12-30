@@ -48,7 +48,7 @@ usefulTasks := Seq(
 
 val zioVersion = "2.1.24"
 
-val scalaCollectionCompatVersion = "2.13.0"
+val scalaCollectionCompatVersion = "2.14.0"
 
 val scalaJavaTimeVersion = "2.6.0"
 

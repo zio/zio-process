@@ -22,7 +22,7 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Cache scala dependencies
-      uses: coursier/cache-action@v7
+      uses: coursier/cache-action@v8
     - name: Setup Action
       uses: coursier/setup-action@v2
       with:
@@ -44,7 +44,7 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Cache scala dependencies
-      uses: coursier/cache-action@v7
+      uses: coursier/cache-action@v8
     - name: Setup Action
       uses: coursier/setup-action@v2
       with:
@@ -70,7 +70,7 @@ jobs:
         ref: ${{ github.head_ref }}
         fetch-depth: '0'
     - name: Cache scala dependencies
-      uses: coursier/cache-action@v7
+      uses: coursier/cache-action@v8
     - name: Setup Action
       uses: coursier/setup-action@v2
       with:

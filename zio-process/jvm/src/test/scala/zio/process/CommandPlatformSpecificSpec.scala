@@ -2,13 +2,15 @@ package zio.process
 
 import zio.stream.ZPipeline
 import zio.test._
-import zio.Chunk
+import zio.{ durationInt, Chunk }
 
 import FilePlatformSpecific._
 import java.util.Optional
 
 // TODO: Add aspects for different OSes? scala.util.Properties.isWin, etc. Also try to make this as OS agnostic as possible in the first place
-object CommandPlatformSpecificSpec extends ZIOProcessBaseSpec {
+object CommandPlatformSpecificSpec extends ZIOSpecDefault {
+
+  override def aspects = Chunk(TestAspect.timeout(30.seconds))
 
   def spec = suite("CommandSpec")(
     test("killTree also kills child processes") {

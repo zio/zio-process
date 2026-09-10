@@ -7,6 +7,9 @@ inThisBuild(
   List(
     organization := "dev.zio",
     homepage     := Some(url("https://zio.dev/zio-process/")),
+    scmInfo      := Some(
+      ScmInfo(url("https://github.com/zio/zio-process"), "scm:git:git@github.com:zio/zio-process.git")
+    ),
     licenses     := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     developers   := List(
       Developer(

@@ -11,6 +11,6 @@ addSbtPlugin("org.scala-native"    % "sbt-scala-native"              % "0.5.9")
 addSbtPlugin("org.portable-scala"  % "sbt-scalajs-crossproject"      % "1.4.0")
 addSbtPlugin("org.scala-js"        % "sbt-scalajs"                   % "1.22.0")
 
-libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "3.0.1"
+libraryDependencies += "org.snakeyaml" % "snakeyaml-engine" % "3.1.1"
 
 resolvers ++= Resolver.sonatypeOssRepos("public")

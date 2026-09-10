@@ -18,7 +18,12 @@ package zio.process
 private[process] trait CommandErrorPlatformSpecific {
   type IOException = java.io.IOException
   private val notFoundErrorCode         = 2
-  val notFound                          = s"error=$notFoundErrorCode,"
   private val permissionDeniedErrorCode = if (OS.os == OS.Windows) 5 else 1
-  val permissionDenied                  = s"error=$permissionDeniedErrorCode,"
+
+  def isNotFound(message: String): Boolean         = hasErrorCode(message, notFoundErrorCode)
+  def isPermissionDenied(message: String): Boolean = hasErrorCode(message, permissionDeniedErrorCode)
+
+  // Older JDKs render the errno as `error=2,`, newer ones as `Exec failed, error: 2 (...)`.
+  private def hasErrorCode(message: String, code: Int): Boolean =
+    message != null && (message.contains(s"error=$code,") || message.contains(s"error: $code ("))
 }

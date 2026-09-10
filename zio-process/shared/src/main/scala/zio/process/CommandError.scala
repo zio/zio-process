@@ -35,18 +35,18 @@ private[process] object CommandThrowable extends CommandErrorPlatformSpecific {
 
   def classify(throwable: Throwable): CommandError =
     throwable match {
-      case c: CommandError                                           => c
-      case e: IOException if e.getMessage.contains(notFound)         => CommandError.ProgramNotFound(e)
-      case e: IOException if e.getMessage.contains(permissionDenied) => CommandError.PermissionDenied(e)
-      case e: java.io.IOException                                    => CommandError.IOError(e)
-      case e                                                         => CommandError.Error(e)
+      case c: CommandError                                    => c
+      case e: IOException if isNotFound(e.getMessage)         => CommandError.ProgramNotFound(e)
+      case e: IOException if isPermissionDenied(e.getMessage) => CommandError.PermissionDenied(e)
+      case e: java.io.IOException                             => CommandError.IOError(e)
+      case e                                                  => CommandError.Error(e)
     }
 
   object ProgramNotFound {
     def unapply(throwable: Throwable): Option[CommandError.ProgramNotFound] =
       throwable match {
         case e: IOException =>
-          if (e.getMessage.contains(notFound)) {
+          if (isNotFound(e.getMessage)) {
             Some(CommandError.ProgramNotFound(e))
           } else None
 
@@ -58,7 +58,7 @@ private[process] object CommandThrowable extends CommandErrorPlatformSpecific {
     def unapply(throwable: Throwable): Option[CommandError.PermissionDenied] =
       throwable match {
         case e: IOException =>
-          if (e.getMessage.contains(permissionDenied)) Some(CommandError.PermissionDenied(e))
+          if (isPermissionDenied(e.getMessage)) Some(CommandError.PermissionDenied(e))
           else None
 
         case _ => None

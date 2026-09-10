@@ -81,7 +81,7 @@ jobs:
         if: matrix.platform == 'Native'
         run: sudo apt-get update && sudo apt-get install -y libuv1-dev
       - name: Setup NodeJS
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         if: matrix.platform == 'JS'
         with:
           node-version: 21.6.1
@@ -94,7 +94,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '11', '21' ]
+        java: [ '21', '25' ]
         scala: [ '2.13.x' ]
     steps:
       - name: Checkout current branch

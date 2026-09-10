@@ -26,7 +26,7 @@ Key features of the ZIO Process:
 In order to use this library, we need to add the following line in our `build.sbt` file:
 
 ```scala
-libraryDependencies += "dev.zio" %% "zio-process" % "0.7.2" 
+libraryDependencies += "dev.zio" %% "zio-process" % "0.8.0" 
 ```
 
 ## Native support

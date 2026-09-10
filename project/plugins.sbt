@@ -1,6 +1,6 @@
 addSbtPlugin("org.scalameta"       % "sbt-scalafmt"                  % "2.6.2")
 addSbtPlugin("com.eed3si9n"        % "sbt-buildinfo"                 % "0.13.1")
-addSbtPlugin("org.scoverage"       % "sbt-scoverage"                 % "2.4.3")
+addSbtPlugin("org.scoverage"       % "sbt-scoverage"                 % "2.4.4")
 addSbtPlugin("org.scalameta"       % "sbt-mdoc"                      % "2.9.2")
 addSbtPlugin("com.github.sbt"      % "sbt-unidoc"                    % "0.6.0")
 addSbtPlugin("com.github.sbt"      % "sbt-ci-release"                % "1.12.1")

@@ -19,6 +19,6 @@ import scala.scalajs.js
 
 private[process] trait CommandErrorPlatformSpecific {
   type IOException = js.JavaScriptException
-  val notFound         = "ENOENT"
-  val permissionDenied = "EACCES"
+  def isNotFound(message: String): Boolean         = message != null && message.contains("ENOENT")
+  def isPermissionDenied(message: String): Boolean = message != null && message.contains("EACCES")
 }

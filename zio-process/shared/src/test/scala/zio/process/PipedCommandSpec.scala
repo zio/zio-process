@@ -62,5 +62,5 @@ object PipedCommandSpec extends ZIOProcessBaseSpec {
         equalTo(NonEmptyChunk(false, false, true))
       )
     }
-  )
+  ) @@ TestAspect.nonFlaky
 }

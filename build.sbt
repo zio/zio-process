@@ -18,7 +18,19 @@ inThisBuild(
 )
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
+addCommandAlias("lint", "check")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
+
+ThisBuild / ciWorkflowTitle       := "CI"
+ThisBuild / ciEnabledBranches     := Seq("master")
+ThisBuild / ciTargetJavaVersions  := Seq("11")
+ThisBuild / ciDefaultJavaVersion  := "11"
+ThisBuild / ciTargetScalaVersions := Map("root" -> Seq(Scala211, Scala212, Scala213, Scala3))
+ThisBuild / ciCheckWebsiteBuildProcess := Seq(
+  zio.sbt.githubactions.Step.SingleStep(name = "Check document generation", run = Some("sbt docs/docusaurusCreateSite"))
+)
+ThisBuild / ciUpdateReadmeJobs := Seq.empty
+ThisBuild / ciPostReleaseJobs  := Seq.empty
 
 logo :=
   s"""

@@ -86,13 +86,13 @@ jobs:
         - '17'
         scala-project:
         - ++2.12.21 zioProcessJVM
-        - ++2.13.18 zioProcessJVM
+        - ++3.10.0 zioProcessJVM
         - ++3.3.8 zioProcessJVM
         - ++2.12.21 zioProcessNative
-        - ++2.13.18 zioProcessNative
+        - ++3.10.0 zioProcessNative
         - ++3.3.8 zioProcessNative
         - ++2.12.21 zioProcessJS
-        - ++2.13.18 zioProcessJS
+        - ++3.10.0 zioProcessJS
         - ++3.3.8 zioProcessJS
     steps:
     - name: Install libuv
@@ -146,7 +146,7 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Test
-      run: sbt --no-colors ++2.13.18 zioProcessJVM/test
+      run: sbt --no-colors ++3.10.0 zioProcessJVM/test
   ci:
     name: ci
     runs-on: ubuntu-latest

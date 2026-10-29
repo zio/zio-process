@@ -87,13 +87,13 @@ jobs:
         scala-project:
         - ++2.12.21 zioProcessJVM
         - ++2.13.18 zioProcessJVM
-        - ++3.3.8 zioProcessJVM
+        - ++3.3.9 zioProcessJVM
         - ++2.12.21 zioProcessNative
         - ++2.13.18 zioProcessNative
-        - ++3.3.8 zioProcessNative
+        - ++3.3.9 zioProcessNative
         - ++2.12.21 zioProcessJS
         - ++2.13.18 zioProcessJS
-        - ++3.3.8 zioProcessJS
+        - ++3.3.9 zioProcessJS
     steps:
     - name: Install libuv
       run: sudo apt-get update && sudo apt-get install -y libuv1-dev

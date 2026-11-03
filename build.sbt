@@ -89,7 +89,7 @@ val zioVersion = "2.1.26"
 
 val scalaCollectionCompatVersion = "2.14.0"
 
-val scalaJavaTimeVersion = "2.7.0"
+val scalaJavaTimeVersion = "2.9.0"
 
 lazy val root =
   project

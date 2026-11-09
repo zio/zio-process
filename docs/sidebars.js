@@ -7,10 +7,20 @@ const sidebars = {
       link: { type: "doc", id: "index" },
       items: [
         "getting-started",
-        "basics",
-        "piping",
-        "interactive-processes",
-        "other"
+        {
+          type: "category",
+          label: "Guides",
+          collapsed: false,
+          items: [
+            "running-commands",
+            "input-output",
+            "piping",
+            "interactive-processes",
+            "process-control",
+            "platform-support"
+          ]
+        },
+        "reference"
       ]
     }
   ]

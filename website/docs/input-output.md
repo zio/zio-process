@@ -24,7 +24,7 @@ val withJavaHome: Command = Command("java", "-version").env(Map("JAVA_HOME" -> "
 
 On the JVM and Native, these variables are added to the environment that the current program inherits. Calling `env` again replaces the earlier map, so chain your variables into one call.
 
-On Scala.js, the map becomes the whole environment of the child process. Variables from the parent, such as `PATH`, are not passed unless you add them yourself.
+On Scala.js, the map replaces the whole environment of the child process. A command that never calls `env` runs with an empty environment, with no `PATH`, so set every variable it needs explicitly on that platform.
 
 ## Setting the Working Directory
 

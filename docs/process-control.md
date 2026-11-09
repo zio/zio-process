@@ -65,7 +65,7 @@ val running: ZIO[Any, CommandError, Boolean] =
   } yield alive
 ```
 
-On Scala.js, `isAlive` returns `true` until `kill` or `killForcibly` is called, even after the program has exited. The list in [Platform Support](#platform-support) below has the details.
+On Scala.js, `isAlive` returns `true` even after the program has exited, so it cannot be used to detect that a program has finished. The list in [Platform Support](#platform-support) below has the details.
 
 ## Reading the Process ID
 
@@ -131,5 +131,5 @@ The behavior of this page differs on each platform. Use the following list as a 
 
 - `Process#killTree` and `Process#killTreeForcibly` exist only on the JVM.
 - `CommandError.ProgramNotFound` and `CommandError.PermissionDenied` are not raised on Scala Native.
-- On Scala.js, `Process#isAlive` reports `true` until `kill` or `killForcibly` is called, even after the program exits.
+- On Scala.js, `Process#isAlive` reports `true` even after the program has exited.
 - On Scala.js, `Process#killForcibly` sends the same signal as `Process#kill`, not SIGKILL.

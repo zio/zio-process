@@ -38,10 +38,12 @@ The table below lists the differences that matter most in practice. "Not tested"
 | `Process#killTree`                  | Available                 | Not available          | Not available                   |
 | `Process#killTreeForcibly`          | Available                 | Not available          | Not available                   |
 | `Process#pid`                       | Available                 | Available (parsed)     | Available                       |
-| `Process#isAlive`                   | Reports the real state    | Not tested             | `true` until `kill` is called   |
+| `Process#isAlive`                   | Reports the real state    | Not tested             | `true` even after exit          |
 | `Process#killForcibly`              | Sends SIGKILL on Unix     | Not tested             | Sends the same signal as `kill` |
 | `CommandError.ProgramNotFound`      | Raised                    | Not tested, not reliable | Raised                        |
 | `CommandError.PermissionDenied`     | Raised                    | Not tested, not reliable | Raised                        |
+| `env` with no map set               | Inherits the parent       | Inherits the parent    | Empty, with no `PATH`           |
+| `env` with a map                    | Adds to the parent        | Adds to the parent     | Replaces the whole environment  |
 | `redirectErrorStream`               | Honored                   | Honored                | Ignored                         |
 | `File` type                         | `java.io.File`            | `java.io.File`         | `String` path                   |
 | `.sh` commands                      | Run as given              | Run through `bash`     | Run as given                    |
@@ -61,7 +63,7 @@ Streaming standard input can block the process on Scala Native. Prefer `ProcessI
 
 On Scala.js, the library runs on Node.js. It cannot run in a browser, because it uses the Node.js `child_process` module. The `File` type is a `String` path, so a path that works on the JVM is written as a plain string.
 
-Several features behave differently on Scala.js. `Process#isAlive` stays `true` until you call `kill`, so do not use it to detect that a program has finished. `Process#killForcibly` sends the same signal as `Process#kill`, so a program that ignores the terminate signal may keep running. `redirectErrorStream` has no effect.
+Several features behave differently on Scala.js. `Process#isAlive` stays `true` after the program has exited, so do not use it to detect that a program has finished. `Process#killForcibly` sends the same signal as `Process#kill`, so a program that ignores the terminate signal keeps running after either call. A command that does not call `Command#env` also runs with an empty environment, with no `PATH`. `redirectErrorStream` has no effect.
 
 On Scala.js, a working directory is a plain path string:
 

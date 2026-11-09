@@ -15,7 +15,7 @@ Each platform runs programs in its own way. The JVM uses the Java process API, S
 | Scala Native | Native binary                 | 2.12, 2.13 and 3       |
 | Scala.js     | Node.js                       | 2.12, 2.13 and 3       |
 
-The project builds and runs its JVM tests on JDK 21 and 25. Programs that call `Process#killTree`, `Process#killTreeForcibly`, `Command#string` or `ProcessStream#string` need JDK 9 or later.
+The project builds and runs its JVM tests on JDK 17, 21 and 25. Programs that call `Process#killTree`, `Process#killTreeForcibly`, `Command#string` or `ProcessStream#string` need JDK 9 or later.
 
 ## Adding the Dependency
 
@@ -40,14 +40,14 @@ The table below lists the differences that matter most in practice. "Not tested"
 | `Process#pid`                       | Available                 | Available (parsed)     | Available                       |
 | `Process#isAlive`                   | Reports the real state    | Not tested             | `true` even after exit          |
 | `Process#killForcibly`              | Sends SIGKILL on Unix     | Not tested             | Sends the same signal as `Process#kill` |
-| `CommandError.ProgramNotFound`      | Raised                    | Not tested, not reliable | Raised                        |
-| `CommandError.PermissionDenied`     | Raised                    | Not tested, not reliable | Raised                        |
+| `CommandError.ProgramNotFound`      | Raised                    | Not tested             | Raised                          |
+| `CommandError.PermissionDenied`     | Raised                    | Not tested             | Raised                          |
 | `Command#env` with no map set       | Inherits the parent       | Inherits the parent    | Empty, with no `PATH`           |
 | `Command#env` with a map            | Adds to the parent        | Adds to the parent     | Replaces the whole environment  |
 | `redirectErrorStream`               | Honored                   | Honored                | Ignored                         |
 | `File` type                         | `java.io.File`            | `java.io.File`         | `String` path                   |
 | `.sh` commands                      | Run as given              | Run through `bash`     | Run as given                    |
-| Streaming standard input            | Tested                    | Not tested, can block  | Not tested                      |
+| Streaming standard input            | Tested                    | Not tested             | Not tested                      |
 
 ### JVM
 
@@ -55,9 +55,9 @@ The JVM is the most complete platform. It is the only one with `Process#killTree
 
 ### Scala Native
 
-On Scala Native, a command whose name ends in `.sh` runs through `bash`, so a shell script runs without needing to be executable. The tests do not check `CommandError.ProgramNotFound` or `CommandError.PermissionDenied` on this platform, and these errors are not reliably raised here, so check the exit code or the output instead.
+On Scala Native, a command whose name ends in `.sh` runs through `bash`, so a shell script runs without needing to be executable. The tests skip `CommandError.ProgramNotFound` and `CommandError.PermissionDenied` on this platform, so these errors may not be raised here. Check the exit code or the output as well.
 
-Streaming standard input can block the process on Scala Native. Prefer `ProcessInput.fromByteArray` or `ProcessInput.fromFile` for input on this platform.
+Streaming standard input is not tested on Scala Native, so verify it in your own program before you rely on it. The same applies to `ProcessInput.fromFile`, whose test is skipped on Native.
 
 ### Scala.js
 

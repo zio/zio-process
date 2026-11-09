@@ -96,7 +96,7 @@ Every failure in the error channel is a `CommandError`. A `CommandError` is a `T
 | `Inherit`                                       | Use the current program's standard input. This is the default.         |
 | `Pipe`                                          | Standard input is a pipe that the caller writes to by hand. Most code uses one of the constructors below instead. |
 | `fromFile(file, chunkSize)`                     | Streams a file. Scala Native takes no `chunkSize`.                     |
-| `fromPath(path, chunkSize)`                     | Streams a `java.nio.file.Path`.                                        |
+| `fromPath(path, chunkSize)`                     | Streams a `java.nio.file.Path` (a `String` path on Scala.js).          |
 | `fromByteArray(bytes)`                          | Sends an array of bytes                                                |
 | `fromString(text, charset)`                     | Sends a string in the given encoding                                   |
 | `fromUTF8String(text)`                          | Sends a string in UTF-8                                                |

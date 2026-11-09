@@ -65,7 +65,7 @@ val fromBytes: ZIO[Any, CommandError, String] =
 
 ### From a File or Path
 
-`ProcessInput.fromFile` streams a file into standard input without loading it into memory. `ProcessInput.fromPath` does the same with a `java.nio.file.Path`:
+`ProcessInput.fromFile` streams a file into standard input without loading it into memory. `ProcessInput.fromPath` does the same with a `java.nio.file.Path`, which is a `String` path on Scala.js:
 
 ```scala mdoc:compile-only
 val fromFile: ZIO[Any, CommandError, Chunk[String]] =
@@ -85,7 +85,7 @@ val streamed: ZIO[Any, CommandError, String] =
   Command("cat").stdin(ProcessInput.fromStream(source, flushChunksEagerly = false)).string
 ```
 
-Streaming standard input is tested on the JVM only, and the Native documentation warns that it can block the process. Scala Native users should prefer `ProcessInput.fromByteArray` or `ProcessInput.fromFile`. For a process that reads commands interactively, see [Interactive Processes](./interactive-processes.md).
+Streaming standard input is tested on the JVM only. On Scala Native, the tests do not cover `ProcessInput.fromStream` or `ProcessInput.fromFile`, so verify standard input in your own program. For a process that reads commands interactively, see [Interactive Processes](./interactive-processes.md).
 
 ## Choosing Where Standard Output Goes
 

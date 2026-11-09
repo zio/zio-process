@@ -14,7 +14,7 @@ import zio.durationInt
 
 ## Stopping a Command with Interruption
 
-When we run a command with `Command#exitCode` (or any other output method), the process belongs to the ZIO fiber that runs it. Interrupting that fiber stops the process, so we do not need to track the process ourselves:
+When we run a command with `Command#exitCode` or `Command#successfulExitCode`, the process belongs to the ZIO fiber that runs it. Interrupting that fiber destroys the process, so we do not need to track it ourselves:
 
 ```scala mdoc:compile-only
 val interrupted: ZIO[Any, Nothing, Unit] =
@@ -25,7 +25,7 @@ val interrupted: ZIO[Any, Nothing, Unit] =
   } yield ()
 ```
 
-Interrupting the fiber destroys the process that the fiber runs, so the spawned program ends with it.
+Interrupting the fiber destroys the process, because `Command#exitCode` cancels by destroying the process.
 
 ## Holding the Process Handle
 
@@ -122,7 +122,7 @@ val output: ZIO[Any, CommandError, String] =
 `CommandError.WorkingDirectoryMissing` is the matching case for a working directory that does not exist. The [Reference](./reference.md) page lists every case.
 
 :::warning[Timeouts]
-Wrapping `Command#exitCode` in `ZIO#timeout` does not reliably stop the program when the timeout fires, so for a hard deadline, use `Command#run` and call `Process#kill` yourself.
+The test for wrapping `Command#exitCode` in `ZIO#timeout` is disabled in this project (see zio/zio#3840), so that behavior is unverified. For a hard deadline, use `Command#run` and call `Process#kill` yourself.
 :::
 
 ## Platform Support
@@ -130,6 +130,6 @@ Wrapping `Command#exitCode` in `ZIO#timeout` does not reliably stop the program 
 The behavior of this page differs on each platform. Use the following list as a reminder, and see [Platform Support](./platform-support.md) for the full picture:
 
 - `Process#killTree` and `Process#killTreeForcibly` exist only on the JVM.
-- `CommandError.ProgramNotFound` and `CommandError.PermissionDenied` are not raised on Scala Native.
+- `CommandError.ProgramNotFound` and `CommandError.PermissionDenied` are not tested on Scala Native, so they may not be raised reliably there.
 - On Scala.js, `Process#isAlive` reports `true` even after the program has exited.
 - On Scala.js, `Process#killForcibly` sends the same signal as `Process#kill`, not SIGKILL.

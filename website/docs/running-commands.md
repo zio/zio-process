@@ -31,7 +31,7 @@ Most of the time you do not need the handle. `Command` has shortcuts that run th
 
 ## Reading Output
 
-The output shortcuts decode standard output as UTF-8 by default. Each one runs the command when the effect runs, so the program only starts when the effect is executed.
+The output shortcuts decode standard output as UTF-8 by default. Each one runs the command when the effect runs, so the program starts only when the effect runs.
 
 ### As a List of Lines
 
@@ -83,7 +83,7 @@ val both: ZIO[Any, CommandError, (String, String)] =
 The two reads run in parallel. Reading one stream to the end before starting the other can deadlock when the program writes a lot to the stream that is not being read yet.
 
 :::warning[Unread standard error]
-When you use the shortcuts, standard error is captured but never read. A program that writes a lot of error output can fill that buffer and stall. Redirect it with `Command#stderr` and a `ProcessOutput` option, as described in [Input, Output and Redirects](./input-output.md), or run the command with `Command#run` and read the `Process` handle's `stderr` stream.
+When you use the shortcuts, standard error is captured but never read. A program that writes a lot of error output can fill that buffer and stall. Redirect it with `Command#stderr` and a `ProcessOutput` option, as described in [Input, Output and Redirects](./input-output.md), or run the command with `Command#run` and read the `Process#stderr` stream.
 :::
 
 ## Getting the Exit Code

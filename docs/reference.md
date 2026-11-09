@@ -13,13 +13,13 @@ Every failure in the error channel is a `CommandError`. A `CommandError` is a `T
 | -------------------------------------- | ------------------------------------------------------------------------ |
 | `NotStarted`                           | The base class of the three cases below. Match on those cases instead.   |
 | `ProgramNotFound(cause)`               | The program does not exist. Not reliably raised on Scala Native.         |
-| `PermissionDenied(cause)`              | The program cannot be executed. Not reliably raised on Scala Native.     |
+| `PermissionDenied(cause)`              | The OS refuses to run the program. Not reliable on Scala Native.         |
 | `WorkingDirectoryMissing(workingDirectory)` | The directory set with `Command#workingDirectory` does not exist. Raised on every platform. |
 | `NonZeroErrorCode(exitCode)`           | The program ran but exited with a non-zero code, from `successfulExitCode`. |
 | `IOError(cause)`                       | Reading or writing a stream failed. `cause` is a `java.io.IOException`.  |
 | `Error(cause)`                         | Any other failure. Treat it as a catch-all.                              |
 
-`cause` is the underlying exception where one exists. On Scala.js, the `cause` of `ProgramNotFound` and `PermissionDenied` is a `JavaScriptException`. `WorkingDirectoryMissing` carries the `File` you passed, which is a `String` path on Scala.js.
+`cause` is the underlying exception where one exists. On Scala.js, the `cause` of `ProgramNotFound` and `PermissionDenied` is a `JavaScriptException`. `WorkingDirectoryMissing` holds the directory path, which is a `String` on Scala.js.
 
 ## Command
 
@@ -47,7 +47,7 @@ Every failure in the error channel is a `CommandError`. A `CommandError` is a `T
 
 | Member                                 | Returns                                 | Description                                                |
 | -------------------------------------- | --------------------------------------- | ---------------------------------------------------------- |
-| `run`                                  | `ZIO[Any, CommandError, Process]`       | Starts the program and returns its handle                  |
+| `Command#run`                          | `ZIO[Any, CommandError, Process]`       | Starts the program and returns its handle                  |
 | `exitCode`                             | `ZIO[Any, CommandError, ExitCode]`      | Runs the program and returns its exit code, zero or not    |
 | `successfulExitCode`                   | `ZIO[Any, CommandError, ExitCode]`      | Runs the program and fails with `NonZeroErrorCode` if it did not exit with zero |
 | `lines` and `lines(charset)`           | `ZIO[Any, CommandError, Chunk[String]]` | Collects standard output as lines                          |
@@ -57,12 +57,12 @@ Every failure in the error channel is a `CommandError`. A `CommandError` is a `T
 
 ## Process
 
-`Process` is the handle returned by `Command#run`. It gives access to the running program's streams and controls it.
+`Process` is the handle that `Command#run` produces. It gives access to the running program's streams and controls it.
 
 | Member                                  | Returns                                 | Description                                                            |
 | --------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------- |
-| `stdout`                                | `ProcessStream`                         | Standard output of the program                                         |
-| `stderr`                                | `ProcessStream`                         | Standard error of the program                                          |
+| `Process#stdout`                        | `ProcessStream`                         | Standard output of the program                                         |
+| `Process#stderr`                        | `ProcessStream`                         | Standard error of the program                                          |
 | `stdoutJava`                            | `InputStream`                           | Standard output as a Java `InputStream`                                |
 | `exitCode`                              | `ZIO[Any, CommandError, ExitCode]`      | Waits for the program and returns its exit code                        |
 | `successfulExitCode`                    | `ZIO[Any, CommandError, ExitCode]`      | Waits for the program and fails if the exit code is not zero           |

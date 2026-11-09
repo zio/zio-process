@@ -3,7 +3,7 @@ id: process-control
 title: "Process Control"
 ---
 
-Once a program is running, we may need to wait for it, stop it, check whether it is still alive, or find out why it failed. This page covers those tasks. The methods come in two places: the effects that `Command` provides, which manage the process for us, and the methods on the `Process` handle, which give us direct control.
+Once a program is running, we may need to wait for it, stop it, check whether it is still alive, or find out why it failed. This page covers those tasks. The methods come in two places: the effects that `Command` provides, which manage the process for us, and the methods on the `Process` handle, which give us direct control. The examples need these imports:
 
 ```scala
 import zio._
@@ -25,7 +25,7 @@ val interrupted: ZIO[Any, Nothing, Unit] =
   } yield ()
 ```
 
-Interrupting the fiber destroys the process it started, so the `sleep` process ends with it.
+Interrupting the fiber destroys the process that the fiber runs, so the spawned program ends with it.
 
 ## Holding the Process Handle
 
@@ -50,7 +50,7 @@ val forced: ZIO[Any, CommandError, Unit] =
   } yield ()
 ```
 
-Use `kill` first, which lets the program clean up, and fall back to `killForcibly` only when a program does not stop.
+Use `Process#kill` first, which lets the program clean up, and fall back to `Process#killForcibly` only when a program does not stop.
 
 ## Checking Whether a Process Is Still Running
 
@@ -65,7 +65,7 @@ val running: ZIO[Any, CommandError, Boolean] =
   } yield alive
 ```
 
-On Scala.js, `isAlive` returns `true` even after the program has exited, so it cannot be used to detect that a program has finished. The list in [Platform Support](#platform-support) below has the details.
+On Scala.js, `Process#isAlive` returns `true` even when the program is no longer running, so it cannot be used to detect that a program has finished. The list in [Platform Support](#platform-support) below has the details.
 
 ## Reading the Process ID
 

@@ -27,7 +27,7 @@ libraryDependencies += "dev.zio" %%% "zio-process" % "0.8.1"
 
 The `%%%` operator selects the JVM artifact for a JVM project and the Scala.js artifact for a Scala.js project.
 
-Scala Native artifacts are not published to Maven Central yet. The build does not publish the Native project, so there is no dependency line to add for Native. Scala Native support is in the code and in the tests, but it cannot be used from a published release until the artifact is published. Check the release notes before you plan to use it.
+Scala Native artifacts are not on Maven Central yet. The build skips publishing the Native project, so there is no dependency line to add for Native. Scala Native support is in the code and in the tests, but a release that includes the Native artifact is needed before you can add it to a build. Check the release notes before you plan to use it.
 
 ## Behavior Differences
 
@@ -39,11 +39,11 @@ The table below lists the differences that matter most in practice. "Not tested"
 | `Process#killTreeForcibly`          | Available                 | Not available          | Not available                   |
 | `Process#pid`                       | Available                 | Available (parsed)     | Available                       |
 | `Process#isAlive`                   | Reports the real state    | Not tested             | `true` even after exit          |
-| `Process#killForcibly`              | Sends SIGKILL on Unix     | Not tested             | Sends the same signal as `kill` |
+| `Process#killForcibly`              | Sends SIGKILL on Unix     | Not tested             | Sends the same signal as `Process#kill` |
 | `CommandError.ProgramNotFound`      | Raised                    | Not tested, not reliable | Raised                        |
 | `CommandError.PermissionDenied`     | Raised                    | Not tested, not reliable | Raised                        |
-| `env` with no map set               | Inherits the parent       | Inherits the parent    | Empty, with no `PATH`           |
-| `env` with a map                    | Adds to the parent        | Adds to the parent     | Replaces the whole environment  |
+| `Command#env` with no map set       | Inherits the parent       | Inherits the parent    | Empty, with no `PATH`           |
+| `Command#env` with a map            | Adds to the parent        | Adds to the parent     | Replaces the whole environment  |
 | `redirectErrorStream`               | Honored                   | Honored                | Ignored                         |
 | `File` type                         | `java.io.File`            | `java.io.File`         | `String` path                   |
 | `.sh` commands                      | Run as given              | Run through `bash`     | Run as given                    |

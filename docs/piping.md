@@ -3,7 +3,7 @@ id: piping
 title: "Piping"
 ---
 
-Piping connects the standard output of one command to the standard input of the next, in the same way that `ps -ef | grep java` works in a shell. ZIO Process builds the pipeline as a value, so nothing starts until you run it. There is no shell involved, so each command in the pipeline is a program with its own arguments.
+Piping connects the standard output of one command to the standard input of the next, in the same way that `ps -ef | grep java` works in a shell. ZIO Process builds the pipeline as a value, so nothing starts until you run it. There is no shell involved, so each command in the pipeline is a program with its own arguments. The examples on this page need these imports:
 
 ```scala mdoc:silent
 import zio._

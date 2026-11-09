@@ -3,7 +3,7 @@ id: input-output
 title: "Input, Output and Redirects"
 ---
 
-Every command has three standard streams: standard input (what the program reads), standard output, and standard error. This page covers how to set the environment and working directory, how to feed input to a program, and where its output goes. Each setting is a method on `Command` that returns a new command, so the original value is never changed.
+Every command has three standard streams: standard input (what the program reads), standard output, and standard error. This page covers how to set the environment and working directory, how to feed input to a program, and where its output goes. Each setting is a method on `Command` that returns a new command, so the original value is never changed. The examples on this page need these imports:
 
 ```scala
 import zio._
@@ -22,9 +22,9 @@ import java.nio.charset.StandardCharsets
 val withJavaHome: Command = Command("java", "-version").env(Map("JAVA_HOME" -> "/usr/lib/jvm/default"))
 ```
 
-On the JVM and Native, these variables are added to the environment that the current program inherits. Calling `env` again replaces the earlier map, so chain your variables into one call.
+On the JVM and Native, these variables are added to the environment that the current program inherits. Calling `Command#env` again replaces the earlier map, so chain your variables into one call.
 
-On Scala.js, the map replaces the whole environment of the child process. A command that never calls `env` runs with an empty environment, with no `PATH`, so set every variable it needs explicitly on that platform.
+On Scala.js, the map replaces the whole environment of the child process. A command that never calls `Command#env` runs with an empty environment, with no `PATH`, so set every variable it needs explicitly on that platform.
 
 ## Setting the Working Directory
 
@@ -72,7 +72,7 @@ val fromFile: ZIO[Any, CommandError, Chunk[String]] =
   Command("cat").stdin(ProcessInput.fromFile(new File("input.txt"))).lines
 ```
 
-The `fromFile` method takes an optional chunk size on the JVM and Scala.js. On Scala Native it does not take one.
+`ProcessInput.fromFile` takes an optional chunk size on the JVM and Scala.js. On Scala Native it does not take one.
 
 ### From a Stream
 

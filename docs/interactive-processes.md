@@ -5,7 +5,7 @@ title: "Interactive Processes"
 
 Some programs read a request, write a response, and then wait for the next request. Examples include a REPL like `node -i` or `python -i`, and an SSH session. To talk to such a program, we need to send input while it is still running and read its output as it arrives, instead of waiting for it to finish.
 
-Three pieces make this work. A `Queue` holds the requests we want to send. `ProcessInput.fromQueue` feeds that queue into the process's standard input and flushes each chunk right away. `Command#run` starts the process without waiting for it to end, so we can read its standard output while we keep sending input.
+Three pieces make this work. A `Queue` holds the requests we want to send. `ProcessInput.fromQueue` feeds that queue into the process's standard input and flushes each chunk right away. `Command#run` starts the process without waiting for it to end, so we can read its standard output while we keep sending input. The example needs these imports:
 
 ```scala mdoc:silent
 import zio._
@@ -36,7 +36,7 @@ val replSession: ZIO[Any, Throwable, Unit] =
 
 The `linesStream` fiber prints each line as the REPL writes it. Requests go in through the queue, so the REPL receives them one at a time, and the `process.exit(0)` request ends the session so that `fiber.join` can finish.
 
-You would probably want a helper for the repeated `offer` calls. This example keeps everything inline so the steps are easy to follow.
+You would probably want a helper for the repeated `Queue#offer` calls. This example keeps everything inline so the steps are easy to follow.
 
 ## Platform Support
 

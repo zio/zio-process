@@ -85,7 +85,7 @@ usefulTasks := Seq(
   UsefulTask("testOnly *.YourSpec -- -t \"YourLabel\"", "Only runs tests with matching term").noAlias
 )
 
-val zioVersion = "2.1.26"
+val zioVersion = "2.1.27"
 
 val scalaCollectionCompatVersion = "2.14.0"
 

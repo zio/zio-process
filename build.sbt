@@ -58,8 +58,6 @@ inThisBuild(List(ciTestJobs := {
   }
   platforms ++ jvms
 }))
-ThisBuild / ciUpdateReadmeJobs         := Seq.empty
-ThisBuild / ciPostReleaseJobs          := Seq.empty
 
 logo        :=
   s"""

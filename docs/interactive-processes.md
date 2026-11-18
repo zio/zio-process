@@ -1,9 +1,9 @@
 ---
 id: interactive-processes
-title: "Interactive Processes"
+title: "Talk to an Interactive Process"
 ---
 
-Some programs read a request, write a response, and then wait for the next request. Examples include a REPL like `node -i` or `python -i`, and an SSH session. To talk to such a program, we need to send input while it is still running and read its output as it arrives, instead of waiting for it to finish.
+This guide shows how to talk to a program that reads a request, write a response, and then wait for the next request. Examples include a REPL like `node -i` or `python -i`, and an SSH session. To talk to such a program, we need to send input while it is still running and read its output as it arrives, instead of waiting for it to finish.
 
 Three pieces make this work. A `Queue` holds the requests we want to send. `ProcessInput.fromQueue` feeds that queue into the process's standard input and flushes each chunk right away. `Command#run` starts the process without waiting for it to end, so we can read its standard output while we keep sending input. The example needs these imports:
 

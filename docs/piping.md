@@ -1,9 +1,9 @@
 ---
 id: piping
-title: "Piping"
+title: "Pipe One Command into Another"
 ---
 
-Piping connects the standard output of one command to the standard input of the next, in the same way that `ps -ef | grep java` works in a shell. ZIO Process builds the pipeline as a value, so nothing starts until you run it. There is no shell involved, so each command in the pipeline is a program with its own arguments. The examples on this page need these imports:
+This guide shows how to connect the standard output of one command to the standard input of the next, in the same way that `ps -ef | grep java` works in a shell. ZIO Process builds the pipeline as a value, so nothing starts until you run it. There is no shell involved, so each command in the pipeline is a program with its own arguments. The examples on this page need these imports:
 
 ```scala mdoc:silent
 import zio._
@@ -64,8 +64,8 @@ val javaFile: ZIO[Any, CommandError, ExitCode] =
   (Command("ps", "-ef") | Command("grep", "java")).stdout(ProcessOutput.FileRedirect(new File("java-processes.txt"))).exitCode
 ```
 
-For more on redirects, see [Input, Output and Redirects](./input-output.md).
+For more on redirects, see [Redirect Output to a File](./how-to-redirect-output-to-a-file.md).
 
 ## Platform Support
 
-Three of the piping tests are skipped on Scala Native: the basic pipe, pipe associativity, and `stdin` on a piped command. The tests for how settings apply to a pipeline run on all three platforms. On Scala.js, `redirectErrorStream` is ignored, as described on [Input, Output and Redirects](./input-output.md).
+Three of the piping tests are skipped on Scala Native: the basic pipe, pipe associativity, and `stdin` on a piped command. The tests for how settings apply to a pipeline run on all three platforms. On Scala.js, `redirectErrorStream` is ignored, as described on [Redirect Output to a File](./how-to-redirect-output-to-a-file.md).

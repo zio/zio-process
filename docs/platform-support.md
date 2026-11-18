@@ -19,15 +19,7 @@ The project builds and runs its JVM tests on JDK 17, 21 and 25. Programs that ca
 
 ## Adding the Dependency
 
-For the JVM and Scala.js, use `%%%` so that sbt picks the right artifact for each platform:
-
-```scala
-libraryDependencies += "dev.zio" %%% "zio-process" % "@VERSION@"
-```
-
-The `%%%` operator selects the JVM artifact for a JVM project and the Scala.js artifact for a Scala.js project.
-
-Scala Native artifacts are not on Maven Central yet. The build skips publishing the Native project, so there is no dependency line to add for Native. Scala Native support is in the code and in the tests, but a release that includes the Native artifact is needed before you can add it to a build. Check the release notes before you plan to use it.
+The [Installation](./index.md#installation) section of the introduction has the dependency blocks for the JVM and for Scala.js. Scala Native artifacts are not on Maven Central yet, because the build skips publishing the Native project, so there is no dependency line to add for Native. Scala Native support is in the code and in the tests, but a release that includes the Native artifact is needed before you can add it to a build. Check the release notes before you plan to use it.
 
 ## Behavior Differences
 
@@ -71,4 +63,4 @@ On Scala.js, a working directory is a plain path string:
 Command("ls", "-l").workingDirectory("/")
 ```
 
-On the JVM the same call takes `new File("/")`, as shown in [Input, Output and Redirects](./input-output.md).
+On the JVM the same call takes `new File("/")`, as shown in [Set the Environment and Working Directory](./how-to-set-the-environment-and-working-directory.md).

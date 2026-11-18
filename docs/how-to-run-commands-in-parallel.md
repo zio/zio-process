@@ -17,7 +17,7 @@ val both: ZIO[Any, CommandError, (String, String)] =
   Command("echo", "first").string.zipPar(Command("echo", "second").string)
 ```
 
-If one command fails, the other is interrupted, and interrupting a command destroys its process.
+If one command fails, the other is interrupted. Interrupting `Command#string` closes its output stream but does not destroy the process, so a long-running program can keep running. Use `Command#exitCode`, or hold the `Process` handle and call `Process#kill`, when the program must stop.
 
 ## Run a List of Commands
 

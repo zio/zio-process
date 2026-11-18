@@ -52,4 +52,4 @@ val javaPid: ZIO[Any, CommandError, Long] =
   } yield pid
 ```
 
-On the JVM, `Process#getOutputStream` returns the program's standard input as a Java `OutputStream`. It exists only on the JVM and is meant for programs that write to a process by hand.
+`Process#getOutputStream` returns the program's standard input as a Java `OutputStream`. On Scala.js, it wraps the Node.js standard input stream. It is meant for programs that write to a process by hand.

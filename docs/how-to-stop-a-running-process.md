@@ -27,7 +27,7 @@ val interrupted: ZIO[Any, Nothing, Unit] =
 
 ## Stop It Through the Handle
 
-`Command#run` returns a `Process` handle as soon as the program starts. The handle is not tied to the fiber, so interrupting the fiber does not stop the program. Call `Process#kill` when you decide to stop it. It sends the terminate signal (SIGTERM on Unix) and waits until the program exits:
+`Command#run` returns a `Process` handle as soon as the program starts. The handle is not tied to the fiber that started it, so interrupting that fiber does not stop the program, unless the fiber is waiting in `Process#exitCode` or `Process#successfulExitCode`, which destroy the program when interrupted. Call `Process#kill` when you decide to stop it. It sends the terminate signal (SIGTERM on Unix) and waits until the program exits:
 
 ```scala mdoc:compile-only
 val killed: ZIO[Any, CommandError, Unit] =

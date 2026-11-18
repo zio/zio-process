@@ -23,7 +23,7 @@ val limited: ZIO[Any, CommandError, Option[ExitCode]] =
   } yield result
 ```
 
-Holding the handle makes the cleanup explicit. Wrapping `Command#exitCode` in `ZIO#timeout` is not covered by the project's tests: the test is disabled (see zio/zio#3840), so prefer the handle for a hard deadline.
+`Process#exitCode` destroys the program when the waiting fiber is interrupted, so `ZIO#timeout` already stops it. The explicit `Process#kill` also waits until the program has exited. Wrapping `Command#exitCode` in `ZIO#timeout` is not covered by the project's tests: the test is disabled (see zio/zio#3840), so prefer the handle for a hard deadline.
 
 ## Fail Instead of Returning None
 

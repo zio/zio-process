@@ -24,14 +24,14 @@ Each setting method returns a new `Command`. On a pipeline, each setting reaches
 | Member                                   | Description                                                                    |
 | ---------------------------------------- | ------------------------------------------------------------------------------ |
 | `Command#env(env: Map[String, String])`  | Sets the environment variables. A second call replaces the earlier map.        |
-| `Command#workingDirectory(dir: File)`    | Sets the directory the program starts in.                                      |
-| `Command#redirectErrorStream(enabled)`   | Merges standard error into standard output. Ignored on Scala.js.               |
-| `Command#stdin(input: ProcessInput)`     | Sets where standard input comes from.                                          |
-| `Command#stdout(output: ProcessOutput)`  | Sets where standard output goes.                                               |
-| `Command#stderr(output: ProcessOutput)`  | Sets where standard error goes.                                                |
+| `Command#workingDirectory(workingDirectory: File)` | Sets the directory the program starts in.                                      |
+| `Command#redirectErrorStream(redirectErrorStream: Boolean)` | Merges standard error into standard output. Ignored on Scala.js.               |
+| `Command#stdin(stdin: ProcessInput)` | Sets where standard input comes from.                                          |
+| `Command#stdout(stdout: ProcessOutput)` | Sets where standard output goes.                                               |
+| `Command#stderr(stderr: ProcessOutput)` | Sets where standard error goes.                                                |
 | `Command#inheritIO`                      | Sends all three standard streams to the current program's terminal.            |
-| `Command#>(file: File)`                  | Redirects standard output to a file, overwriting it.                           |
-| `Command#>>(file: File)`                 | Redirects standard output to a file, appending to it.                          |
+| `Command#>(redirectTo: File)` | Redirects standard output to a file, overwriting it.                           |
+| `Command#>>(redirectTo: File)` | Redirects standard output to a file, appending to it.                          |
 | `Command#<<(input: String)`              | Sends a UTF-8 string to standard input.                                        |
 | `Command#\|(into: Command)`              | Pipes the output of this command into the input of the next command.           |
 | `Command#pipe(into: Command)`            | A named alias for `Command#\|`.                                                |

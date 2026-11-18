@@ -98,7 +98,7 @@ object DiskUsage extends ZIOAppDefault {
 }
 ```
 
-That's it! We built a tool from three commands and a few lines of parsing,.
+That's it! We built a tool from three commands and a few lines of parsing.
 
 ## Next Steps
 

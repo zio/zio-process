@@ -23,24 +23,25 @@ Key features of ZIO Process:
 
 ## Installation
 
-To use the library, add the following line to your `build.sbt` file:
+ZIO Process is published for Scala 2.12, 2.13 and 3. To use it on the JVM, add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "dev.zio" %%% "zio-process" % "0.8.1"
+libraryDependencies ++= Seq(
+  // ZIO Process: runs external programs as ZIO effects (JVM)
+  "dev.zio" %% "zio-process" % "0.8.1"
+)
 ```
 
-The [Getting Started](docs/./getting-started.md) page walks through a first program, and [Platform Support](docs/./platform-support.md) explains the differences between the JVM, Scala Native and Scala.js.
+For a cross-built project that also targets Scala.js, use `%%%` so that sbt picks the artifact for each platform:
 
-## Guides
+```scala
+libraryDependencies ++= Seq(
+  // ZIO Process: runs external programs as ZIO effects (JVM and Scala.js)
+  "dev.zio" %%% "zio-process" % "0.8.1"
+)
+```
 
-- **[Running Commands and Reading Output](docs/./running-commands.md)** — Describe a command, run it, and read its output.
-- **[Input, Output and Redirects](docs/./input-output.md)** — Set the environment, the working directory, and the streams.
-- **[Piping](docs/./piping.md)** — Connect one command's output to the next command's input.
-- **[Interactive Processes](docs/./interactive-processes.md)** — Talk to a process that reads requests and writes responses.
-- **[Process Control](docs/./process-control.md)** — Wait for, stop, and inspect running processes, and handle errors.
-- **[Platform Support](docs/./platform-support.md)** — Use the library on the JVM, Scala Native and Scala.js.
-
-The [Reference](docs/./reference.md) page lists the public types and methods.
+The code supports Scala Native, but no Scala Native artifact is published yet. [Platform Support](docs/./platform-support.md) explains the differences between the platforms.
 
 ## Example
 
@@ -71,6 +72,10 @@ object ZIOProcessExample extends ZIOAppDefault {
 ```
 
 This example runs on Linux, because it uses `dmesg` and `/proc/cpuinfo`.
+
+## Where to Go Next
+
+[Getting Started](docs/./getting-started.md) runs a first program. The [Concepts](docs/./concepts/index.md) pages explain how commands, processes, streams and errors fit together, the [Reference](docs/./reference/command.md) pages list every public type, and the [Tutorial](docs/./tutorial-disk-usage-report.md) builds a small command-line tool step by step. The how-to guides, starting with [Run a Command and Read Its Output](docs/./how-to-run-a-command-and-read-its-output.md), solve one task each.
 
 ## Documentation
 

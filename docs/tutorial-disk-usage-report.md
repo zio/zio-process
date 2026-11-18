@@ -1,5 +1,5 @@
 ---
-id: tutorial-log-search-cli
+id: tutorial-disk-usage-report
 title: "Tutorial: Build a Disk Usage Report Tool"
 sidebar_label: "Tutorial"
 ---
@@ -98,7 +98,7 @@ object DiskUsage extends ZIOAppDefault {
 }
 ```
 
-That's it! We built a tool from three commands and a few lines of parsing, and nothing in it blocks a thread or leaks a process.
+That's it! We built a tool from three commands and a few lines of parsing,.
 
 ## Next Steps
 

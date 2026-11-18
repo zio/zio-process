@@ -26,4 +26,4 @@ object HelloProcess extends ZIOAppDefault {
 
 ## Where to Go Next
 
-To understand what a `Command` is and when the program starts, read [Commands and Processes](./concepts/commands-and-processes.md). To learn by building something, follow the [Tutorial](./tutorial-log-search-cli.md). To solve a specific task, start with [Run a Command and Read Its Output](./how-to-run-a-command-and-read-its-output.md). Every public type is listed in the [Command](./reference/command.md) reference.
+To understand what a `Command` is and when the program starts, read [Commands and Processes](./concepts/commands-and-processes.md). To learn by building something, follow the [Tutorial](./tutorial-disk-usage-report.md). To solve a specific task, start with [Run a Command and Read Its Output](./how-to-run-a-command-and-read-its-output.md). Every public type is listed in the [Command](./reference/command.md) reference.

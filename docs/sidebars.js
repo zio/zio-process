@@ -25,7 +25,7 @@ const sidebars = {
         "reference/command-error"
       ]
     },
-    "tutorial-log-search-cli",
+    "tutorial-disk-usage-report",
     {
       type: "category",
       label: "How-to Guides",

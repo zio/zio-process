@@ -75,4 +75,4 @@ This example runs on Linux, because it uses `dmesg` and `/proc/cpuinfo`.
 
 ## Where to Go Next
 
-[Getting Started](./getting-started.md) runs a first program. The [Concepts](./concepts/index.md) pages explain how commands, processes, streams and errors fit together, the [Reference](./reference/command.md) pages list every public type, and the [Tutorial](./tutorial-log-search-cli.md) builds a small command-line tool step by step. The how-to guides, starting with [Run a Command and Read Its Output](./how-to-run-a-command-and-read-its-output.md), solve one task each.
+[Getting Started](./getting-started.md) runs a first program. The [Concepts](./concepts/index.md) pages explain how commands, processes, streams and errors fit together, the [Reference](./reference/command.md) pages list every public type, and the [Tutorial](./tutorial-disk-usage-report.md) builds a small command-line tool step by step. The how-to guides, starting with [Run a Command and Read Its Output](./how-to-run-a-command-and-read-its-output.md), solve one task each.

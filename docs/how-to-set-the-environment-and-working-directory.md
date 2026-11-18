@@ -10,7 +10,6 @@ This guide shows how to start a program with its own environment variables and i
 To pass variables to the program, give `Command#env` a `Map`:
 
 ```scala mdoc:compile-only
-import zio._
 import zio.process._
 
 val withJavaHome: Command =

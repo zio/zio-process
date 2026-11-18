@@ -39,14 +39,14 @@ The pipeline is also a `Command`, so `Command#lines` reads the output of its las
 
 ## Step 3: Turn Lines into Values
 
-Lines of text are awkward to work with, so we parse each one into a case class. A line that does not match the format is skipped:
+Lines of text are awkward to work with, so we parse each one into an `Entry` with a size and a path. A line that does not match the format is skipped:
 
 ```scala mdoc:silent
-final case class Entry(sizeKb: Long, path: String)
+final class Entry(val sizeKb: Long, val path: String)
 
 def parse(line: String): Option[Entry] =
   line.split("\t", 2) match {
-    case Array(size, path) => scala.util.Try(size.toLong).toOption.map(Entry(_, path))
+    case Array(size, path) => scala.util.Try(size.toLong).toOption.map(new Entry(_, path))
     case _                 => None
   }
 

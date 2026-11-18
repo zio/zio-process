@@ -35,15 +35,13 @@ import zio.process._
 
 import zio.durationInt
 
-final case class TimedOut(program: String)
-
-val strict: ZIO[Any, Object, ExitCode] =
+val strict: ZIO[Any, Throwable, ExitCode] =
   for {
     process <- Command("sleep", "20").run
     result  <- process.exitCode.timeout(5.seconds)
     code    <- result match {
                  case Some(code) => ZIO.succeed(code)
-                 case None       => process.kill *> ZIO.fail(TimedOut("sleep"))
+                 case None       => process.kill *> ZIO.fail(new RuntimeException("sleep timed out"))
                }
   } yield code
 ```

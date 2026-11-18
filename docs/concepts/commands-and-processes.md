@@ -9,6 +9,8 @@ ZIO Process separates two things that most process APIs blur together: the descr
 
 A `Command` holds a program name, its arguments, an environment, a working directory and the settings for the three standard streams. Creating one starts nothing, and every setting method returns a new `Command` instead of changing the old one. A single `Command` value can therefore be stored, shared and run many times, and each run starts a new operating system process.
 
+For example, the following value describes `ls -l /tmp`:
+
 ```scala mdoc:silent
 import zio._
 import zio.process._
@@ -21,6 +23,8 @@ There is no shell between ZIO Process and the program. `Command.apply` takes the
 ## Running a Command
 
 `Command#run` starts the program and returns a `Process`, the handle to the running program. The handle gives access to the output streams and to the methods that wait for, inspect and stop the program. Most code never needs it, because `Command` also has shortcuts such as `Command#string`, `Command#lines` and `Command#exitCode` that start the program and read its result in one call.
+
+The following two values do the same work, one with a shortcut and one with the handle:
 
 ```scala mdoc:compile-only
 val shortcut: ZIO[Any, CommandError, String] = listTmp.string

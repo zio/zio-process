@@ -4,7 +4,7 @@ title: "Tutorial: Build a Disk Usage Report Tool"
 sidebar_label: "Tutorial"
 ---
 
-Welcome! In this tutorial we build a small command-line tool that reports the biggest files and folders under a directory. Along the way we run a command, pipe three commands together, turn the output into Scala values, handle a failure, and write the result to a file. By the end, you will have used the main parts of ZIO Process in one program.
+Welcome! In this tutorial, we build a small command-line tool that reports the biggest files and folders under a directory. Along the way we run a command, pipe three commands together, turn the output into Scala values, handle a failure, and write the result to a file. By the end, you will have used the main parts of ZIO Process in one program.
 
 The tool relies on the Unix programs `du`, `sort` and `head`, so it runs on Linux and macOS. We assume that you know basic ZIO, such as `for` comprehensions and `ZIOAppDefault`, and that ZIO Process is on your classpath as described in [Installation](./index.md#installation).
 

@@ -15,7 +15,7 @@ Match on a case to handle a specific failure.
 | `CommandError.ProgramNotFound(cause)`         | The program does not exist. Not reliably raised on Scala Native.                             |
 | `CommandError.PermissionDenied(cause)`        | The operating system refuses to run the program. Not reliable on Scala Native.               |
 | `CommandError.WorkingDirectoryMissing(workingDirectory)` | The directory set with `Command#workingDirectory` does not exist. Raised on every platform. |
-| `CommandError.NonZeroErrorCode(exitCode)`     | The program exited with a non-zero code and the code called `successfulExitCode`.            |
+| `CommandError.NonZeroErrorCode(exitCode)`     | The program exits with a non-zero code and the code calls `successfulExitCode`.            |
 | `CommandError.IOError(cause)`                 | Reading or writing a stream failed. `cause` is a `java.io.IOException`.                      |
 | `CommandError.Error(cause)`                   | Any other failure. Treat it as a catch-all.                                                  |
 

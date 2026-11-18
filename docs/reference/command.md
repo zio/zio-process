@@ -7,14 +7,10 @@ title: "Command"
 
 ## Construction
 
-To create a command, call `Command.apply` with the program name and its arguments:
+To create a command, call `Command.apply`, which takes the program name and any number of arguments and returns a `Command.Standard`:
 
 ```scala mdoc:compile-only
 import zio.process._
-
-trait CommandApi {
-  def apply(processName: String, args: String*): Command.Standard
-}
 
 val ls: Command = Command("ls", "-l", "/tmp")
 ```

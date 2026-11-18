@@ -34,9 +34,9 @@ val replSession: ZIO[Any, Throwable, Unit] =
   } yield ()
 ```
 
-The `linesStream` fiber prints each line as the REPL writes it. Requests go in through the queue, so the REPL receives them one at a time, and the `process.exit(0)` request ends the session so that `fiber.join` can finish.
+The `ProcessStream#linesStream` fiber prints each line as the REPL writes it. Requests go in through the queue, so the REPL receives them one at a time, and the `process.exit(0)` request ends the session so that `fiber.join` can finish.
 
-You would probably want a helper for the repeated `Queue#offer` calls. This example keeps everything inline so the steps are easy to follow.
+A helper for the repeated `Queue#offer` calls is useful in real code. This example keeps everything inline so the steps are easy to follow.
 
 ## Platform Support
 

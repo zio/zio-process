@@ -31,4 +31,4 @@ val count: ZIO[Any, CommandError, String] = Command("sh", "-c", "ls /tmp/*.log |
 
 ## Prefer ZIO Process for Pipes
 
-When the commands are known in advance, a pipeline built with `Command#|` avoids the shell and its quoting rules. See [Pipe One Command into Another](./piping.md). Never build a `sh -c` string from untrusted input, because the shell would interpret it. To pass such input safely, make it a separate argument, as in `Command("sh", "-c", "wc -l < \"$1\"", "sh", path)`, where the shell reads it as `$1`.
+When the commands are known in advance, a pipeline built with `Command#|` avoids the shell and its quoting rules. See [Pipe One Command into Another](./piping.md). Never build a `sh -c` string from untrusted input, because the shell interprets it. To pass such input safely, make it a separate argument, as in `Command("sh", "-c", "wc -l < \"$1\"", "sh", path)`, where the shell reads it as `$1`.

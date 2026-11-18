@@ -9,11 +9,11 @@ ZIO Process is one codebase built for three platforms: the JVM, Scala Native, an
 
 Each platform runs programs in its own way. The JVM uses the Java process API, Scala Native uses its own native runtime, and Scala.js runs on Node.js and uses its `child_process` module.
 
-| Platform     | Runtime                       | Scala Versions         |
-| ------------ | ----------------------------- | ---------------------- |
-| JVM          | JDK, 9 or later for some features | 2.12, 2.13 and 3   |
-| Scala Native | Native binary                 | 2.12, 2.13 and 3       |
-| Scala.js     | Node.js                       | 2.12, 2.13 and 3       |
+| Platform     | Runtime                           | Scala Versions   |
+| ------------ | --------------------------------- | ---------------- |
+| JVM          | JDK, 9 or later for some features | 2.12, 2.13 and 3 |
+| Scala Native | Native binary                     | 2.12, 2.13 and 3 |
+| Scala.js     | Node.js                           | 2.12, 2.13 and 3 |
 
 The project builds and runs its JVM tests on JDK 17, 21 and 25. Programs that call `Process#killTree`, `Process#killTreeForcibly`, `Command#string` or `ProcessStream#string` need JDK 9 or later.
 
@@ -25,21 +25,21 @@ The [Installation](./index.md#installation) section of the introduction has the 
 
 The table below lists the differences that matter most in practice. "Not tested" means the project's test suite does not check that feature on that platform, so verify it in your own program.
 
-| Feature                             | JVM                       | Scala Native           | Scala.js                        |
-| ----------------------------------- | ------------------------- | ---------------------- | ------------------------------- |
-| `Process#killTree`                  | Available                 | Not available          | Not available                   |
-| `Process#killTreeForcibly`          | Available                 | Not available          | Not available                   |
-| `Process#pid`                       | Available                 | Available (parsed)     | Available                       |
-| `Process#isAlive`                   | Reports the real state    | Not tested             | `true` even after exit          |
-| `Process#killForcibly`              | Sends SIGKILL on Unix     | Not tested             | Sends the same signal as `Process#kill` |
-| `CommandError.ProgramNotFound`      | Raised                    | Not tested             | Raised                          |
-| `CommandError.PermissionDenied`     | Raised                    | Not tested             | Raised                          |
-| `Command#env` with no map set       | Inherits the parent       | Inherits the parent    | Empty, with no `PATH`           |
-| `Command#env` with a map            | Adds to the parent        | Adds to the parent     | Replaces the whole environment  |
-| `redirectErrorStream`               | Honored                   | Honored                | Ignored                         |
-| `File` type                         | `java.io.File`            | `java.io.File`         | `String` path                   |
-| `.sh` commands                      | Run as given              | Run through `bash`     | Run as given                    |
-| Streaming standard input            | Tested                    | Not tested             | Not tested                      |
+| Feature                         | JVM                    | Scala Native        | Scala.js                                |
+| ------------------------------- | ---------------------- | ------------------- | --------------------------------------- |
+| `Process#killTree`              | Available              | Not available       | Not available                           |
+| `Process#killTreeForcibly`      | Available              | Not available       | Not available                           |
+| `Process#pid`                   | Available              | Available (parsed)  | Available                               |
+| `Process#isAlive`               | Reports the real state | Not tested          | `true` even after exit                  |
+| `Process#killForcibly`          | Sends SIGKILL on Unix  | Not tested          | Sends the same signal as `Process#kill` |
+| `CommandError.ProgramNotFound`  | Raised                 | Not tested          | Raised                                  |
+| `CommandError.PermissionDenied` | Raised                 | Not tested          | Raised                                  |
+| `Command#env` with no map set   | Inherits the parent    | Inherits the parent | Empty, with no `PATH`                   |
+| `Command#env` with a map        | Adds to the parent     | Adds to the parent  | Replaces the whole environment          |
+| `Command#redirectErrorStream`   | Honored                | Honored             | Ignored                                 |
+| `File` type                     | `java.io.File`         | `java.io.File`      | `String` path                           |
+| `.sh` commands                  | Run as given           | Run through `bash`  | Run as given                            |
+| Streaming standard input        | Tested                 | Not tested          | Not tested                              |
 
 ### JVM
 
@@ -55,7 +55,7 @@ Streaming standard input is not tested on Scala Native, so verify it in your own
 
 On Scala.js, the library runs on Node.js. It cannot run in a browser, because it uses the Node.js `child_process` module. The `File` type is a `String` path, so a path that works on the JVM is written as a plain string.
 
-Several features behave differently on Scala.js. `Process#isAlive` stays `true` after the program has exited, so do not use it to detect that a program has finished. `Process#killForcibly` sends the same signal as `Process#kill`, so a program that ignores the terminate signal keeps running after either call. A command that does not call `Command#env` also runs with an empty environment, with no `PATH`. `redirectErrorStream` has no effect.
+Several features behave differently on Scala.js. `Process#isAlive` stays `true` after the program has exited, so do not use it to detect that a program has finished. `Process#killForcibly` sends the same signal as `Process#kill`, so a program that ignores the terminate signal keeps running after either call. A command that does not call `Command#env` also runs with an empty environment, with no `PATH`. `Command#redirectErrorStream` has no effect.
 
 On Scala.js, a working directory is a plain path string:
 

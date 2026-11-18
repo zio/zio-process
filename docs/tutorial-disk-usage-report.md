@@ -26,7 +26,7 @@ def allEntries(dir: File): ZIO[Any, CommandError, Chunk[String]] =
 
 ## Step 2: Pipe Commands Together
 
-The output has one line for every file, which is far too much. In a shell, we would write `du -ak . | sort -rn | head -n 5`. ZIO Process has the same idea with the `Command#|` operator, which connects the output of one command to the input of the next:
+The output has one line for every file, which is far too much. In a shell, we write `du -ak . | sort -rn | head -n 5`. ZIO Process has the same idea with the `Command#|` operator, which connects the output of one command to the input of the next:
 
 ```scala mdoc:silent
 def biggestLines(dir: File, count: Int): ZIO[Any, CommandError, Chunk[String]] =
@@ -65,7 +65,7 @@ def biggestOrEmpty(dir: File, count: Int): ZIO[Any, CommandError, Chunk[Entry]] 
   biggest(dir, count).catchSome { case CommandError.WorkingDirectoryMissing(_) => ZIO.succeed(Chunk.empty) }
 ```
 
-Returning an empty chunk hides the problem, so a real tool would print a message instead. We keep the example short. [Handle Command Errors](./how-to-handle-command-errors.md) covers the other cases.
+Returning an empty chunk hides the problem, so a real tool prints a message instead. We keep the example short. [Handle Command Errors](./how-to-handle-command-errors.md) covers the other cases.
 
 ## Step 5: Write a Report to a File
 

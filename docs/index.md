@@ -12,7 +12,7 @@ sidebar_label: "Introduction"
 
 ZIO Process is backed by ZIO Streams, enabling you to work with processes that output gigabytes of data without worrying about exceeding memory constraints.
 
-ZIO Process provides a principled way to call out to external programs from within a ZIO application while leveraging ZIO's capabilities like interruptions and offloading blocking operations to a separate thread pool. We don't need to worry about avoiding these common pitfalls as we would if we were to use Java's `ProcessBuilder` or the `scala.sys.process` API since it is already taken care of for you.
+ZIO Process provides a principled way to call out to external programs from within a ZIO application while leveraging ZIO's capabilities like interruptions and offloading blocking operations to a separate thread pool. We do not need to worry about avoiding these common pitfalls, as we do when using Java's `ProcessBuilder` or the `scala.sys.process` API, because the library already takes care of them.
 
 Key features of ZIO Process:
 - **Deep ZIO Integration** — Leverages ZIO to handle interruption and offload blocking operations.

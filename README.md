@@ -28,7 +28,7 @@ ZIO Process is published for Scala 2.12, 2.13 and 3. To use it on the JVM, add t
 ```scala
 libraryDependencies ++= Seq(
   // ZIO Process: runs external programs as ZIO effects (JVM)
-  "dev.zio" %% "zio-process" % "0.8.1"
+  "dev.zio" %% "zio-process" % "0.8.2"
 )
 ```
 
@@ -37,7 +37,7 @@ For a cross-built project that also targets Scala.js, use `%%%` so that sbt pick
 ```scala
 libraryDependencies ++= Seq(
   // ZIO Process: runs external programs as ZIO effects (JVM and Scala.js)
-  "dev.zio" %%% "zio-process" % "0.8.1"
+  "dev.zio" %%% "zio-process" % "0.8.2"
 )
 ```
 

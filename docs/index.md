@@ -1,7 +1,7 @@
 ---
 id: index
-title:  "Introduction to ZIO Process"
-sidebar_label: "ZIO Process"
+title: "Introduction to ZIO Process"
+sidebar_label: "Introduction"
 ---
 
 [ZIO Process](https://zio.dev/zio-process) is a simple ZIO library for interacting with external processes and command-line programs.
@@ -12,7 +12,7 @@ sidebar_label: "ZIO Process"
 
 ZIO Process is backed by ZIO Streams, enabling you to work with processes that output gigabytes of data without worrying about exceeding memory constraints.
 
-ZIO Process provides a principled way to call out to external programs from within a ZIO application while leveraging ZIO's capabilities like interruptions and offloading blocking operations to a separate thread pool. We don't need to worry about avoiding these common pitfalls as we would if we were to use Java's `ProcessBuilder` or the `scala.sys.process` API since it is already taken care of for you.
+ZIO Process provides a principled way to call out to external programs from within a ZIO application while leveraging ZIO's capabilities like interruptions and offloading blocking operations to a separate thread pool. We do not need to worry about avoiding these common pitfalls, as we do when using Java's `ProcessBuilder` or the `scala.sys.process` API, because the library already takes care of them.
 
 Key features of ZIO Process:
 - **Deep ZIO Integration** — Leverages ZIO to handle interruption and offload blocking operations.
@@ -23,24 +23,25 @@ Key features of ZIO Process:
 
 ## Installation
 
-To use the library, add the following line to your `build.sbt` file:
+ZIO Process is published for Scala 2.12, 2.13 and 3. To use it on the JVM, add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "dev.zio" %%% "zio-process" % "@VERSION@"
+libraryDependencies ++= Seq(
+  // ZIO Process: runs external programs as ZIO effects (JVM)
+  "dev.zio" %% "zio-process" % "@VERSION@"
+)
 ```
 
-The [Getting Started](./getting-started.md) page walks through a first program, and [Platform Support](./platform-support.md) explains the differences between the JVM, Scala Native and Scala.js.
+For a cross-built project that also targets Scala.js, use `%%%` so that sbt picks the artifact for each platform:
 
-## Guides
+```scala
+libraryDependencies ++= Seq(
+  // ZIO Process: runs external programs as ZIO effects (JVM and Scala.js)
+  "dev.zio" %%% "zio-process" % "@VERSION@"
+)
+```
 
-- **[Running Commands and Reading Output](./running-commands.md)** — Describe a command, run it, and read its output.
-- **[Input, Output and Redirects](./input-output.md)** — Set the environment, the working directory, and the streams.
-- **[Piping](./piping.md)** — Connect one command's output to the next command's input.
-- **[Interactive Processes](./interactive-processes.md)** — Talk to a process that reads requests and writes responses.
-- **[Process Control](./process-control.md)** — Wait for, stop, and inspect running processes, and handle errors.
-- **[Platform Support](./platform-support.md)** — Use the library on the JVM, Scala Native and Scala.js.
-
-The [Reference](./reference.md) page lists the public types and methods.
+The code supports Scala Native, but no Scala Native artifact is published yet. [Platform Support](./platform-support.md) explains the differences between the platforms.
 
 ## Example
 
@@ -71,3 +72,7 @@ object ZIOProcessExample extends ZIOAppDefault {
 ```
 
 This example runs on Linux, because it uses `dmesg` and `/proc/cpuinfo`.
+
+## Where to Go Next
+
+[Getting Started](./getting-started.md) runs a first program. The [Concepts](./concepts/index.md) pages explain how commands, processes, streams and errors fit together, the [Reference](./reference/command.md) pages list every public type, and the [Tutorial](./tutorial-disk-usage-report.md) builds a small command-line tool step by step. The how-to guides, starting with [Run a Command and Read Its Output](./how-to-run-a-command-and-read-its-output.md), solve one task each.

@@ -418,3 +418,9 @@ website/static/api
 .vscode/
 project/
 .scala-build/
+
+website/docs
+website/.docusaurus
+website/package-lock.json
+website/yarn.lock
+website/i18n

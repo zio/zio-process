@@ -1,9 +1,9 @@
 ---
 id: piping
-title: "Piping"
+title: "Pipe One Command into Another"
 ---
 
-Piping connects the standard output of one command to the standard input of the next, in the same way that `ps -ef | grep java` works in a shell. ZIO Process builds the pipeline as a value, so nothing starts until you run it. There is no shell involved, so each command in the pipeline is a program with its own arguments. The examples on this page need these imports:
+This guide shows how to connect the standard output of one command to the standard input of the next, in the same way that `ps -ef | grep java` works in a shell. ZIO Process builds the pipeline as a value, so nothing starts until you run it. There is no shell involved, so each command in the pipeline is a program with its own arguments. The examples on this page need these imports:
 
 ```scala mdoc:silent
 import zio._
@@ -21,7 +21,7 @@ val javaProcessIds: ZIO[Any, CommandError, Chunk[String]] =
   (Command("ps", "-ef") | Command("grep", "java") | Command("awk", "{print $2}")).lines
 ```
 
-The pipeline behaves as one command. Its methods, such as `lines`, `string` and `exitCode`, read from the rightmost command, and the output of each command feeds the next.
+The pipeline behaves as one command. Its methods, such as `Command#lines`, `Command#string` and `Command#exitCode`, read from the rightmost command, and the output of each command feeds the next.
 
 ## Connecting Commands Manually
 
@@ -39,16 +39,16 @@ The operator form in the previous section does the same work and is easier to re
 
 A pipeline is a single `Command` value, so you can call the usual setting methods on it. Each setting reaches only the commands that need it:
 
-| Setting               | Applies to                                                    |
-| --------------------- | ------------------------------------------------------------- |
-| `env`                 | Every command in the pipeline                                 |
-| `workingDirectory`    | Every command in the pipeline                                 |
-| `stdin`               | The leftmost command, because the others read from the pipe  |
-| `stdout`              | The rightmost command, which produces the result              |
-| `stderr`              | The rightmost command                                         |
-| `redirectErrorStream` | The rightmost command                                         |
+| Setting                       | Applies to                                                  |
+| ----------------------------- | ----------------------------------------------------------- |
+| `Command#env`                 | Every command in the pipeline                               |
+| `Command#workingDirectory`    | Every command in the pipeline                               |
+| `Command#stdin`               | The leftmost command, because the others read from the pipe |
+| `Command#stdout`              | The rightmost command, which produces the result            |
+| `Command#stderr`              | The rightmost command                                       |
+| `Command#redirectErrorStream` | The rightmost command                                       |
 
-For example, `stdin` on a pipeline feeds the leftmost command, and the rightmost command's output is the result:
+For example, `Command#stdin` on a pipeline feeds the leftmost command, and the rightmost command's output is the result:
 
 ```scala mdoc:compile-only
 val javaLineCount: ZIO[Any, CommandError, String] =
@@ -64,8 +64,8 @@ val javaFile: ZIO[Any, CommandError, ExitCode] =
   (Command("ps", "-ef") | Command("grep", "java")).stdout(ProcessOutput.FileRedirect(new File("java-processes.txt"))).exitCode
 ```
 
-For more on redirects, see [Input, Output and Redirects](./input-output.md).
+For more on redirects, see [Redirect Output to a File](./how-to-redirect-output-to-a-file.md).
 
 ## Platform Support
 
-Three of the piping tests are skipped on Scala Native: the basic pipe, pipe associativity, and `stdin` on a piped command. The tests for how settings apply to a pipeline run on all three platforms. On Scala.js, `redirectErrorStream` is ignored, as described on [Input, Output and Redirects](./input-output.md).
+Three of the piping tests are skipped on Scala Native: the basic pipe, pipe associativity, and `Command#stdin` on a piped command. The tests for how settings apply to a pipeline run on all three platforms. On Scala.js, `Command#redirectErrorStream` is ignored, as described on [Redirect Output to a File](./how-to-redirect-output-to-a-file.md).

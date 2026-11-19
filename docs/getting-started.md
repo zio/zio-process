@@ -3,17 +3,7 @@ id: getting-started
 title: "Getting Started"
 ---
 
-This page adds ZIO Process to a project and runs a first program. ZIO Process works with Scala 2.12, 2.13 and 3, on the JVM and Scala.js. Scala Native is supported in the code, but its artifact is not published yet, as explained on [Platform Support](./platform-support.md).
-
-## Installation
-
-Add the library to your `build.sbt`:
-
-```scala
-libraryDependencies += "dev.zio" %%% "zio-process" % "@VERSION@"
-```
-
-The `%%%` operator selects the artifact for your platform. Use it even for JVM-only projects, so that the same line works on every platform the library supports.
+This page runs a first program with ZIO Process. To add the library to a project, copy the dependency block from the [Installation](./index.md#installation) section of the introduction.
 
 ## A First Program
 
@@ -36,13 +26,4 @@ object HelloProcess extends ZIOAppDefault {
 
 ## Where to Go Next
 
-The guides cover each part of the library in order:
-
-- [Running Commands and Reading Output](./running-commands.md) describes commands and the ways to read their output.
-- [Input, Output and Redirects](./input-output.md) sets the environment, working directory, and standard streams.
-- [Piping](./piping.md) connects commands together.
-- [Interactive Processes](./interactive-processes.md) talks to programs that read requests and write responses.
-- [Process Control](./process-control.md) stops, waits for, and inspects running processes.
-- [Platform Support](./platform-support.md) lists the differences between platforms.
-
-The [Reference](./reference.md) page lists every public type and method.
+To understand what a `Command` is and when the program starts, read [Commands and Processes](./concepts/commands-and-processes.md). To learn by building something, follow the [Tutorial](./tutorial-disk-usage-report.md). To solve a specific task, start with [Run a Command and Read Its Output](./how-to-run-a-command-and-read-its-output.md). Every public type is listed in the [Command](./reference/command.md) reference.

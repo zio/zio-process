@@ -26,19 +26,15 @@ Key features of ZIO Process:
 ZIO Process is published for Scala 2.12, 2.13 and 3. To use it on the JVM, add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies ++= Seq(
-  // ZIO Process: runs external programs as ZIO effects (JVM)
-  "dev.zio" %% "zio-process" % "@VERSION@"
-)
+// ZIO Process: runs external programs as ZIO effects (JVM)
+libraryDependencies += "dev.zio" %% "zio-process" % "@VERSION@"
 ```
 
 For a cross-built project that also targets Scala.js, use `%%%` so that sbt picks the artifact for each platform:
 
 ```scala
-libraryDependencies ++= Seq(
-  // ZIO Process: runs external programs as ZIO effects (JVM and Scala.js)
-  "dev.zio" %%% "zio-process" % "@VERSION@"
-)
+// ZIO Process: runs external programs as ZIO effects (JVM and Scala.js)
+libraryDependencies += "dev.zio" %%% "zio-process" % "@VERSION@"
 ```
 
 The code supports Scala Native, but no Scala Native artifact is published yet. [Platform Support](./platform-support.md) explains the differences between the platforms.

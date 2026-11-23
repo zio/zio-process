@@ -23,6 +23,13 @@ import java.io._
 import java.nio.charset.{ Charset, StandardCharsets }
 import scala.collection.mutable.ArrayBuffer
 
+/**
+ * The standard output or standard error of a running process, read as bytes, lines or a string. Obtained from
+ * [[Process.stdout]] or [[Process.stderr]].
+ *
+ * Each read continues from where the previous read stopped. After a read that consumed all the output, a second read
+ * returns no data.
+ */
 final case class ProcessStream(
   private[process] val inputStream: InputStream,
   private[process] val outputStream: Option[OutputStream] = None
@@ -75,7 +82,8 @@ final case class ProcessStream(
       .via(ZPipeline.splitLines)
 
   /**
-   * Return the output of this process as a chunked stream of bytes.
+   * Return the output of this process as a chunked stream of bytes. The underlying input is closed when the stream
+   * ends, fails or is interrupted.
    */
   def stream: ZStream[Any, CommandError, Byte] =
     Constructors
@@ -91,7 +99,7 @@ final case class ProcessStream(
   /**
    * Return the entire output of this process as a string with the specified encoding.
    *
-   * Note: Needs Java 9 or greater.
+   * On the JVM, this needs Java 9 or greater.
    */
   def string(charset: Charset): ZIO[Any, CommandError, String] =
     ZIO.attemptBlockingCancelable {

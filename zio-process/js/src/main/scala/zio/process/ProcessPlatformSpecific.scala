@@ -51,6 +51,11 @@ private[process] trait ProcessPlatformSpecific extends ProcessInterface { self: 
   protected lazy val stdoutInternal         = ProcessPlatformSpecific.JSInputStream(self.process.stdout)
   protected lazy val stderrInternal         = ProcessPlatformSpecific.JSInputStream(self.process.stderr)
   protected def getInputStream: InputStream = stdoutInternal
+
+  /**
+   * Returns the standard input of the process as an `OutputStream`. Write to it only when the command's standard input
+   * is [[ProcessInput.Pipe]]. Close it to send the end of input.
+   */
   def getOutputStream: OutputStream         = stdinInternal
   protected def getErrorStream: InputStream = stderrInternal
 

@@ -24,14 +24,40 @@ import FilePlatformSpecific._
 import java.nio.file.Path
 import java.io.InputStream
 
+/**
+ * Where the standard input of a command comes from. The default is [[ProcessInput.Inherit]].
+ */
 sealed trait ProcessInput
 
+/**
+ * Constructors for [[ProcessInput]]. Each returns a `ProcessInput` that feeds a file, bytes or text to the standard
+ * input of a command.
+ */
 object ProcessInput {
+
+  /**
+   * Feed the bytes of a ZIO stream to the standard input of the process. With `flushChunksEagerly`, each chunk is
+   * flushed as soon as it is written. See [[ProcessInput.fromStream]].
+   */
   final case class FromStream(stream: ZStream[Any, CommandError, Byte], flushChunksEagerly: Boolean)
       extends ProcessInput
+
+  /**
+   * Feed the bytes of a Java `InputStream` to the standard input of the process. `flushChunksEagerly` has the same
+   * meaning as for [[ProcessInput.FromStream]].
+   */
   final case class JavaStream(stream: InputStream, flushChunksEagerly: Boolean) extends ProcessInput
-  case object Inherit                                                           extends ProcessInput
-  case object Pipe                                                              extends ProcessInput
+
+  /**
+   * Read the standard input from the parent process. This is the default.
+   */
+  case object Inherit extends ProcessInput
+
+  /**
+   * Leave the standard input open, so the caller can write to it through `Process.getOutputStream`. Closing that stream
+   * sends the end of input.
+   */
+  case object Pipe extends ProcessInput
 
   /**
    * Returns a ProcessInput from a file.

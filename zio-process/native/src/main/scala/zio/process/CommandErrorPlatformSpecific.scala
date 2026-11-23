@@ -33,7 +33,8 @@ private[process] trait CommandErrorPlatformSpecific {
 
   /**
    * Returns whether the `message` of a failed program start says that permission was denied. On Scala.js, this looks
-   * for `EACCES`. On the JVM and Scala Native, it looks for the errno code of a denied permission.
+   * for `EACCES`. On the JVM, this looks for error code 13 (5 on Windows). On Scala Native, it looks for error code 1
+   * (5 on Windows).
    */
   def isPermissionDenied(message: String): Boolean = hasErrorCode(message, permissionDeniedErrorCode)
 

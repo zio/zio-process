@@ -39,9 +39,10 @@ import java.io.InputStream
 sealed trait Command extends CommandPlatformSpecific {
 
   /**
-   * Adds environment variables for this command. They are added to the environment that the command inherits from the
-   * parent process, and a variable that is already set is replaced by the new value. For a piped command, both sides
-   * receive the variables.
+   * Sets the environment variables for this command, replacing any set by an earlier `env` call. On the JVM and Scala
+   * Native, they are added to the environment that the command inherits from the parent process, and a variable that is
+   * already set is replaced by the new value. On Scala.js, the command receives only these variables. For a piped
+   * command, every command in the pipe receives the variables.
    *
    * {{{
    * import zio.ZIO
@@ -69,9 +70,8 @@ sealed trait Command extends CommandPlatformSpecific {
     run.flatMap(_.exitCode)
 
   /**
-   * Flatten this command to a non-empty chunk of standard commands. For the standard case, this simply returns a 1
-   * element chunk. For the piped case, all the commands in the pipe will be extracted out into a chunk from left to
-   * right.
+   * Flatten this command to a non-empty chunk of standard commands. For the standard case, this returns a chunk of one
+   * element. For the piped case, all the commands in the pipe will be extracted out into a chunk from left to right.
    */
   def flatten: NonEmptyChunk[Command.Standard] = this match {
     case c: Command.Standard => NonEmptyChunk.single(c)
@@ -80,7 +80,7 @@ sealed trait Command extends CommandPlatformSpecific {
 
   /**
    * Inherit standard input, standard output, and standard error. The command reads from and writes to the terminal of
-   * the parent process, so `string`, `lines` and [[stream]] return no output.
+   * the parent process. On the JVM, `string`, `lines` and [[stream]] then return no output.
    */
   def inheritIO: Command =
     stdin(ProcessInput.Inherit).stdout(ProcessOutput.Inherit).stderr(ProcessOutput.Inherit)
@@ -118,7 +118,7 @@ sealed trait Command extends CommandPlatformSpecific {
 
   /**
    * Pipe the output of this command into the input of the specified command. The standard output of this command
-   * becomes the standard input of `into`. `a | b | c` runs three commands in order.
+   * becomes the standard input of `into`. In `a | b | c`, the output of `a` feeds `b` and the output of `b` feeds `c`.
    *
    * {{{
    * import zio.ZIO
@@ -142,7 +142,8 @@ sealed trait Command extends CommandPlatformSpecific {
   /**
    * Start running the command returning a handle to the running process. The exit code is not checked here. Fails with
    * [[CommandError.ProgramNotFound]], [[CommandError.PermissionDenied]] or [[CommandError.WorkingDirectoryMissing]]
-   * when the program cannot be started.
+   * when the program cannot be started. On the JVM, it fails with [[CommandError.IOError]] for other start failures,
+   * such as a redirect to a file in a directory that does not exist.
    */
   def run: ZIO[Any, CommandError, Process] = run(None)
 
@@ -220,8 +221,8 @@ sealed trait Command extends CommandPlatformSpecific {
 
   /**
    * Runs the command returning the entire output as a string (default encoding of UTF-8). A non-zero exit code is not
-   * an error: the output is returned anyway. Returns an empty string when the standard output is inherited or
-   * redirected to a file.
+   * an error: the output is returned anyway. On the JVM, returns an empty string when the standard output is inherited
+   * or redirected to a file.
    *
    * {{{
    * import zio.ZIO
@@ -266,7 +267,8 @@ sealed trait Command extends CommandPlatformSpecific {
   /**
    * Set the working directory that will be used when this command will be run. For the piped case, each piped command's
    * working directory will also be set. Running the command fails with [[CommandError.WorkingDirectoryMissing]] when
-   * the directory does not exist.
+   * the directory does not exist. On Scala.js, the path is joined to the current directory of the parent process, even
+   * when it is absolute.
    *
    * {{{
    * import zio.ZIO
@@ -330,7 +332,8 @@ object Command {
   ) extends Command
 
   /**
-   * Two commands connected so that the standard output of `left` feeds the standard input of `right`. Created by `|`.
+   * Two commands connected so that the standard output of `left` feeds the standard input of `right`. Created by `|` or
+   * `pipe`.
    */
   final case class Piped(left: Command, right: Command) extends Command
 
@@ -339,7 +342,8 @@ object Command {
    *
    * The new command adds no environment variables, runs in the working directory of the parent process, reads standard
    * input from the parent process ([[ProcessInput.Inherit]]), pipes standard output and standard error
-   * ([[ProcessOutput.Pipe]]), and does not merge the error stream into the output.
+   * ([[ProcessOutput.Pipe]]), and does not merge the error stream into the output. On Scala.js, the command starts with
+   * an empty environment.
    *
    * {{{
    * import zio.ZIO

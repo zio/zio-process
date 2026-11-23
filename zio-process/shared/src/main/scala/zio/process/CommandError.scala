@@ -60,7 +60,7 @@ object CommandError extends CommandErrorPlatformSpecific {
   final case class NonZeroErrorCode(exitCode: ExitCode) extends CommandError(null)
 
   /**
-   * An input or output failure that is not a missing or non-executable program. For example, a redirect to a file in a
+   * An input or output failure that is not a missing or non-executable program. On the JVM, a redirect to a file in a
    * directory that does not exist fails with this case.
    */
   final case class IOError(cause: java.io.IOException) extends CommandError(cause)

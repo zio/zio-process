@@ -12,7 +12,8 @@ object FilePlatformSpecific {
   type File = java.io.File
 
   /**
-   * Returns whether `file` exists.
+   * Returns whether `file` exists. On Scala.js, `file` is joined to the current working directory, even when it is
+   * absolute.
    */
   def exists(file: File) = file.exists()
 }

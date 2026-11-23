@@ -44,9 +44,9 @@ object ProcessOutput {
   case object Inherit extends ProcessOutput
 
   /**
-   * Make the output readable through [[Process.stdout]] or [[Process.stderr]], or through `string`, `lines` and
-   * `stream` on the command. In a piped command, the output of each command except the rightmost goes to the next
-   * command.
+   * Make the output readable through [[Process.stdout]] or [[Process.stderr]]. For the standard output, `string`,
+   * `lines` and `stream` on the command read it too. In a piped command, the output of each command except the
+   * rightmost goes to the next command.
    */
   case object Pipe extends ProcessOutput
 }

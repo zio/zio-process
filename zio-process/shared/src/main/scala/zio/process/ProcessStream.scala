@@ -27,8 +27,8 @@ import scala.collection.mutable.ArrayBuffer
  * The standard output or standard error of a running process, read as bytes, lines or a string. Obtained from
  * [[Process.stdout]] or [[Process.stderr]].
  *
- * Each read continues from where the previous read stopped. After a read that consumed all the output, a second read
- * returns no data.
+ * On the JVM, `lines` and `stream` close the output when they finish, so a later read on the same `ProcessStream` fails
+ * with a [[CommandError.IOError]]. After `string`, a later `string` returns an empty string.
  */
 final case class ProcessStream(
   private[process] val inputStream: InputStream,

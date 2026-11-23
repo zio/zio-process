@@ -30,17 +30,17 @@ object JS {
   trait ChildProcess extends EventEmitter {
 
     /**
-     * The standard input of the child process, as a writable stream.
+     * The standard input of the child process, as a writable stream, or null when it is not piped.
      */
     val stdin: Writable = js.native
 
     /**
-     * The standard output of the child process, as a readable stream.
+     * The standard output of the child process, as a readable stream, or null when it is not piped.
      */
     val stdout: Readable = js.native
 
     /**
-     * The standard error of the child process, as a readable stream.
+     * The standard error of the child process, as a readable stream, or null when it is not piped.
      */
     val stderr: Readable = js.native
 
@@ -55,12 +55,13 @@ object JS {
     def connected: Boolean = js.native
 
     /**
-     * Sends a signal to the child process. Returns true when the signal was sent.
+     * Sends `SIGTERM` to the child process. Returns true when the signal was sent.
      */
     def kill(): Boolean = js.native
 
     /**
-     * The exit code of the child process. It is set once the process has exited.
+     * The exit code of the child process. It is set once the process has exited. It is null while the process runs, and
+     * stays null when a signal ended the process.
      */
     def exitCode: Int = js.native
 
@@ -84,7 +85,8 @@ object JS {
     def read(): Buffer = js.native
 
     /**
-     * Reads `size` bytes of the buffered data as a `Buffer`, or returns null when not enough data is buffered.
+     * Reads `size` bytes of the buffered data as a `Buffer`, or returns null when not enough data is buffered, unless
+     * the stream has ended, in which case the remaining data is returned.
      */
     def read(size: Int): Buffer = js.native
 
@@ -155,8 +157,8 @@ object JS {
     def write(b: js.Any): Boolean = js.native
 
     /**
-     * Writes the bytes of `b`, using `encoding`, and calls `callback` once the chunk has been handled. Returns false
-     * when the stream is full.
+     * Writes the bytes of `b` and calls `callback` once the chunk has been handled. Node.js uses `encoding` only for
+     * string chunks, so it has no effect here. Returns false when the stream is full.
      */
     def write(b: js.typedarray.Uint8Array, encoding: String, callback: js.Function): Boolean = js.native
 
@@ -176,7 +178,7 @@ object JS {
     def writableEnded: Boolean = js.native
 
     /**
-     * Buffers writes in memory until `uncork` is called.
+     * Buffers writes in memory until `uncork` or `end` is called.
      */
     def cork(): js.Any = js.native
 

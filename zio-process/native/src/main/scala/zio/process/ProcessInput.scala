@@ -38,14 +38,15 @@ object ProcessInput {
 
   /**
    * Feed the bytes of a ZIO stream to the standard input of the process. With `flushChunksEagerly`, each chunk is
-   * flushed as soon as it is written. See [[ProcessInput.fromStream]].
+   * flushed as soon as it is written. On Scala.js, the flag has no effect. See [[ProcessInput.fromStream]].
    */
   final case class FromStream(stream: ZStream[Any, CommandError, Byte], flushChunksEagerly: Boolean)
       extends ProcessInput
 
   /**
-   * Feed the bytes of a Java `InputStream` to the standard input of the process. `flushChunksEagerly` has the same
-   * meaning as for [[ProcessInput.FromStream]].
+   * Feed the bytes of a Java `InputStream` to the standard input of the process. On the JVM and Scala Native, `run`
+   * returns only after the whole stream has been copied, and `flushChunksEagerly` adds one flush at the end. On
+   * Scala.js, the flag has no effect.
    */
   final case class JavaStream(stream: InputStream, flushChunksEagerly: Boolean) extends ProcessInput
 
@@ -61,7 +62,9 @@ object ProcessInput {
   case object Pipe extends ProcessInput
 
   /**
-   * Returns a ProcessInput from a file.
+   * Returns a ProcessInput that reads `file`. On the JVM, the file is read while the command runs, and a file that
+   * cannot be read gives the command an empty standard input. On Scala Native, the file is opened when this method is
+   * called. On Scala.js, `chunkSize` is ignored.
    */
   def fromFile(file: File): ProcessInput =
     ProcessInput.JavaStream(

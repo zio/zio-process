@@ -44,8 +44,8 @@ object ProcessInput {
 
   /**
    * Feed the bytes of a Java `InputStream` to the standard input of the process. On the JVM and Scala Native, `run`
-   * returns only after the whole stream has been copied, and `flushChunksEagerly` adds one flush at the end. On
-   * Scala.js, the flag has no effect.
+   * returns only after the whole stream has been copied, and `flushChunksEagerly` adds a flush after the copy when the
+   * stream had data. On Scala.js, the flag has no effect.
    */
   final case class JavaStream(stream: InputStream, flushChunksEagerly: Boolean) extends ProcessInput
 

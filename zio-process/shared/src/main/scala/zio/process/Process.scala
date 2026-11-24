@@ -22,8 +22,8 @@ import java.io.InputStream
 import ProcessPlatformSpecific._
 
 /**
- * A program that has started. Obtained from [[Command.run]]. `stdout` and `stderr` give access to its output.
- * `exitCode`, `kill` and `killForcibly` wait for it to exit or stop it.
+ * A program that has started. Obtained from [[Command.run]]. `stdout` and `stderr` give access to its output. On the
+ * JVM and Scala Native, `exitCode`, `kill` and `killForcibly` wait for it to exit or stop it.
  */
 final case class Process(private[process] val process: JProcess) extends ProcessPlatformSpecific { self =>
 

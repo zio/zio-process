@@ -46,6 +46,11 @@ private[process] trait ProcessPlatformSpecific { self: Process =>
     }
 
   protected def getInputStream: InputStream = self.process.getInputStream()
+
+  /**
+   * Returns the standard input of the process as an `OutputStream`. Write to it only when the command's standard input
+   * is [[ProcessInput.Pipe]]. Close it to send the end of input.
+   */
   def getOutputStream: OutputStream         = self.process.getOutputStream()
   protected def getErrorStream: InputStream = self.process.getErrorStream()
   protected def get: Option[OutputStream]   = Some(getOutputStream)

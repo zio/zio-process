@@ -18,7 +18,23 @@ package zio.process
 import scala.scalajs.js
 
 private[process] trait CommandErrorPlatformSpecific {
+
+  /**
+   * The exception that a failed program start reports. It is `java.io.IOException` on the JVM and Scala Native, and
+   * `js.JavaScriptException` on Scala.js.
+   */
   type IOException = js.JavaScriptException
-  def isNotFound(message: String): Boolean         = message != null && message.contains("ENOENT")
+
+  /**
+   * Returns whether the `message` of a failed program start says that the program was not found. On the JVM and Scala
+   * Native, this looks for errno 2. On Scala.js, it looks for `ENOENT`.
+   */
+  def isNotFound(message: String): Boolean = message != null && message.contains("ENOENT")
+
+  /**
+   * Returns whether the `message` of a failed program start says that permission was denied. On Scala.js, this looks
+   * for `EACCES`. On the JVM, this looks for error code 13 (5 on Windows). On Scala Native, it looks for error code 1
+   * (5 on Windows).
+   */
   def isPermissionDenied(message: String): Boolean = message != null && message.contains("EACCES")
 }
